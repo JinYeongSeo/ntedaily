@@ -161,12 +161,12 @@
         [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.08); }
         .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 22px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
 
-        /* ✅ 개선된 체크박스 UI (짜치는 초록색 제거 & 사이버틱하게 변경) */
+        /* ✅ 개선된 체크박스 UI (크기 축소 및 정밀 조정) */
         .task-item { display: flex; align-items: flex-start; margin-bottom: 18px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] { 
-            appearance: none; width: 24px; height: 24px; flex-shrink: 0; 
-            border: 2px solid var(--text-muted); border-radius: 6px; 
-            margin-right: 14px; margin-top: 1px; cursor: pointer; 
+            appearance: none; width: 18px; height: 18px; flex-shrink: 0; 
+            border: 2px solid var(--text-muted); border-radius: 5px; 
+            margin-right: 12px; margin-top: 3px; cursor: pointer; 
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
             background: rgba(0,0,0,0.4); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); 
             position: relative;
@@ -176,18 +176,17 @@
         .task-item input[type="checkbox"]:checked { 
             background: var(--grad-main); 
             border-color: transparent; 
-            box-shadow: 0 0 12px rgba(217, 70, 239, 0.4); 
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.4); 
         }
         
-        /* 커스텀 V마크 (기본 이모지 대신 CSS 테두리로 예쁘게 그림) */
         .task-item input[type="checkbox"]:checked::after { 
             content: ''; position: absolute; 
-            left: 7px; top: 3px; width: 5px; height: 11px; 
-            border: solid #ffffff; border-width: 0 3px 3px 0; 
+            left: 5px; top: 1px; width: 4px; height: 9px; 
+            border: solid #ffffff; border-width: 0 2px 2px 0; 
             transform: rotate(45deg); 
         }
         
-        .task-item span { font-size: 17px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
+        .task-item span { font-size: 16px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
         /* 커스텀 슬라이더 */
@@ -220,8 +219,6 @@
         .custom-controls select { padding: 14px; flex-shrink: 0; width: 95px; }
         .custom-controls input { flex: 1; min-width: 150px; padding: 14px 18px; margin-bottom: 0; }
         .custom-controls button { flex-shrink: 0; width: 80px; padding: 14px; font-size: 15px; }
-        
-        /* ✅ X 버튼 늘어남 현상 방지 & 크기 고정 */
         .delete-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 0; width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; border-radius: 8px; margin-left: auto; margin-top: -3px; box-shadow: none; transition: 0.2s; flex: none; }
         .delete-btn:hover { background: var(--danger); color: #fff; transform: scale(1.1); box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
 
@@ -347,10 +344,10 @@
             </div>
 
             <div class="timers-grid">
-                <div class="glass-panel timer-card"><h3>일일 초기화</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>주간 초기화</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--accent);">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>월간 초기화</h3><div id="timer-monthly" class="time" style="color:var(--success);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time" style="color:var(--success);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--warning);">계산 중...</div></div>
             </div>
 
@@ -441,11 +438,14 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
+    // ✅ 슬라이더 오차 수정: 원(Thumb)의 22px 폭을 고려하여 calc() 공식을 적용해 백그라운드 색상이 정중앙에 맞게 조절했습니다.
     function updateSliderBackground(el, min, max, val) {
         const percentage = ((val - min) / (max - min)) * 100;
         const color = document.documentElement.getAttribute('data-theme') === 'light' ? '#0ea5e9' : '#00e5ff';
         const bg = document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.6)';
-        el.style.background = `linear-gradient(to right, ${color} ${percentage}%, ${bg} ${percentage}%)`;
+        
+        const thumbOffset = 11 - (percentage * 0.22); // 22px thumb 기준
+        el.style.background = `linear-gradient(to right, ${color} calc(${percentage}% + ${thumbOffset}px), ${bg} calc(${percentage}% + ${thumbOffset}px))`;
     }
 
     function showLoginScreen() {
@@ -646,7 +646,6 @@
             let min = Math.floor(nextTick / 60000);
             let sec = Math.floor((nextTick % 60000) / 1000);
             
-            // 완충 시간 계산 추가
             let totalMinsLeft = (maxStamina - current) * 6;
             let fullH = Math.floor(totalMinsLeft / 60);
             let fullM = totalMinsLeft % 60;
@@ -779,7 +778,6 @@
     function renderTasks() {
         const container = document.getElementById('task-container');
         
-        // 렌더링 전 아코디언 메뉴(details) 열림 상태 저장 로직 추가
         const openStates = {};
         document.querySelectorAll('details.sub-tasks').forEach(d => {
             if(d.id) openStates[d.id] = d.open;
@@ -806,7 +804,6 @@
                 if(cat.type === 'weekly' || cat.type === 'biweekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
             });
 
-            // 아코디언 렌더링 시 이전 상태(openStates) 복구
             if (cat.sub) {
                 const detailsId = `details_${cat.sub.id}`;
                 const openAttr = openStates[detailsId] ? 'open' : '';
@@ -843,7 +840,6 @@
             container.appendChild(div);
         });
 
-        // 커스텀 숙제
         const customDiv = document.createElement('div');
         customDiv.className = 'glass-panel task-category';
         let customHtml = `<h2>커스텀 숙제 (개인용)</h2>
@@ -879,7 +875,6 @@
         customDiv.innerHTML = customHtml;
         container.appendChild(customDiv);
 
-        // 진행도 업데이트
         const dailyPercent = dailyTotal > 0 ? Math.round((dailyDone / dailyTotal) * 100) : 0;
         const weeklyPercent = weeklyTotal > 0 ? Math.round((weeklyDone / weeklyTotal) * 100) : 0;
         document.getElementById('progress-daily-fill').style.width = `${dailyPercent}%`;
