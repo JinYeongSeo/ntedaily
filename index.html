@@ -161,7 +161,7 @@
         [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.08); }
         .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 22px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
 
-        /* ✅ 체크박스 완벽 고정 & 정중앙 정렬 (더 콤팩트하게 18px로 조정) */
+        /* ✅ 개선된 체크박스 UI (크기 축소 18px 및 정밀 조정) */
         .task-item { display: flex; align-items: center; margin-bottom: 16px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] { 
             -webkit-appearance: none; appearance: none; 
@@ -181,10 +181,9 @@
             box-shadow: 0 0 10px rgba(217, 70, 239, 0.5); 
         }
         
-        /* 체크 표시 정중앙 완벽 고정 */
         .task-item input[type="checkbox"]:checked::after { 
             content: ''; position: absolute; 
-            left: 50%; top: 40%; /* 약간 위로 올려야 회전했을 때 중앙에 맞음 */
+            left: 50%; top: 40%; 
             width: 4px; height: 8px; 
             border: solid #ffffff; border-width: 0 2px 2px 0; 
             transform: translate(-50%, -50%) rotate(45deg); 
@@ -193,15 +192,25 @@
         .task-item span { font-size: 16px; line-height: 1.4; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
-        /* 커스텀 슬라이더 UI */
-        .range-wrapper { position: relative; width: 100%; height: 20px; display: flex; align-items: center; margin-top: 15px; margin-bottom: 5px; }
-        .range-bg { position: absolute; width: 100%; height: 8px; background: rgba(0,0,0,0.6); border-radius: 4px; box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); z-index: 1; }
-        [data-theme="light"] .range-bg { background: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .range-fill { position: absolute; height: 8px; background: var(--grad-main); border-radius: 4px; z-index: 2; pointer-events: none; transition: width 0.1s linear; box-shadow: 0 0 10px rgba(0,229,255,0.4); }
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 20px; background: transparent; position: relative; z-index: 3; margin: 0; outline: none; box-shadow: none; }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); border: 3px solid var(--secondary); transition: transform 0.1s; margin-top: 0; }
+        /* ✅ 커스텀 슬라이더 완벽 UI (오차 없이 그라데이션 직접 삽입) */
+        input[type="range"] { 
+            -webkit-appearance: none; appearance: none; width: 100%; height: 8px; 
+            border-radius: 4px; outline: none; margin: 15px 0 5px 0; 
+            background-color: rgba(0,0,0,0.6); 
+            background-image: var(--grad-main);
+            background-size: var(--val, 0%) 100%;
+            background-repeat: no-repeat;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); 
+        }
+        [data-theme="light"] input[type="range"] { background-color: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; 
+            border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); 
+            border: 3px solid var(--secondary); transition: transform 0.1s; margin-top: -6px; 
+        }
         input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 20px; background: transparent; border: none; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 8px; background: transparent; border: none; }
         
         .slider-container { margin-top: 15px; background: rgba(0,0,0,0.35); padding: 18px 22px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; }
         [data-theme="light"] .slider-container { background: #ffffff; border-color: rgba(0,0,0,0.12); }
@@ -446,12 +455,13 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
+    // ✅ 슬라이더 오차 수정 (calc 공식으로 정중앙 완벽 배치)
     function updateSliderVisuals(elId, min, max, val) {
         const el = document.getElementById(elId);
         if(!el) return;
         const percentage = ((val - min) / (max - min)) * 100;
-        // Thumb 반경 10px을 반영한 calc() 식으로 정중앙 위치 완벽 고정
-        el.style.width = `calc(${percentage}% + (${10 - (percentage * 0.2)}px))`;
+        // Thumb 폭 20px 기준 -> 중심점 반경 10px
+        el.style.setProperty('--val', `calc(${percentage}% + ${10 - percentage * 0.2}px)`);
     }
 
     function showLoginScreen() {
@@ -530,7 +540,10 @@
         fiveWeekly: { title: "5주 간격 숙제", type: "5weekly", items: ["궤도 너머 특별 노선 클리어", "헌터 거래소 교환"] }
     };
 
-    const affectionExpReq = { 1: 500, 2: 1000, 3: 2000, 4: 3000, 5: 5000, 6: 8000, 7: 11000, 8: 15000, 9: 16000 };
+    // ✅ 3렙 -> 4렙 요구치 3500으로 수정
+    const affectionExpReq = { 1: 500, 2: 1000, 3: 2000, 4: 3500, 5: 5000, 6: 8000, 7: 11000, 8: 15000, 9: 16000 };
+    // 총 경험치 누적 = 62000
+    const totalExpReq = 62000;
 
     let currentUserAuthUid = null;
     let userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 320, staminaUpdated: 0 };
@@ -747,7 +760,7 @@
         document.getElementById(`slider-val-${id}`).innerText = userData.itemCounters[id];
         saveData();
         
-        updateSliderVisuals(`slider-fill-${id}`, 0, max, val);
+        updateSliderVisuals(`slider-${id}`, 0, max, val);
     }
 
     function updateSpLevel(val) {
@@ -756,7 +769,7 @@
         document.getElementById('sp-number').value = userData.spLevel;
         saveData();
         
-        updateSliderVisuals('slider-fill-sp', 1, 50, userData.spLevel);
+        updateSliderVisuals('sp-slider', 1, 50, userData.spLevel);
     }
 
     function addCustomTask() {
@@ -822,11 +835,7 @@
                                 <span>${slider.name}</span>
                                 <span class="sp-input"><span id="slider-val-${slider.id}">${val}</span> / ${slider.max}</span>
                             </div>
-                            <div class="range-wrapper">
-                                <div class="range-bg"></div>
-                                <div class="range-fill" id="slider-fill-${slider.id}"></div>
-                                <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
-                            </div>
+                            <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
                         </div>`;
                     });
                 } else if (cat.sub.items) {
@@ -848,11 +857,7 @@
                         <span>시즌 패스 보상 수령 (Lv)</span>
                         <input type="number" id="sp-number" class="sp-input-box" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)">
                     </div>
-                    <div class="range-wrapper">
-                        <div class="range-bg"></div>
-                        <div class="range-fill" id="slider-fill-sp"></div>
-                        <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
-                    </div>
+                    <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
                 </div>`;
             }
             div.innerHTML = html;
@@ -901,13 +906,14 @@
         document.getElementById('progress-weekly-fill').style.width = `${weeklyPercent}%`;
         document.getElementById('progress-weekly-text').innerText = `${weeklyPercent}%`;
 
+        // 렌더링 직후 슬라이더 시각화 (calc() 변수 세팅)
         setTimeout(() => {
             if(taskConfig.monthly.sub && taskConfig.monthly.sub.sliders) {
                 taskConfig.monthly.sub.sliders.forEach(slider => {
-                    updateSliderVisuals(`slider-fill-${slider.id}`, 0, slider.max, userData.itemCounters[slider.id] || 0);
+                    updateSliderVisuals(`slider-${slider.id}`, 0, slider.max, userData.itemCounters[slider.id] || 0);
                 });
             }
-            updateSliderVisuals('slider-fill-sp', 1, 50, userData.spLevel);
+            updateSliderVisuals('sp-slider', 1, 50, userData.spLevel);
         }, 10);
     }
 
@@ -1009,7 +1015,7 @@
                 remainingExpTo10 += (affectionExpReq[char.level] - char.exp);
                 for(let i = char.level + 1; i < 10; i++) remainingExpTo10 += affectionExpReq[i];
                 daysLeft = Math.ceil(remainingExpTo10 / 1200);
-                const totalExpReq = 61500;
+                
                 const currentTotalExp = totalExpReq - remainingExpTo10;
                 progressPercent = Math.min(100, (currentTotalExp / totalExpReq) * 100);
             }
