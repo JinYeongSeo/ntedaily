@@ -15,7 +15,7 @@
     
     <style>
         :root {
-            /* 눈이 편안하고 깔끔한 다크모드 컬러 팔레트 */
+            /* 다크모드 트렌디 컬러 팔레트 */
             --bg-color: #0b0f19;
             --panel-bg: rgba(22, 27, 40, 0.85);
             --panel-border: 1px solid rgba(255, 255, 255, 0.08);
@@ -86,24 +86,54 @@
         [data-theme="light"] select option { background-color: #ffffff; color: #0f172a; }
         input:focus, select:focus { border-color: var(--primary); }
         .btn-group { display: flex; gap: 10px; justify-content: center; }
+        
         button { background: var(--primary); color: #0f172a; border: none; flex: 1; padding: 14px; border-radius: 10px; font-weight: 800; font-family: inherit; cursor: pointer; transition: opacity 0.2s; font-size: 15px; }
         [data-theme="light"] button { color: #ffffff; }
         button.btn-signup { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
         button:hover:not(:disabled) { opacity: 0.85; }
         button:disabled { background: #334155; border-color: #334155; color: #94a3b8; cursor: not-allowed; }
 
+        .help-links { margin-top: 20px; display: flex; gap: 15px; justify-content: center; align-items: center; font-size: 13px; }
+        .help-links a { color: var(--text-muted); text-decoration: none; transition: 0.2s; }
+        .help-links a:hover { color: var(--primary); text-decoration: underline; }
+
+        /* ✅ 화이트 모드 글자색 숨김 버그 완벽 픽스 */
+        [data-theme="light"] .tab-btn { color: var(--text-muted); }
+        [data-theme="light"] .tab-btn.active { color: var(--primary); }
+        [data-theme="light"] .tab-btn:hover:not(.active) { color: var(--text-main); background: rgba(0,0,0,0.05); }
+        
+        [data-theme="light"] .outline-btn,
+        [data-theme="light"] .theme-btn { color: var(--text-muted); border-color: var(--text-muted); }
+        [data-theme="light"] .logout-btn { color: var(--danger); border-color: var(--danger); }
+        [data-theme="light"] .outline-btn:hover, [data-theme="light"] .theme-btn:hover { color: var(--bg-color); background: var(--text-muted); }
+        
+        [data-theme="light"] button.btn-signup { color: var(--primary); border-color: var(--primary); }
+        [data-theme="light"] .add-account-btn { color: #ffffff; }
+
+        [data-theme="light"] .char-exp-btn { background: rgba(2, 132, 199, 0.1); color: var(--primary); border-color: rgba(2, 132, 199, 0.2); }
+        [data-theme="light"] .char-exp-btn:hover { background: var(--primary); color: #fff; }
+        [data-theme="light"] .char-exp-btn.minus { background: rgba(225, 29, 72, 0.1); color: var(--danger); border-color: rgba(225, 29, 72, 0.2); }
+        [data-theme="light"] .char-exp-btn.minus:hover { background: var(--danger); color: #fff; }
+        [data-theme="light"] .char-exp-btn.custom { background: rgba(124, 58, 237, 0.1); color: var(--secondary); border-color: rgba(124, 58, 237, 0.2); }
+        [data-theme="light"] .char-exp-btn.custom:hover { background: var(--secondary); color: #fff; }
+
         #app-screen { display: none; }
         header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid var(--panel-border); padding-bottom: 15px; margin-bottom: 25px; }
         header h1 { margin: 0; font-size: 24px; font-weight: 800; color: var(--text-main); }
         header h1 span { color: var(--primary); }
         
-        .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; flex-wrap: wrap; }
+        .user-info { display: flex; align-items: center; gap: 8px; font-size: 14px; flex-wrap: wrap; }
         .account-select { background: rgba(0, 210, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); font-weight: 700; padding: 6px 10px; border-radius: 6px; font-size: 13px; cursor: pointer; }
         [data-theme="light"] .account-select { background: #f0f9ff; }
         
         .add-account-btn { background: var(--secondary); color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 700; border: none; flex: none; }
-        .theme-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; flex: none; }
-        .logout-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; flex: none; }
+        
+        /* 헤더 버튼 공통 스타일 */
+        .outline-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; flex: none; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; }
+        .outline-btn:hover { background: var(--text-muted); color: var(--bg-color); }
+        
+        .logout-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 6px 10px; border-radius: 6px; font-size: 13px; font-weight: 600; flex: none; transition: 0.2s; cursor: pointer; }
+        .logout-btn:hover { background: rgba(244, 63, 94, 0.15); }
 
         /* 탭 메뉴 */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--panel-border); padding-bottom: 5px; overflow-x: auto; }
@@ -149,7 +179,6 @@
         .task-category h2 { margin-top: 0; font-size: 18px; font-weight: 800; color: var(--text-main); border-bottom: 1px solid var(--panel-border); padding-bottom: 12px; margin-bottom: 18px; display: flex; align-items: center; }
         .task-category h2::before { content: ''; display: inline-block; width: 4px; height: 16px; background: var(--primary); margin-right: 10px; border-radius: 2px; }
 
-        /* 깔끔한 체크박스 (크기 18px 유지, 네온 효과 제거) */
         .task-item { display: flex; align-items: center; margin-bottom: 14px; cursor: pointer; }
         .task-item input[type="checkbox"] { 
             -webkit-appearance: none; appearance: none; 
@@ -173,7 +202,6 @@
         .task-item span { font-size: 15px; line-height: 1.4; transition: 0.2s; color: var(--text-main); font-weight: 600; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; }
 
-        /* 커스텀 슬라이더 (단색으로 깔끔하게) */
         .range-wrapper { position: relative; width: 100%; height: 20px; display: flex; align-items: center; margin-top: 10px; margin-bottom: 5px; }
         .range-bg { position: absolute; width: 100%; height: 6px; background: rgba(0,0,0,0.3); border-radius: 3px; z-index: 1; }
         [data-theme="light"] .range-bg { background: rgba(0,0,0,0.08); }
@@ -217,13 +245,10 @@
         .char-stat { font-size: 14px; margin-bottom: 8px; color: var(--text-muted); font-weight: 600; }
         .char-stat strong { color: var(--primary); font-weight: 800; font-size: 15px; }
         
-        /* 호감도 버튼 UI 정돈 (CSS Grid 사용) */
         .char-exp-wrapper { margin: 15px 0; }
         .char-exp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 6px; }
         .char-exp-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--panel-border); color: var(--text-main); padding: 8px 4px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.1s; }
-        [data-theme="light"] .char-exp-btn { background: #fff; }
         .char-exp-btn.minus { color: var(--danger); }
-        
         .char-exp-btn:hover { background: var(--primary); color: #0f172a; border-color: var(--primary); }
         .char-exp-btn.minus:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
         .char-exp-btn:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -237,7 +262,6 @@
         [data-theme="light"] .char-progress-bar { background: rgba(0,0,0,0.08); }
         .char-progress-fill { height: 100%; background: var(--secondary); transition: width 0.4s ease; }
 
-        /* 모바일 최적화 세밀 조정 */
         @media (max-width: 600px) {
             body, html { font-size: 14px; }
             .container { padding: 12px; }
@@ -249,7 +273,7 @@
             .stamina-controls { width: 100%; }
             .stamina-input-wrapper { flex: 1; justify-content: center; }
             .stamina-input-wrapper input { width: 100%; font-size: 14px; }
-            .account-select, .add-account-btn, .theme-btn, .logout-btn { padding: 6px 10px; font-size: 12px; }
+            .account-select, .add-account-btn, .outline-btn, .logout-btn { padding: 6px 10px; font-size: 12px; }
             .tab-btn { font-size: 14px; padding: 10px 16px; }
             .char-exp-btn { font-size: 11px; padding: 6px 2px; }
         }
@@ -276,6 +300,13 @@
             </div>
             <div id="loading-text" style="color:var(--primary); margin-top:15px; display:none; font-weight:700; font-size:14px;">데이터를 불러오는 중입니다...</div>
             <button id="btn-cancel-login" onclick="cancelLogin()" style="margin-top:15px; background:transparent; border:none; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; display:none;">돌아가기</button>
+            
+            <!-- ✅ 도용 문의 및 건의하기 링크 추가 -->
+            <div class="help-links">
+                <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20UID%20도용%20문의&body=도용당한%20UID:%20%0D%0A상세%20내용:%20">UID 도용 문의</a>
+                <span style="color:var(--text-muted); opacity:0.5;">|</span>
+                <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20건의사항&body=건의%20내용:%20">건의하기</a>
+            </div>
         </div>
     </div>
 
@@ -285,7 +316,9 @@
             <div class="user-info">
                 <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
                 <button class="add-account-btn" onclick="showLoginScreen()">+ 새 계정</button>
-                <button id="theme-btn" class="theme-btn" onclick="toggleTheme()">화이트 모드</button>
+                <button id="theme-btn" class="outline-btn" onclick="toggleTheme()">화이트 모드</button>
+                <!-- ✅ 상단 건의/문의하기 버튼 추가 -->
+                <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20건의/문의사항&body=내용:%20" class="outline-btn">건의/문의</a>
                 <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
             </div>
         </header>
@@ -330,10 +363,11 @@
             </div>
 
             <div class="timers-grid">
-                <div class="glass-panel timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time">계산 중...</div></div>
+                <!-- ✅ (5AM), (월), (1일) 텍스트 제거됨 -->
+                <div class="glass-panel timer-card"><h3>일일 초기화</h3><div id="timer-daily" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>주간 초기화</h3><div id="timer-weekly" class="time">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--text-main);">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time" style="color:var(--text-main);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>월간 초기화</h3><div id="timer-monthly" class="time" style="color:var(--text-main);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--text-main);">계산 중...</div></div>
             </div>
 
@@ -424,12 +458,10 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
-    // 슬라이더 바 위치 계산 함수 (calc 방식 유지, 더 간결하게)
     function updateSliderVisuals(elId, min, max, val) {
         const el = document.getElementById(elId);
         if(!el) return;
         const percentage = ((val - min) / (max - min)) * 100;
-        // 16px thumb 기준으로 중앙을 맞추기 위한 계산
         el.style.width = `calc(${percentage}% + (${8 - percentage * 0.16}px))`;
     }
 
@@ -865,7 +897,7 @@
                 <div class="task-item">
                     <label style="display:flex; align-items:center; flex:1; cursor:pointer;">
                         <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${checkedAttr}>
-                        <span><b style="color:var(--primary); font-size:12px; margin-right:8px; border:1px solid var(--primary); padding:2px 4px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
+                        <span><b style="color:var(--primary); font-size:13px; margin-right:8px; border:1px solid var(--primary); padding:2px 6px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
                     </label>
                     <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">✕</button>
                 </div>`;
@@ -975,7 +1007,7 @@
         const list = document.getElementById('character-list');
         list.innerHTML = '';
         if(!userData.characters || userData.characters.length === 0) {
-            list.innerHTML = '<p style="color:var(--text-muted); padding:10px; font-weight:600;">추가된 캐릭터가 없습니다.</p>';
+            list.innerHTML = '<p style="color:var(--text-muted); padding:10px; font-weight:700;">추가된 캐릭터가 없습니다.</p>';
             return;
         }
 
@@ -996,9 +1028,9 @@
 
             list.innerHTML += `
             <div class="glass-panel char-card">
-                <h3><span style="color:var(--text-main); font-weight:900;">${char.name}</span> <button class="delete-btn" style="margin:0; padding:0; width:26px; height:26px;" onclick="deleteCharacter('${char.id}')">✕</button></h3>
+                <h3><span style="background:var(--grad-main); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">${char.name}</span> <button class="delete-btn" style="margin:0; padding:0; width:30px; height:30px;" onclick="deleteCharacter('${char.id}')">✕</button></h3>
                 <div class="char-stat">현재 레벨: <strong>Lv. ${char.level} ${isMaxLevel ? '(MAX)' : ''}</strong></div>
-                <div class="char-stat">현재 경험치: <strong style="color:var(--primary);">${char.exp} ${isMaxLevel ? '' : '/ ' + affectionExpReq[char.level]}</strong></div>
+                <div class="char-stat">현재 경험치: <strong style="color:var(--secondary);">${char.exp} ${isMaxLevel ? '' : '/ ' + affectionExpReq[char.level]}</strong></div>
                 
                 <div class="char-exp-wrapper">
                     ${!isMaxLevel ? `
@@ -1026,8 +1058,8 @@
 
                 <div class="char-result">
                     ${isMaxLevel ? `<p class="highlight" style="color:var(--primary); text-align:center;">✨ 호감도 마스터 완료! ✨</p>` : `
-                    <p>만렙까지 남은 경험치: <span class="highlight" style="color:var(--primary);">${remainingExpTo10.toLocaleString()}</span></p>
-                    <p>만렙까지 걸리는 시간: <span class="highlight" style="color:var(--text-main);">약 ${daysLeft}일</span></p>
+                    <p>만렙까지 남은 경험치: <span class="highlight" style="color:var(--accent);">${remainingExpTo10.toLocaleString()}</span></p>
+                    <p>만렙까지 걸리는 시간: <span class="highlight" style="color:var(--primary);">약 ${daysLeft}일</span></p>
                     `}
                 </div>
             </div>`;
