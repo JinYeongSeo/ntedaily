@@ -161,15 +161,17 @@
         [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.08); }
         .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 22px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
 
-        /* ✅ 개선된 체크박스 UI (크기 축소 15px 및 정밀 조정) */
+        /* ✅ 체크박스 완벽 고정 & 정중앙 정렬 (더 콤팩트하게 18px로 조정) */
         .task-item { display: flex; align-items: center; margin-bottom: 16px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] { 
-            appearance: none; width: 15px; height: 15px; flex-shrink: 0; 
-            border: 2px solid var(--text-muted); border-radius: 4px; 
-            margin-right: 12px; cursor: pointer; 
+            -webkit-appearance: none; appearance: none; 
+            width: 18px !important; height: 18px !important; 
+            min-width: 18px !important; min-height: 18px !important; 
+            flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 4px; 
+            margin-right: 12px; margin-top: 0px; cursor: pointer; 
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
             background: rgba(0,0,0,0.4); box-shadow: inset 0 1px 2px rgba(0,0,0,0.2); 
-            position: relative;
+            position: relative; display: flex; align-items: center; justify-content: center;
         }
         [data-theme="light"] .task-item input[type="checkbox"] { background: #fff; }
         
@@ -179,40 +181,25 @@
             box-shadow: 0 0 10px rgba(217, 70, 239, 0.5); 
         }
         
+        /* 체크 표시 정중앙 완벽 고정 */
         .task-item input[type="checkbox"]:checked::after { 
             content: ''; position: absolute; 
-            left: 4px; top: 1px; width: 3px; height: 7px; 
+            left: 50%; top: 40%; /* 약간 위로 올려야 회전했을 때 중앙에 맞음 */
+            width: 4px; height: 8px; 
             border: solid #ffffff; border-width: 0 2px 2px 0; 
-            transform: rotate(45deg); 
+            transform: translate(-50%, -50%) rotate(45deg); 
         }
         
         .task-item span { font-size: 16px; line-height: 1.4; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
-        /* ✅ 커스텀 슬라이더 UI (오차 완벽 해결 방식) */
-        .range-wrapper {
-            position: relative; width: 100%; height: 20px; 
-            display: flex; align-items: center; margin-top: 15px; margin-bottom: 5px;
-        }
-        .range-bg {
-            position: absolute; width: 100%; height: 8px; background: rgba(0,0,0,0.6); 
-            border-radius: 4px; box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); z-index: 1;
-        }
+        /* 커스텀 슬라이더 UI */
+        .range-wrapper { position: relative; width: 100%; height: 20px; display: flex; align-items: center; margin-top: 15px; margin-bottom: 5px; }
+        .range-bg { position: absolute; width: 100%; height: 8px; background: rgba(0,0,0,0.6); border-radius: 4px; box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); z-index: 1; }
         [data-theme="light"] .range-bg { background: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .range-fill {
-            position: absolute; height: 8px; background: var(--grad-main); 
-            border-radius: 4px; z-index: 2; pointer-events: none; transition: width 0.1s linear;
-            box-shadow: 0 0 10px rgba(0,229,255,0.4);
-        }
-        input[type="range"] { 
-            -webkit-appearance: none; appearance: none; width: 100%; height: 20px; 
-            background: transparent; position: relative; z-index: 3; margin: 0; outline: none; box-shadow: none; 
-        }
-        input[type="range"]::-webkit-slider-thumb { 
-            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; 
-            border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); 
-            border: 3px solid var(--secondary); transition: transform 0.1s; margin-top: 0; 
-        }
+        .range-fill { position: absolute; height: 8px; background: var(--grad-main); border-radius: 4px; z-index: 2; pointer-events: none; transition: width 0.1s linear; box-shadow: 0 0 10px rgba(0,229,255,0.4); }
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 20px; background: transparent; position: relative; z-index: 3; margin: 0; outline: none; box-shadow: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); border: 3px solid var(--secondary); transition: transform 0.1s; margin-top: 0; }
         input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
         input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 20px; background: transparent; border: none; }
         
@@ -459,12 +446,11 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
-    // ✅ 슬라이더 오차 수정 (calc 공식 도입으로 정중앙 완벽 일치)
     function updateSliderVisuals(elId, min, max, val) {
         const el = document.getElementById(elId);
         if(!el) return;
         const percentage = ((val - min) / (max - min)) * 100;
-        // Thumb 반경 10px을 반영한 calc() 식
+        // Thumb 반경 10px을 반영한 calc() 식으로 정중앙 위치 완벽 고정
         el.style.width = `calc(${percentage}% + (${10 - (percentage * 0.2)}px))`;
     }
 
