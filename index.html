@@ -173,29 +173,18 @@
     </div>
 
 <script>
-    // ==========================================
-    // 🚨 본인 파이어베이스 설정으로 무조건 변경 🚨
-    // ==========================================
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    // 네 파이어베이스 키값 들어간 세팅 (건드리지 마셈)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDmHL4vrYAwSzw-59TeNE5eGQatCkT8_Aw",
+      authDomain: "nte-daily.firebaseapp.com",
+      databaseURL: "https://nte-daily-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "nte-daily",
+      storageBucket: "nte-daily.firebasestorage.app",
+      messagingSenderId: "584022791839",
+      appId: "1:584022791839:web:384f8f5794124344c0f4aa"
+    };
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDmHL4vrYAwSzw-59TeNE5eGQatCkT8_Aw",
-  authDomain: "nte-daily.firebaseapp.com",
-  databaseURL: "https://nte-daily-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "nte-daily",
-  storageBucket: "nte-daily.firebasestorage.app",
-  messagingSenderId: "584022791839",
-  appId: "1:584022791839:web:384f8f5794124344c0f4aa"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-    // ==========================================
-
+    // 파이어베이스 초기화 (v8 방식)
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
@@ -213,7 +202,6 @@ const app = initializeApp(firebaseConfig);
     let userData = { tasks: {}, spLevel: 1, resetTargets: {} };
     let timerInterval = null;
 
-    // 파이어베이스는 이메일 형식을 요구하므로, 뒤에 가짜 도메인을 붙여서 인증 시스템을 우회하는 꼼수임.
     function getFakeEmail(uid) { return uid + "@nte-tracker.com"; }
 
     function toggleLoading(show) {
@@ -296,7 +284,6 @@ const app = initializeApp(firebaseConfig);
         });
     }
 
-    // 시간 계산 및 데이터 렌더링 로직 (이전과 동일)
     function getNextReset(type, now = new Date()) {
         let d = new Date(now);
         let resetToday = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 5, 0, 0);
