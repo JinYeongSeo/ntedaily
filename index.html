@@ -15,36 +15,45 @@
     
     <style>
         :root {
-            /* 다크모드 */
-            --bg-color: #0a0b12;
-            --panel-bg: linear-gradient(145deg, rgba(28, 32, 45, 0.85), rgba(15, 18, 25, 0.95));
-            --panel-border: 1px solid rgba(0, 240, 255, 0.15);
-            --primary: #00f0ff;
-            --primary-dark: #0099cc;
-            --accent: #ff0055;
-            --grad: linear-gradient(135deg, var(--primary), #0077ff);
+            /* 다크모드 트렌디 컬러 팔레트 */
+            --bg-color: #05050a;
+            --panel-bg: rgba(18, 20, 28, 0.7);
+            --panel-border: 1px solid rgba(255, 255, 255, 0.08);
+            
+            --primary: #00f0ff;    /* Cyan */
+            --secondary: #a855f7;  /* Purple */
+            --accent: #ff0055;     /* Pink */
+            --success: #10b981;    /* Green */
+            --warning: #f59e0b;    /* Orange */
+            
+            --grad-main: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            --grad-sub: linear-gradient(135deg, var(--secondary), var(--primary));
+            
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --danger: #ff4444;
-            --bg-overlay: rgba(8, 9, 14, 0.75);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            --inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+            --danger: #ef4444;
+            --bg-overlay: rgba(5, 5, 10, 0.8);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            --inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
         }
 
         [data-theme="light"] {
             /* 화이트모드 */
-            --bg-color: #f1f5f9;
-            --panel-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.85));
-            --panel-border: 1px solid rgba(14, 165, 233, 0.25);
+            --bg-color: #f8fafc;
+            --panel-bg: rgba(255, 255, 255, 0.9);
+            --panel-border: 1px solid rgba(0, 0, 0, 0.1);
+            
             --primary: #0ea5e9;
-            --primary-dark: #0284c7;
+            --secondary: #8b5cf6;
             --accent: #e11d48;
-            --grad: linear-gradient(135deg, var(--primary), #3b82f6);
+            
+            --grad-main: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            --grad-sub: linear-gradient(135deg, var(--secondary), var(--primary));
+            
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --danger: #ef4444;
             --bg-overlay: rgba(255, 255, 255, 0.5);
-            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
             --inner-glow: inset 0 1px 0px rgba(255, 255, 255, 1);
         }
 
@@ -59,160 +68,182 @@
         }
 
         .bg-image { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('img/bg.png') center center/cover no-repeat; z-index: -2; }
-        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: -1; transition: background-color 0.3s; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); z-index: -1; transition: background-color 0.3s; }
         [data-theme="light"] .bg-image { display: none; }
         [data-theme="light"] .bg-overlay { backdrop-filter: none; background: var(--bg-color); }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 
-        /* 공통 패널 디자인 (그라데이션 박스) */
         .glass-panel {
             background: var(--panel-bg);
             border: var(--panel-border);
             box-shadow: var(--shadow), var(--inner-glow);
-            backdrop-filter: blur(8px);
+            backdrop-filter: blur(10px);
             border-radius: 16px;
+            position: relative;
         }
 
         /* 로그인 */
         #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-        .login-box { padding: 40px 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 380px; }
-        .login-box h1 { font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .login-box { padding: 45px 35px; border-radius: 24px; text-align: center; width: 100%; max-width: 400px; }
+        .login-box h1 { font-weight: 900; font-size: 32px; margin-bottom: 10px; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        input, select { box-sizing: border-box; background: rgba(0,0,0,0.25); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 10px; outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
+        input, select { box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 14px 16px; border-radius: 12px; outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s; }
         select option { background-color: #1a1c23; color: #ffffff; }
-        [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: rgba(0,0,0,0.1); }
+        [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: rgba(0,0,0,0.15); }
         [data-theme="light"] select option { background-color: #ffffff; color: #0f172a; }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
-        .btn-group { display: flex; gap: 10px; justify-content: center; }
-        button { background: var(--grad); color: #fff; border: none; flex: 1; padding: 14px; border-radius: 10px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
-        button.btn-signup { background: transparent; border: 1px solid var(--primary); color: var(--primary); box-shadow: none; }
-        button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 20px rgba(0,240,255,0.3); }
+        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+        .btn-group { display: flex; gap: 12px; justify-content: center; }
+        button { background: var(--grad-main); color: #fff; border: none; flex: 1; padding: 14px; border-radius: 12px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 15px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); }
+        button.btn-signup { background: transparent; border: 2px solid var(--secondary); color: var(--secondary); box-shadow: none; }
+        button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.15); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4); }
         button:disabled { background: #334155; border-color: #334155; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; filter:none;}
 
         #app-screen { display: none; }
         header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid var(--panel-border); padding-bottom: 20px; margin-bottom: 25px; }
-        header h1 { margin: 0; font-size: 28px; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 700; margin-left: 4px; }
+        header h1 { margin: 0; font-size: 28px; font-weight: 900; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 800; margin-left: 4px; }
         .user-info { display: flex; align-items: center; gap: 12px; font-size: 15px; flex-wrap: wrap; }
+        
+        /* 다중 계정 스위처 UI */
+        .account-select { background: rgba(168, 85, 247, 0.15); border: 1px solid var(--secondary); color: var(--secondary); font-weight: 800; padding: 8px 14px; border-radius: 8px; font-size: 15px; cursor: pointer; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
+        [data-theme="light"] .account-select { background: rgba(139, 92, 246, 0.1); border-color: var(--secondary); color: var(--secondary); }
+        .account-select:focus { outline: none; }
+        
         .theme-btn { background: transparent; border: 2px solid var(--text-muted); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; box-shadow: none; }
-        .theme-btn:hover { background: var(--text-muted); color: var(--bg-color); box-shadow: none; transform: none; filter:none; }
-        .logout-btn { background: transparent; border: 2px solid var(--accent); color: var(--accent); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; box-shadow: none; }
-        .logout-btn:hover { background: rgba(255, 0, 85, 0.1); transform: none; filter:none; box-shadow: none; }
+        .theme-btn:hover { background: var(--text-muted); color: var(--bg-color); }
+        .logout-btn { background: transparent; border: 2px solid var(--danger); color: var(--danger); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; box-shadow: none; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.15); }
 
         /* 탭 메뉴 */
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; padding-bottom: 10px; overflow-x: auto; }
-        .tab-btn { background: transparent; color: var(--text-muted); border: none; font-size: 16px; font-weight: 800; padding: 10px 20px; cursor: pointer; border-radius: 8px; white-space: nowrap; box-shadow: none; }
-        .tab-btn.active { background: rgba(0, 240, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); }
-        .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.05); transform: none; filter:none; box-shadow: none; }
+        .tab-btn { background: transparent; color: var(--text-muted); border: none; font-size: 16px; font-weight: 800; padding: 10px 20px; cursor: pointer; border-radius: 10px; white-space: nowrap; transition: 0.2s; }
+        .tab-btn.active { background: rgba(168, 85, 247, 0.15); color: var(--secondary); border: 1px solid var(--secondary); box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1); }
+        .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.05); }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 스태미나 위젯 */
-        .stamina-widget { padding: 25px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; position: relative; overflow: hidden; }
-        .stamina-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--grad); }
-        .stamina-info h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: var(--primary); }
-        .stamina-val { font-size: 32px; font-weight: 900; font-family: monospace; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,240,255,0.3); }
-        .stamina-max-text { font-size: 18px; color: var(--text-muted); font-weight: 600; text-shadow: none; }
+        .stamina-widget { padding: 25px 30px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+        .stamina-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--grad-main); border-radius: 16px 0 0 16px; }
+        .stamina-info h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--secondary); }
+        .stamina-val { font-size: 34px; font-weight: 900; font-family: monospace; letter-spacing: -1px; text-shadow: 0 2px 15px rgba(168, 85, 247, 0.4); background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .stamina-max-text { font-size: 20px; color: var(--text-muted); font-weight: 700; -webkit-text-fill-color: var(--text-muted); }
         .stamina-timer { font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: 5px; }
-        .stamina-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .stamina-input-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 10px; border: 1px solid var(--panel-border); box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
-        [data-theme="light"] .stamina-input-wrapper { background: #ffffff; }
-        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 60px; text-align: center; font-weight: 800; box-shadow: none; font-size: 16px; color: var(--primary); }
+        .stamina-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .stamina-input-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
+        [data-theme="light"] .stamina-input-wrapper { background: #ffffff; border-color:rgba(0,0,0,0.1); }
+        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 65px; text-align: center; font-weight: 800; box-shadow: none; font-size: 16px; color: var(--text-main); }
         .stamina-input-wrapper span { color: var(--text-muted); font-weight: 700; }
-        .stamina-controls button { padding: 12px 20px; width: auto; font-size: 14px; }
+        .stamina-controls button { padding: 12px 22px; width: auto; font-size: 14px; background: var(--grad-sub); border-radius: 12px; }
 
+        /* 진행도 위젯 */
         .progress-widget { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .progress-card { padding: 18px 20px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; margin-bottom: 10px; }
-        .progress-bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+        .progress-card { padding: 20px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+        .progress-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.4); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); }
         [data-theme="light"] .progress-bar-bg { background: rgba(0,0,0,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .progress-bar-fill { height: 100%; background: var(--grad); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; box-shadow: 0 0 10px var(--primary); }
+        .progress-bar-fill { height: 100%; background: var(--grad-main); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
 
         .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .timer-card { padding: 20px; text-align: center; border-top: 2px solid transparent; transition: 0.3s; }
-        .timer-card:hover { border-top-color: var(--primary); transform: translateY(-3px); }
-        .timer-card h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted); font-weight: 700; }
-        .timer-card .time { font-size: 20px; font-weight: 800; color: var(--primary); font-family: monospace; letter-spacing: -0.5px; }
+        .timer-card { padding: 20px; text-align: center; border-top: 3px solid transparent; transition: 0.3s; }
+        .timer-card:hover { border-top-color: var(--secondary); transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        [data-theme="light"] .timer-card:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .timer-card h3 { margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); font-weight: 800; }
+        .timer-card .time { font-size: 20px; font-weight: 900; color: var(--primary); font-family: monospace; letter-spacing: -0.5px; }
 
         .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
         .task-category { padding: 25px; }
-        .task-category h2 { margin-top: 0; font-size: 19px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid rgba(128,128,128,0.15); padding-bottom: 14px; margin-bottom: 20px; display: flex; align-items: center; }
-        .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 18px; background: var(--grad); margin-right: 10px; border-radius: 3px; }
+        .task-category h2 { margin-top: 0; font-size: 20px; font-weight: 900; color: var(--text-main); border-bottom: 2px solid rgba(255,255,255,0.05); padding-bottom: 14px; margin-bottom: 20px; display: flex; align-items: center; }
+        [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.05); }
+        .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 20px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
 
-        .task-item { display: flex; align-items: flex-start; margin-bottom: 16px; cursor: pointer; position: relative; }
-        .task-item input[type="checkbox"] { appearance: none; width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; margin-right: 12px; margin-top: 1px; cursor: pointer; position: relative; transition: all 0.2s; background: rgba(0,0,0,0.2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .task-item input[type="checkbox"]:checked { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px rgba(0,240,255,0.4); }
+        .task-item { display: flex; align-items: flex-start; margin-bottom: 18px; cursor: pointer; position: relative; }
+        .task-item input[type="checkbox"] { appearance: none; width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; margin-right: 14px; margin-top: 1px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(0,0,0,0.3); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
+        [data-theme="light"] .task-item input[type="checkbox"] { background: #fff; }
+        .task-item input[type="checkbox"]:checked { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 12px rgba(0,240,255,0.5); }
         .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #000; font-size: 14px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
         .task-item span { font-size: 16px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 600; word-break: keep-all; }
-        .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.6; }
+        .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
-        /* 커스텀 슬라이더 바 UI (회색 꼬리 버그 완벽 해결) */
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; margin: 15px 0 5px 0; background: rgba(128,128,128,0.2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
-        [data-theme="light"] input[type="range"] { background: rgba(0,0,0,0.1); }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 0 10px var(--primary); border: 2px solid #fff; margin-top: -6px; }
+        /* 커스텀 슬라이더 UI (회색 꼬리 제거 완벽 호환) */
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; margin: 15px 0 5px 0; background: rgba(0,0,0,0.5); box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); }
+        [data-theme="light"] input[type="range"] { background: rgba(0,0,0,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--text-main); cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.3); border: 3px solid var(--secondary); margin-top: -7px; transition: transform 0.1s; }
+        input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
         input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; border: none; }
         
-        .slider-container { margin-top: 15px; background: rgba(0,0,0,0.2); padding: 18px 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); margin-bottom: 10px; }
-        [data-theme="light"] .slider-container { background: #ffffff; }
-        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 15px; font-weight: 700; }
-        .sp-input { text-align: right; font-weight: 800; font-size: 15px; color: var(--primary); }
+        .slider-container { margin-top: 15px; background: rgba(0,0,0,0.3); padding: 18px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
+        [data-theme="light"] .slider-container { background: #ffffff; border-color: rgba(0,0,0,0.1); }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 15px; font-weight: 800; }
+        .sp-input { text-align: right; font-weight: 800; font-size: 16px; color: var(--secondary); }
 
-        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(128,128,128,0.15); }
-        [data-theme="light"] details.sub-tasks { background: #ffffff; }
-        details.sub-tasks summary { padding: 15px; font-weight: 800; font-size: 15px; cursor: pointer; color: var(--primary); list-style: none; display: flex; align-items: center; justify-content: space-between; border-radius: 12px; transition: 0.2s; }
+        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        [data-theme="light"] details.sub-tasks { background: #ffffff; border-color: rgba(0,0,0,0.1); }
+        details.sub-tasks summary { padding: 15px 18px; font-weight: 800; font-size: 15px; cursor: pointer; color: var(--secondary); list-style: none; display: flex; align-items: center; justify-content: space-between; border-radius: 12px; transition: 0.2s; }
         details.sub-tasks summary:hover { background: rgba(255,255,255,0.05); }
         details.sub-tasks summary::-webkit-details-marker { display: none; }
         details.sub-tasks summary::after { content: '▼'; font-size: 12px; transition: 0.3s; }
         details[open] summary::after { transform: rotate(180deg); }
-        .sub-task-list { padding: 15px 15px 5px 15px; border-top: 1px solid rgba(128,128,128,0.1); }
+        .sub-task-list { padding: 15px 18px 5px 18px; border-top: 1px solid rgba(255,255,255,0.05); }
+        [data-theme="light"] .sub-task-list { border-top-color: rgba(0,0,0,0.05); }
 
         .custom-controls { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
         .custom-controls select { padding: 12px; flex-shrink: 0; width: 90px; }
         .custom-controls input { flex: 1; min-width: 140px; padding: 12px 16px; margin-bottom: 0; }
         .custom-controls button { flex-shrink: 0; width: 75px; padding: 12px; font-size: 14px; }
-        .delete-btn { background: rgba(255, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(255, 68, 68, 0.3); padding: 6px 12px; font-size: 13px; font-weight: 700; border-radius: 6px; margin-left: auto; margin-top: -2px; box-shadow: none; }
-        .delete-btn:hover { background: var(--danger); color: #fff; transform: none; box-shadow: none; }
+        
+        /* 삭제 버튼 콤팩트 디자인 */
+        .delete-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; border-radius: 8px; margin-left: auto; margin-top: -2px; box-shadow: none; transition: 0.2s; }
+        .delete-btn:hover { background: var(--danger); color: #fff; transform: scale(1.05); box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
 
         /* 호감도 계산기 UI */
         .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-        .char-add-box { padding: 25px; margin-bottom: 25px; border-top: 3px solid var(--primary); }
-        .char-add-inputs { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; align-items: center; }
-        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 100px; padding: 12px; }
+        .char-add-box { padding: 25px 30px; margin-bottom: 30px; position: relative; overflow: hidden; }
+        .char-add-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--grad-sub); }
+        .char-add-inputs { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 100px; padding: 12px 14px; }
         
         .char-card { padding: 25px; position: relative; display: flex; flex-direction: column; }
-        .char-card h3 { margin: 0 0 15px 0; font-size: 22px; color: var(--primary); font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
-        .char-stat { font-size: 16px; margin-bottom: 8px; color: var(--text-muted); font-weight: 600; }
-        .char-stat strong { color: var(--text-main); font-weight: 800; }
+        .char-card h3 { margin: 0 0 18px 0; font-size: 22px; color: var(--text-main); font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
+        .char-stat { font-size: 15px; margin-bottom: 10px; color: var(--text-muted); font-weight: 600; }
+        .char-stat strong { color: var(--text-main); font-weight: 800; font-size: 16px; }
         
-        /* 퀵 경험치 추가 버튼 그룹 */
-        .char-exp-btns { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
-        .char-exp-btns button { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--primary); padding: 8px 10px; font-size: 14px; flex: 1; box-shadow: none; }
-        .char-exp-btns button:hover { background: var(--primary); color: #000; box-shadow: 0 0 10px rgba(0,240,255,0.4); transform: translateY(-2px); }
-        .char-exp-btns button:disabled { background: rgba(128,128,128,0.1); border-color: rgba(128,128,128,0.2); color: rgba(128,128,128,0.5); cursor: not-allowed; box-shadow: none; transform: none; }
+        /* 호감도 + / - 버튼 그룹 세밀화 */
+        .char-exp-wrapper { display: flex; flex-direction: column; gap: 8px; margin: 18px 0; }
+        .char-exp-row { display: flex; gap: 8px; flex-wrap: wrap; }
+        .char-exp-btn { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.2); color: var(--primary); padding: 8px; font-size: 13px; font-weight: 800; flex: 1; border-radius: 8px; transition: 0.2s; box-shadow: none; min-width: 45px; }
+        .char-exp-btn.minus { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--danger); }
+        .char-exp-btn.custom { background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2); color: var(--secondary); flex: 2; }
+        
+        .char-exp-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 12px rgba(0,240,255,0.4); transform: translateY(-2px); }
+        .char-exp-btn.minus:hover { background: var(--danger); color: #fff; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
+        .char-exp-btn.custom:hover { background: var(--secondary); color: #fff; box-shadow: 0 0 12px rgba(168, 85, 247, 0.4); }
+        
+        .char-exp-btn:disabled { background: rgba(128,128,128,0.1); border-color: rgba(128,128,128,0.2); color: rgba(128,128,128,0.5); cursor: not-allowed; box-shadow: none; transform: none; }
 
-        .char-result { margin-top: auto; padding: 18px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
+        .char-result { margin-top: auto; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 2px 8px rgba(0,0,0,0.3); }
         [data-theme="light"] .char-result { background: #ffffff; border-color: rgba(0,0,0,0.1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
-        .char-result p { margin: 6px 0; font-size: 15px; font-weight: 700; color: var(--text-muted); }
-        .highlight { color: var(--text-main); font-size: 18px; font-weight: 900; }
+        .char-result p { margin: 8px 0; font-size: 15px; font-weight: 700; color: var(--text-muted); }
+        .highlight { color: var(--primary); font-size: 18px; font-weight: 900; }
         
-        .char-progress-bar { width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; margin: 15px 0; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); }
-        [data-theme="light"] .char-progress-bar { background: rgba(0,0,0,0.1); }
-        .char-progress-fill { height: 100%; background: var(--grad); transition: width 0.4s; box-shadow: 0 0 10px var(--primary); }
+        .char-progress-bar { width: 100%; height: 12px; background: rgba(0,0,0,0.5); border-radius: 6px; margin: 15px 0 20px 0; overflow: hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,0.6); }
+        [data-theme="light"] .char-progress-bar { background: rgba(0,0,0,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        .char-progress-fill { height: 100%; background: var(--grad-main); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
 
         @media (max-width: 600px) {
             body, html { font-size: 14px; }
             .container { padding: 15px; }
             header h1 { font-size: 24px; }
             .user-info { font-size: 13px; }
-            .stamina-val { font-size: 26px; }
+            .stamina-val { font-size: 28px; }
             .stamina-widget, .char-add-box, .task-category, .timer-card, .progress-card, .char-card { padding: 20px; }
             .stamina-widget { flex-direction: column; align-items: flex-start; gap: 15px; }
             .stamina-controls { width: 100%; }
             .stamina-input-wrapper { flex: 1; justify-content: center; }
             .stamina-input-wrapper input { width: 100%; }
-            .char-exp-btns button { font-size: 13px; padding: 6px 5px; }
+            .account-select, .theme-btn, .logout-btn { padding: 6px 10px; font-size: 13px; }
         }
     </style>
 </head>
@@ -223,7 +254,7 @@
     <div id="login-screen">
         <div class="glass-panel login-box">
             <h1 style="margin-bottom: 10px;">NTE Tracker</h1>
-            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 15px; font-weight: 600;">한 번 로그인하면 기기에 자동으로 기억됩니다.</p>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px; font-weight: 600;">한 번 로그인하면 기기에 자동으로 기록됩니다.</p>
             
             <div class="input-group">
                 <input type="text" id="uid-input" placeholder="인게임 UID 입력">
@@ -234,7 +265,7 @@
                 <button id="btn-login" onclick="handleLogin()">로그인</button>
                 <button id="btn-signup" class="btn-signup" onclick="handleSignup()">가입하기</button>
             </div>
-            <div id="loading-text" style="color:var(--primary); margin-top:20px; display:none; font-weight:800;">인증 처리 중입니다...</div>
+            <div id="loading-text" style="color:var(--secondary); margin-top:20px; display:none; font-weight:800;">데이터를 불러오는 중입니다...</div>
         </div>
     </div>
 
@@ -242,7 +273,7 @@
         <header>
             <h1>이환 숙제 트래커 <span class="version">v1.0</span></h1>
             <div class="user-info">
-                <span id="display-uid" style="font-weight: 900; font-size: 17px; color: var(--primary);"></span>
+                <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
                 <button id="theme-btn" class="theme-btn" onclick="toggleTheme()">화이트 모드 변경</button>
                 <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
             </div>
@@ -278,21 +309,21 @@
             <!-- 진행도 위젯 -->
             <div class="progress-widget">
                 <div class="glass-panel progress-card">
-                    <div class="progress-header"><span>일일 숙제 진행도</span><span id="progress-daily-text" style="color:var(--primary);">0%</span></div>
+                    <div class="progress-header"><span style="color:var(--primary);">일일 숙제 달성률</span><span id="progress-daily-text" style="color:var(--text-main);">0%</span></div>
                     <div class="progress-bar-bg"><div id="progress-daily-fill" class="progress-bar-fill"></div></div>
                 </div>
                 <div class="glass-panel progress-card">
-                    <div class="progress-header"><span>주간 숙제 진행도</span><span id="progress-weekly-text" style="color:var(--primary);">0%</span></div>
-                    <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill"></div></div>
+                    <div class="progress-header"><span style="color:var(--secondary);">주간 숙제 달성률</span><span id="progress-weekly-text" style="color:var(--text-main);">0%</span></div>
+                    <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill" style="background:var(--grad-sub); box-shadow:0 0 15px var(--primary);"></div></div>
                 </div>
             </div>
 
             <div class="timers-grid">
                 <div class="glass-panel timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>5주 초기화</h3><div id="timer-5weekly" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--accent);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time" style="color:var(--success);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--warning);">계산 중...</div></div>
             </div>
 
             <div class="task-grid" id="task-container">
@@ -303,10 +334,10 @@
         <!-- 호감도 계산기 탭 -->
         <div id="tab-affection" class="tab-content">
             <div class="glass-panel char-add-box">
-                <h2 style="margin:0 0 10px 0; font-size:20px; font-weight:800; color:var(--text-main);">캐릭터 호감도 추가</h2>
-                <p style="margin:0; font-size:14px; color:var(--text-muted); font-weight:500; line-height:1.5;">
+                <h2 style="margin:0 0 10px 0; font-size:20px; font-weight:900; color:var(--text-main);">캐릭터 호감도 추가</h2>
+                <p style="margin:0; font-size:14px; color:var(--text-muted); font-weight:600; line-height:1.5;">
                     * 하루 호감도 아이템 3개 선물 기준 (일일 1200 획득)으로 일수가 계산됩니다.<br>
-                    * 과금 아이템(2000 획득) 사용 시 만렙 달성 기간이 더욱 단축될 수 있습니다.
+                    * 과금 아이템(2000 획득) 사용 시 만렙 달성 기간이 단축될 수 있습니다.
                 </p>
                 <div class="char-add-inputs">
                     <select id="char-name-select" onchange="toggleCustomChar()">
@@ -384,10 +415,50 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
-    // 슬라이더 배경 채우기 함수 (회색 꼬리 제거용)
+    // 슬라이더 색상 채우기 (회색 꼬리 버그 완벽 픽스)
     function updateSliderBackground(el, min, max, val) {
         const percentage = ((val - min) / (max - min)) * 100;
-        el.style.background = `linear-gradient(to right, var(--primary) ${percentage}%, rgba(128,128,128,0.2) ${percentage}%)`;
+        const color = document.documentElement.getAttribute('data-theme') === 'light' ? '#0ea5e9' : '#00f0ff';
+        const bg = document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.5)';
+        el.style.background = `linear-gradient(to right, ${color} ${percentage}%, ${bg} ${percentage}%)`;
+    }
+
+    // 다중 계정 저장 로직 (로컬 스토리지)
+    function saveAccountLocal(uid, pw) {
+        let accounts = JSON.parse(localStorage.getItem('nte_accounts') || '{}');
+        accounts[uid] = pw;
+        localStorage.setItem('nte_accounts', JSON.stringify(accounts));
+        renderAccountSwitcher(uid);
+    }
+
+    function renderAccountSwitcher(currentUid) {
+        let accounts = JSON.parse(localStorage.getItem('nte_accounts') || '{}');
+        let switcher = document.getElementById('account-switcher');
+        switcher.innerHTML = '';
+        for(let uid in accounts) {
+            switcher.innerHTML += `<option value="${uid}" ${uid === currentUid ? 'selected' : ''}>[UID] ${uid}</option>`;
+        }
+    }
+
+    function switchAccount(uid) {
+        let displayUid = currentUserAuthUid ? auth.currentUser.email.split('@')[0] : '';
+        if(uid === displayUid) return;
+        
+        let accounts = JSON.parse(localStorage.getItem('nte_accounts') || '{}');
+        let pw = accounts[uid];
+        if(!pw) return;
+
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('loading-text').style.display = 'block';
+        document.getElementById('loading-text').innerText = "계정 전환 중입니다...";
+
+        auth.signOut().then(() => {
+            return auth.signInWithEmailAndPassword(getFakeEmail(uid), pw);
+        }).catch((error) => {
+            document.getElementById('loading-text').style.display = 'none';
+            alert("계정 전환 중 오류가 발생했습니다: " + error.message);
+        });
     }
 
     // 숙제 설정
@@ -414,7 +485,6 @@
         fiveWeekly: { title: "5주 간격 숙제", type: "5weekly", items: ["궤도 너머 특별 노선 클리어", "헌터 거래소 교환"] }
     };
 
-    // 1~9레벨 구간별 레벨업 필요 경험치 (총 누적 61500)
     const affectionExpReq = { 1: 500, 2: 1000, 3: 2000, 4: 3000, 5: 5000, 6: 8000, 7: 11000, 8: 15000, 9: 16000 };
 
     let currentUserAuthUid = null;
@@ -436,7 +506,9 @@
         if (pw.length < 6) return alert("비밀번호는 최소 6자리 이상이어야 합니다.");
 
         document.getElementById('loading-text').style.display = 'block';
-        auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
+        auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw).then(() => {
+            saveAccountLocal(uid, pw);
+        }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
             if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID입니다. 비밀번호를 입력하고 로그인해 주세요.");
             else alert("오류가 발생했습니다: " + error.message);
@@ -449,7 +521,9 @@
         if (!uid || !pw) return alert("UID와 비밀번호를 모두 입력해 주세요.");
 
         document.getElementById('loading-text').style.display = 'block';
-        auth.signInWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
+        auth.signInWithEmailAndPassword(getFakeEmail(uid), pw).then(() => {
+            saveAccountLocal(uid, pw);
+        }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
             if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입되지 않은 UID이거나 비밀번호가 틀렸습니다.");
             else alert("로그인 실패: " + error.message);
@@ -476,10 +550,11 @@
             
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('display-uid').innerText = `UID: ${displayUid}`;
+            document.getElementById('loading-text').style.display = 'none';
             document.getElementById('stamina-input').value = '';
             document.getElementById('stamina-max-input').value = userData.staminaMax;
             
+            renderAccountSwitcher(displayUid);
             renderTasks();
             renderCharacters();
             if(timerInterval) clearInterval(timerInterval);
@@ -617,7 +692,6 @@
         document.getElementById(`slider-val-${id}`).innerText = userData.itemCounters[id];
         saveData();
         
-        // 슬라이더 배경색 동적 조절
         const el = document.getElementById(`slider-${id}`);
         if(el) updateSliderBackground(el, 0, max, val);
     }
@@ -665,7 +739,6 @@
             div.className = 'glass-panel task-category';
             let html = `<h2>${cat.title}</h2>`;
             
-            // 일반 체크박스
             cat.items.forEach((item, idx) => {
                 const taskId = `${cat.type}_${categoryKey}_${idx}`;
                 const isChecked = userData.tasks[taskId];
@@ -676,7 +749,6 @@
                 if(cat.type === 'weekly' || cat.type === 'biweekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
             });
 
-            // 아코디언 메뉴
             if (cat.sub) {
                 html += `<details class="sub-tasks"><summary>${cat.sub.title}</summary><div class="sub-task-list">`;
                 
@@ -711,7 +783,6 @@
             container.appendChild(div);
         });
 
-        // 커스텀 숙제
         const customDiv = document.createElement('div');
         customDiv.className = 'glass-panel task-category';
         let customHtml = `<h2>커스텀 숙제 (개인용)</h2>
@@ -740,7 +811,7 @@
                         <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${checkedAttr}>
                         <span><b style="color:var(--primary); font-size:12px; margin-right:6px; border:1px solid var(--primary); padding:2px 4px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
                     </label>
-                    <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">삭제</button>
+                    <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">✕</button>
                 </div>`;
             });
         }
@@ -755,7 +826,6 @@
         document.getElementById('progress-weekly-fill').style.width = `${weeklyPercent}%`;
         document.getElementById('progress-weekly-text').innerText = `${weeklyPercent}%`;
 
-        // 렌더링 후 슬라이더 배경 초기화
         setTimeout(() => {
             if(taskConfig.monthly.sub && taskConfig.monthly.sub.sliders) {
                 taskConfig.monthly.sub.sliders.forEach(slider => {
@@ -809,18 +879,37 @@
         saveData(); renderCharacters();
     }
 
-    // 퀵 경험치 추가 함수 (버튼 연동)
+    function promptCustomExp(charId) {
+        let val = prompt("추가할 경험치를 입력해 주세요. (차감하려면 앞에 '-'를 붙이세요)");
+        if(val === null || val.trim() === '') return;
+        val = parseInt(val);
+        if(isNaN(val)) return alert("올바른 숫자를 입력해 주세요.");
+        addAffectionExp(charId, val);
+    }
+
+    // 퀵 & 커스텀 경험치 통합 증감 로직 (레벨 롤백 포함)
     function addAffectionExp(charId, expToAdd) {
         let char = userData.characters.find(c => c.id === charId);
         if(!char) return;
-        
-        if (char.level === 10) return; // 이미 만렙이면 무시
+        if (char.level === 10 && expToAdd > 0) return; // 만렙 시 추가 불가
 
         char.exp += expToAdd;
         
+        // 경험치 감소 시 레벨 강등(롤백) 처리
+        while (char.exp < 0 && char.level > 1) {
+            char.level--;
+            char.exp += affectionExpReq[char.level];
+        }
+        
+        // 최저점 고정
+        if (char.exp < 0) {
+            char.exp = 0;
+            char.level = 1;
+        }
+
         // 경험치 초과 시 레벨업 처리
         while (char.level < 10 && char.exp >= affectionExpReq[char.level]) {
-            if (char.level === 9) { // 9에서 10으로 넘어갈 때
+            if (char.level === 9) {
                 char.level = 10;
                 char.exp = 0;
                 break;
@@ -858,27 +947,36 @@
 
             list.innerHTML += `
             <div class="glass-panel char-card">
-                <h3>${char.name} <button class="delete-btn" style="margin:0; padding:4px 8px; width:auto;" onclick="deleteCharacter('${char.id}')">삭제</button></h3>
+                <h3><span style="background:var(--grad-main); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">${char.name}</span> <button class="delete-btn" style="margin:0; padding:0; width:30px; height:30px;" onclick="deleteCharacter('${char.id}')">✕</button></h3>
                 <div class="char-stat">현재 레벨: <strong>Lv. ${char.level} ${isMaxLevel ? '(MAX)' : ''}</strong></div>
-                <div class="char-stat">현재 경험치: <strong>${char.exp} ${isMaxLevel ? '' : '/ ' + affectionExpReq[char.level]}</strong></div>
+                <div class="char-stat">현재 경험치: <strong style="color:var(--secondary);">${char.exp} ${isMaxLevel ? '' : '/ ' + affectionExpReq[char.level]}</strong></div>
                 
-                ${!isMaxLevel ? `
-                <div class="char-exp-btns">
-                    <button onclick="addAffectionExp('${char.id}', 50)">+50</button>
-                    <button onclick="addAffectionExp('${char.id}', 200)">+200</button>
-                    <button onclick="addAffectionExp('${char.id}', 400)">+400</button>
-                    <button onclick="addAffectionExp('${char.id}', 1200)">+1200</button>
+                <div class="char-exp-wrapper">
+                    ${!isMaxLevel ? `
+                    <div class="char-exp-row">
+                        <button class="char-exp-btn" onclick="addAffectionExp('${char.id}', 50)">+50</button>
+                        <button class="char-exp-btn" onclick="addAffectionExp('${char.id}', 200)">+200</button>
+                        <button class="char-exp-btn" onclick="addAffectionExp('${char.id}', 400)">+400</button>
+                        <button class="char-exp-btn" onclick="addAffectionExp('${char.id}', 1200)">+1200</button>
+                    </div>
+                    ` : ''}
+                    <div class="char-exp-row">
+                        <button class="char-exp-btn minus" onclick="addAffectionExp('${char.id}', -50)">-50</button>
+                        <button class="char-exp-btn minus" onclick="addAffectionExp('${char.id}', -200)">-200</button>
+                        <button class="char-exp-btn minus" onclick="addAffectionExp('${char.id}', -400)">-400</button>
+                        <button class="char-exp-btn minus" onclick="addAffectionExp('${char.id}', -1200)">-1200</button>
+                        ${!isMaxLevel ? `<button class="char-exp-btn custom" onclick="promptCustomExp('${char.id}')">직접입력</button>` : ''}
+                    </div>
                 </div>
-                ` : `<div style="height:48px; display:flex; align-items:center; color:var(--primary); font-weight:800; margin:15px 0;">✨ 최고 레벨 달성 ✨</div>`}
 
                 <div class="char-progress-bar">
                     <div class="char-progress-fill" style="width: ${progressPercent}%;"></div>
                 </div>
 
                 <div class="char-result">
-                    ${isMaxLevel ? `<p class="highlight" style="color:var(--primary); text-align:center;">호감도 마스터 완료!</p>` : `
-                    <p>만렙까지 남은 경험치: <span class="highlight">${remainingExpTo10.toLocaleString()}</span></p>
-                    <p>만렙까지 걸리는 시간: <span class="highlight">약 ${daysLeft}일</span></p>
+                    ${isMaxLevel ? `<p class="highlight" style="color:var(--primary); text-align:center;">✨ 호감도 마스터 완료! ✨</p>` : `
+                    <p>만렙까지 남은 경험치: <span class="highlight" style="color:var(--accent);">${remainingExpTo10.toLocaleString()}</span></p>
+                    <p>만렙까지 걸리는 시간: <span class="highlight" style="color:var(--primary);">약 ${daysLeft}일</span></p>
                     `}
                 </div>
             </div>`;
