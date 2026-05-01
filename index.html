@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>이환(NTE) 1.0 숙제 트래커 - Vercel Ver.</title>
+    <title>이환(NTE) 1.0 숙제 트래커</title>
     
     <!-- SUIT 폰트 -->
     <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet">
@@ -17,29 +17,35 @@
         :root {
             /* 다크모드 */
             --bg-color: #0a0b12;
-            --panel-bg: rgba(18, 20, 28, 0.85);
+            --panel-bg: linear-gradient(145deg, rgba(28, 32, 45, 0.85), rgba(15, 18, 25, 0.95));
+            --panel-border: 1px solid rgba(0, 240, 255, 0.15);
             --primary: #00f0ff;
+            --primary-dark: #0099cc;
             --accent: #ff0055;
-            --grad: linear-gradient(135deg, var(--primary), var(--accent));
+            --grad: linear-gradient(135deg, var(--primary), #0077ff);
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --border: rgba(0, 240, 255, 0.2);
             --danger: #ff4444;
-            --bg-overlay: rgba(10, 11, 18, 0.7);
+            --bg-overlay: rgba(8, 9, 14, 0.75);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
         [data-theme="light"] {
             /* 화이트모드 */
             --bg-color: #f1f5f9;
-            --panel-bg: rgba(255, 255, 255, 0.95);
+            --panel-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.95), rgba(240, 248, 255, 0.85));
+            --panel-border: 1px solid rgba(14, 165, 233, 0.25);
             --primary: #0ea5e9;
+            --primary-dark: #0284c7;
             --accent: #e11d48;
-            --grad: linear-gradient(135deg, var(--primary), var(--accent));
+            --grad: linear-gradient(135deg, var(--primary), #3b82f6);
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --border: rgba(14, 165, 233, 0.3);
             --danger: #ef4444;
-            --bg-overlay: rgba(255, 255, 255, 0.6);
+            --bg-overlay: rgba(255, 255, 255, 0.5);
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            --inner-glow: inset 0 1px 0px rgba(255, 255, 255, 1);
         }
 
         body, html {
@@ -52,146 +58,161 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        .bg-image {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: url('img/bg.png') center center/cover no-repeat;
-            z-index: -2;
-        }
-        .bg-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-overlay); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-            z-index: -1; transition: background-color 0.3s;
-        }
+        .bg-image { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('img/bg.png') center center/cover no-repeat; z-index: -2; }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: -1; transition: background-color 0.3s; }
         [data-theme="light"] .bg-image { display: none; }
         [data-theme="light"] .bg-overlay { backdrop-filter: none; background: var(--bg-color); }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 
+        /* 공통 패널 디자인 (그라데이션 박스) */
+        .glass-panel {
+            background: var(--panel-bg);
+            border: var(--panel-border);
+            box-shadow: var(--shadow), var(--inner-glow);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+        }
+
         /* 로그인 */
         #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-        .login-box { background: var(--panel-bg); padding: 40px 30px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); text-align: center; width: 100%; max-width: 380px; backdrop-filter: blur(8px); }
+        .login-box { padding: 40px 30px; border-radius: 20px; text-align: center; width: 100%; max-width: 380px; }
         .login-box h1 { font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        input, select { box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 10px; outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s; }
+        input, select { box-sizing: border-box; background: rgba(0,0,0,0.25); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 10px; outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); }
         select option { background-color: #1a1c23; color: #ffffff; }
-        [data-theme="light"] input, [data-theme="light"] select { background: #f8fafc; color: #0f172a; }
+        [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: rgba(0,0,0,0.1); }
         [data-theme="light"] select option { background-color: #ffffff; color: #0f172a; }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0,240,255,0.2); }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0,240,255,0.3); }
         .btn-group { display: flex; gap: 10px; justify-content: center; }
-        button { background: var(--primary); color: #0f172a; border: none; flex: 1; padding: 14px; border-radius: 10px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 15px; }
-        button.btn-signup { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,240,255,0.3); }
-        button:disabled { background: #334155; border-color: #334155; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none;}
+        button { background: var(--grad); color: #fff; border: none; flex: 1; padding: 14px; border-radius: 10px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 15px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+        button.btn-signup { background: transparent; border: 1px solid var(--primary); color: var(--primary); box-shadow: none; }
+        button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 20px rgba(0,240,255,0.3); }
+        button:disabled { background: #334155; border-color: #334155; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; filter:none;}
 
         #app-screen { display: none; }
-        header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 25px; }
+        header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid var(--panel-border); padding-bottom: 20px; margin-bottom: 25px; }
         header h1 { margin: 0; font-size: 28px; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 700; margin-left: 4px; }
         .user-info { display: flex; align-items: center; gap: 12px; font-size: 15px; flex-wrap: wrap; }
-        .theme-btn { background: transparent; border: 2px solid var(--text-muted); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; }
-        .theme-btn:hover { background: var(--text-muted); color: var(--bg-color); box-shadow: none; transform: none; }
+        .theme-btn { background: transparent; border: 2px solid var(--text-muted); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; box-shadow: none; }
+        .theme-btn:hover { background: var(--text-muted); color: var(--bg-color); box-shadow: none; transform: none; filter:none; }
+        .logout-btn { background: transparent; border: 2px solid var(--accent); color: var(--accent); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; box-shadow: none; }
+        .logout-btn:hover { background: rgba(255, 0, 85, 0.1); transform: none; filter:none; box-shadow: none; }
 
-        /* 탭 메뉴 UI */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 10px; overflow-x: auto; }
-        .tab-btn { background: transparent; color: var(--text-muted); border: none; font-size: 16px; font-weight: 800; padding: 10px 20px; cursor: pointer; border-radius: 8px; white-space: nowrap; }
+        /* 탭 메뉴 */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; padding-bottom: 10px; overflow-x: auto; }
+        .tab-btn { background: transparent; color: var(--text-muted); border: none; font-size: 16px; font-weight: 800; padding: 10px 20px; cursor: pointer; border-radius: 8px; white-space: nowrap; box-shadow: none; }
         .tab-btn.active { background: rgba(0, 240, 255, 0.1); color: var(--primary); border: 1px solid var(--primary); }
+        .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.05); transform: none; filter:none; box-shadow: none; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 스태미나 위젯 */
-        .stamina-widget { background: var(--panel-bg); border-radius: 16px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
-        .stamina-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--grad); }
+        .stamina-widget { padding: 25px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; position: relative; overflow: hidden; }
+        .stamina-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--grad); }
         .stamina-info h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: var(--primary); }
-        .stamina-val { font-size: 28px; font-weight: 900; font-family: monospace; letter-spacing: -0.5px; }
-        .stamina-max-text { font-size: 18px; color: var(--text-muted); font-weight: 600; }
+        .stamina-val { font-size: 32px; font-weight: 900; font-family: monospace; letter-spacing: -0.5px; text-shadow: 0 2px 10px rgba(0,240,255,0.3); }
+        .stamina-max-text { font-size: 18px; color: var(--text-muted); font-weight: 600; text-shadow: none; }
         .stamina-timer { font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: 5px; }
         .stamina-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-        .stamina-input-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); }
-        [data-theme="light"] .stamina-input-wrapper { background: #f8fafc; }
-        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 60px; text-align: center; font-weight: 700; box-shadow: none; font-size: 16px; }
+        .stamina-input-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 10px; border: 1px solid var(--panel-border); box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
+        [data-theme="light"] .stamina-input-wrapper { background: #ffffff; }
+        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 60px; text-align: center; font-weight: 800; box-shadow: none; font-size: 16px; color: var(--primary); }
         .stamina-input-wrapper span { color: var(--text-muted); font-weight: 700; }
-        .stamina-controls button { padding: 10px 16px; width: auto; font-size: 14px; }
+        .stamina-controls button { padding: 12px 20px; width: auto; font-size: 14px; }
 
-        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .timer-card { background: var(--panel-bg); border-radius: 16px; padding: 18px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .progress-widget { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .progress-card { padding: 18px 20px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+        .progress-bar-bg { width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+        [data-theme="light"] .progress-bar-bg { background: rgba(0,0,0,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        .progress-bar-fill { height: 100%; background: var(--grad); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; box-shadow: 0 0 10px var(--primary); }
+
+        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .timer-card { padding: 20px; text-align: center; border-top: 2px solid transparent; transition: 0.3s; }
+        .timer-card:hover { border-top-color: var(--primary); transform: translateY(-3px); }
         .timer-card h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted); font-weight: 700; }
         .timer-card .time { font-size: 20px; font-weight: 800; color: var(--primary); font-family: monospace; letter-spacing: -0.5px; }
 
-        /* 진행도 위젯 (새로운 기능) */
-        .progress-widget { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .progress-card { background: var(--panel-bg); border-radius: 12px; padding: 15px 20px; border: 1px solid rgba(128,128,128,0.1); }
-        .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-        .progress-bar-bg { width: 100%; height: 8px; background: rgba(128,128,128,0.2); border-radius: 4px; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: var(--grad); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
-
         .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
-        .task-category { background: var(--panel-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .task-category h2 { margin-top: 0; font-size: 18px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid rgba(128,128,128,0.1); padding-bottom: 12px; margin-bottom: 18px; }
+        .task-category { padding: 25px; }
+        .task-category h2 { margin-top: 0; font-size: 19px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid rgba(128,128,128,0.15); padding-bottom: 14px; margin-bottom: 20px; display: flex; align-items: center; }
+        .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 18px; background: var(--grad); margin-right: 10px; border-radius: 3px; }
 
-        /* 체크박스 크기 축소 */
-        .task-item { display: flex; align-items: flex-start; margin-bottom: 14px; cursor: pointer; position: relative; }
-        .task-item input[type="checkbox"] { appearance: none; width: 20px; height: 20px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 5px; margin-right: 12px; margin-top: 0px; cursor: pointer; position: relative; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: transparent; }
-        .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
-        .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #0f172a; font-size: 13px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .task-item span { font-size: 15px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 500; word-break: keep-all; }
+        .task-item { display: flex; align-items: flex-start; margin-bottom: 16px; cursor: pointer; position: relative; }
+        .task-item input[type="checkbox"] { appearance: none; width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; margin-right: 12px; margin-top: 1px; cursor: pointer; position: relative; transition: all 0.2s; background: rgba(0,0,0,0.2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        .task-item input[type="checkbox"]:checked { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px rgba(0,240,255,0.4); }
+        .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #000; font-size: 14px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .task-item span { font-size: 16px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 600; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.6; }
 
-        /* 아코디언 메뉴 */
-        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 5px; border: 1px solid rgba(128,128,128,0.1); }
-        [data-theme="light"] details.sub-tasks { background: #f8fafc; }
-        details.sub-tasks summary { padding: 12px; font-weight: 700; font-size: 15px; cursor: pointer; color: var(--primary); list-style: none; display: flex; align-items: center; justify-content: space-between; }
+        /* 커스텀 슬라이더 바 UI (회색 꼬리 버그 완벽 해결) */
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; margin: 15px 0 5px 0; background: rgba(128,128,128,0.2); box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); }
+        [data-theme="light"] input[type="range"] { background: rgba(0,0,0,0.1); }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--primary); cursor: pointer; box-shadow: 0 0 10px var(--primary); border: 2px solid #fff; margin-top: -6px; }
+        input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; border: none; }
+        
+        .slider-container { margin-top: 15px; background: rgba(0,0,0,0.2); padding: 18px 20px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); margin-bottom: 10px; }
+        [data-theme="light"] .slider-container { background: #ffffff; }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 15px; font-weight: 700; }
+        .sp-input { text-align: right; font-weight: 800; font-size: 15px; color: var(--primary); }
+
+        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(128,128,128,0.15); }
+        [data-theme="light"] details.sub-tasks { background: #ffffff; }
+        details.sub-tasks summary { padding: 15px; font-weight: 800; font-size: 15px; cursor: pointer; color: var(--primary); list-style: none; display: flex; align-items: center; justify-content: space-between; border-radius: 12px; transition: 0.2s; }
+        details.sub-tasks summary:hover { background: rgba(255,255,255,0.05); }
         details.sub-tasks summary::-webkit-details-marker { display: none; }
         details.sub-tasks summary::after { content: '▼'; font-size: 12px; transition: 0.3s; }
         details[open] summary::after { transform: rotate(180deg); }
-        .sub-task-list { padding: 15px 10px 5px 10px; border-top: 1px solid rgba(128,128,128,0.1); }
+        .sub-task-list { padding: 15px 15px 5px 15px; border-top: 1px solid rgba(128,128,128,0.1); }
 
-        /* 슬라이더 오버플로우 수정 */
-        .slider-container { margin-top: 10px; background: rgba(128,128,128,0.05); padding: 15px 18px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); margin-bottom: 10px; }
-        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 15px; font-weight: 600; }
-        input[type="range"] { width: 100%; box-sizing: border-box; accent-color: var(--primary); cursor: pointer; height: 6px; margin: 0; }
-        .sp-input { text-align: right; font-weight: 700; font-size: 14px; color: var(--primary); }
-
-        .custom-controls { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-        .custom-controls select { padding: 10px; flex-shrink: 0; width: 85px; }
-        .custom-controls input { flex: 1; min-width: 140px; padding: 10px 12px; margin-bottom: 0; }
-        .custom-controls button { flex-shrink: 0; width: 70px; padding: 10px; font-size: 14px; }
-        .delete-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 6px 10px; font-size: 13px; border-radius: 6px; margin-left: auto; margin-top: -2px; }
-        .delete-btn:hover { background: rgba(239, 68, 68, 0.1); transform: none; box-shadow: none; }
+        .custom-controls { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .custom-controls select { padding: 12px; flex-shrink: 0; width: 90px; }
+        .custom-controls input { flex: 1; min-width: 140px; padding: 12px 16px; margin-bottom: 0; }
+        .custom-controls button { flex-shrink: 0; width: 75px; padding: 12px; font-size: 14px; }
+        .delete-btn { background: rgba(255, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(255, 68, 68, 0.3); padding: 6px 12px; font-size: 13px; font-weight: 700; border-radius: 6px; margin-left: auto; margin-top: -2px; box-shadow: none; }
+        .delete-btn:hover { background: var(--danger); color: #fff; transform: none; box-shadow: none; }
 
         /* 호감도 계산기 UI */
-        .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .char-add-box { background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--primary); box-shadow: 0 0 15px rgba(0,240,255,0.1); margin-bottom: 20px; }
+        .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .char-add-box { padding: 25px; margin-bottom: 25px; border-top: 3px solid var(--primary); }
         .char-add-inputs { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; align-items: center; }
-        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 90px; padding: 10px; }
-        .char-card { background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid rgba(128,128,128,0.2); position: relative; }
-        .char-card h3 { margin: 0 0 15px 0; font-size: 20px; color: var(--primary); font-weight: 800; display: flex; justify-content: space-between; }
-        .char-del-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; font-size: 12px; border-radius: 6px; width: auto; }
-        .char-stat { font-size: 15px; margin-bottom: 8px; color: var(--text-muted); }
-        .char-stat strong { color: var(--text-main); }
-        .char-result { margin-top: 15px; padding: 15px; background: rgba(0,240,255,0.1); border-radius: 10px; border: 1px solid rgba(0,240,255,0.2); }
-        .char-result p { margin: 5px 0; font-size: 15px; font-weight: 600; }
-        .highlight { color: var(--primary); font-size: 18px; font-weight: 800; }
-        .progress-bar { width: 100%; height: 8px; background: rgba(128,128,128,0.2); border-radius: 4px; margin-top: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--grad); transition: width 0.3s; }
+        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 100px; padding: 12px; }
+        
+        .char-card { padding: 25px; position: relative; display: flex; flex-direction: column; }
+        .char-card h3 { margin: 0 0 15px 0; font-size: 22px; color: var(--primary); font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
+        .char-stat { font-size: 16px; margin-bottom: 8px; color: var(--text-muted); font-weight: 600; }
+        .char-stat strong { color: var(--text-main); font-weight: 800; }
+        
+        /* 퀵 경험치 추가 버튼 그룹 */
+        .char-exp-btns { display: flex; gap: 8px; margin: 15px 0; flex-wrap: wrap; }
+        .char-exp-btns button { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.3); color: var(--primary); padding: 8px 10px; font-size: 14px; flex: 1; box-shadow: none; }
+        .char-exp-btns button:hover { background: var(--primary); color: #000; box-shadow: 0 0 10px rgba(0,240,255,0.4); transform: translateY(-2px); }
+        .char-exp-btns button:disabled { background: rgba(128,128,128,0.1); border-color: rgba(128,128,128,0.2); color: rgba(128,128,128,0.5); cursor: not-allowed; box-shadow: none; transform: none; }
+
+        .char-result { margin-top: auto; padding: 18px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); }
+        [data-theme="light"] .char-result { background: #ffffff; border-color: rgba(0,0,0,0.1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .char-result p { margin: 6px 0; font-size: 15px; font-weight: 700; color: var(--text-muted); }
+        .highlight { color: var(--text-main); font-size: 18px; font-weight: 900; }
+        
+        .char-progress-bar { width: 100%; height: 10px; background: rgba(0,0,0,0.3); border-radius: 5px; margin: 15px 0; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4); }
+        [data-theme="light"] .char-progress-bar { background: rgba(0,0,0,0.1); }
+        .char-progress-fill { height: 100%; background: var(--grad); transition: width 0.4s; box-shadow: 0 0 10px var(--primary); }
 
         @media (max-width: 600px) {
             body, html { font-size: 14px; }
             .container { padding: 15px; }
-            header h1 { font-size: 22px; }
+            header h1 { font-size: 24px; }
             .user-info { font-size: 13px; }
-            .theme-btn, .user-info button { padding: 6px 10px; font-size: 12px; }
-            .stamina-val { font-size: 24px; }
-            .stamina-max-text { font-size: 16px; }
-            .stamina-widget { flex-direction: column; align-items: flex-start; gap: 15px; padding: 15px; }
+            .stamina-val { font-size: 26px; }
+            .stamina-widget, .char-add-box, .task-category, .timer-card, .progress-card, .char-card { padding: 20px; }
+            .stamina-widget { flex-direction: column; align-items: flex-start; gap: 15px; }
             .stamina-controls { width: 100%; }
             .stamina-input-wrapper { flex: 1; justify-content: center; }
-            .stamina-input-wrapper input { width: 100%; font-size: 14px; }
-            .timer-card .time { font-size: 16px; }
-            .task-category h2 { font-size: 16px; }
-            .task-item span { font-size: 14px; }
-            .tab-btn { font-size: 14px; padding: 8px 12px; }
-            .char-card h3 { font-size: 18px; }
+            .stamina-input-wrapper input { width: 100%; }
+            .char-exp-btns button { font-size: 13px; padding: 6px 5px; }
         }
     </style>
 </head>
@@ -200,9 +221,9 @@
     <div class="bg-overlay"></div>
     
     <div id="login-screen">
-        <div class="login-box">
+        <div class="glass-panel login-box">
             <h1 style="margin-bottom: 10px;">NTE Tracker</h1>
-            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px; font-weight: 500;">한 번 로그인하면 기기에 자동으로 기억됩니다.</p>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 15px; font-weight: 600;">한 번 로그인하면 기기에 자동으로 기억됩니다.</p>
             
             <div class="input-group">
                 <input type="text" id="uid-input" placeholder="인게임 UID 입력">
@@ -213,7 +234,7 @@
                 <button id="btn-login" onclick="handleLogin()">로그인</button>
                 <button id="btn-signup" class="btn-signup" onclick="handleSignup()">가입하기</button>
             </div>
-            <div id="loading-text" style="color:var(--accent); margin-top:15px; display:none; font-weight:700;">인증 중입니다...</div>
+            <div id="loading-text" style="color:var(--primary); margin-top:20px; display:none; font-weight:800;">인증 처리 중입니다...</div>
         </div>
     </div>
 
@@ -221,9 +242,9 @@
         <header>
             <h1>이환 숙제 트래커 <span class="version">v1.0</span></h1>
             <div class="user-info">
-                <span id="display-uid" style="font-weight: 800; font-size: 16px;"></span>
+                <span id="display-uid" style="font-weight: 900; font-size: 17px; color: var(--primary);"></span>
                 <button id="theme-btn" class="theme-btn" onclick="toggleTheme()">화이트 모드 변경</button>
-                <button onclick="handleLogout()" style="background: transparent; border: 2px solid var(--accent); color: var(--accent); font-weight: 700;">로그아웃</button>
+                <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
             </div>
         </header>
 
@@ -235,7 +256,7 @@
 
         <!-- 숙제 트래커 탭 -->
         <div id="tab-homework" class="tab-content active">
-            <div class="stamina-widget">
+            <div class="glass-panel stamina-widget">
                 <div class="stamina-info">
                     <h3>본성 픽셀 (6분당 1 회복)</h3>
                     <div class="stamina-val">
@@ -254,24 +275,24 @@
                 </div>
             </div>
 
-            <!-- 진행도 위젯 (추가 기능) -->
+            <!-- 진행도 위젯 -->
             <div class="progress-widget">
-                <div class="progress-card">
-                    <div class="progress-header"><span>일일 숙제 진행도</span><span id="progress-daily-text">0%</span></div>
+                <div class="glass-panel progress-card">
+                    <div class="progress-header"><span>일일 숙제 진행도</span><span id="progress-daily-text" style="color:var(--primary);">0%</span></div>
                     <div class="progress-bar-bg"><div id="progress-daily-fill" class="progress-bar-fill"></div></div>
                 </div>
-                <div class="progress-card">
-                    <div class="progress-header"><span>주간 숙제 진행도</span><span id="progress-weekly-text">0%</span></div>
+                <div class="glass-panel progress-card">
+                    <div class="progress-header"><span>주간 숙제 진행도</span><span id="progress-weekly-text" style="color:var(--primary);">0%</span></div>
                     <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill"></div></div>
                 </div>
             </div>
 
             <div class="timers-grid">
-                <div class="timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time">계산 중...</div></div>
-                <div class="timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time">계산 중...</div></div>
-                <div class="timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time">계산 중...</div></div>
-                <div class="timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time">계산 중...</div></div>
-                <div class="timer-card"><h3>5주 초기화</h3><div id="timer-5weekly" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>5주 초기화</h3><div id="timer-5weekly" class="time">계산 중...</div></div>
             </div>
 
             <div class="task-grid" id="task-container">
@@ -281,11 +302,11 @@
 
         <!-- 호감도 계산기 탭 -->
         <div id="tab-affection" class="tab-content">
-            <div class="char-add-box">
-                <h2 style="margin:0 0 10px 0; font-size:18px;">캐릭터 호감도 추가</h2>
-                <p style="margin:0; font-size:13px; color:var(--text-muted);">
-                    * 하루 호감도템 3개 기준 (일 1200 획득)으로 계산됩니다.<br>
-                    * 과금 아이템(2000 획득) 사용 시 기간이 단축될 수 있습니다.
+            <div class="glass-panel char-add-box">
+                <h2 style="margin:0 0 10px 0; font-size:20px; font-weight:800; color:var(--text-main);">캐릭터 호감도 추가</h2>
+                <p style="margin:0; font-size:14px; color:var(--text-muted); font-weight:500; line-height:1.5;">
+                    * 하루 호감도 아이템 3개 선물 기준 (일일 1200 획득)으로 일수가 계산됩니다.<br>
+                    * 과금 아이템(2000 획득) 사용 시 만렙 달성 기간이 더욱 단축될 수 있습니다.
                 </p>
                 <div class="char-add-inputs">
                     <select id="char-name-select" onchange="toggleCustomChar()">
@@ -307,7 +328,7 @@
                     <input type="text" id="char-name-custom" placeholder="캐릭터명" style="display:none; flex:1;">
                     <input type="number" id="char-level" placeholder="현재 레벨 (1~9)" min="1" max="9" style="flex:0.8;">
                     <input type="number" id="char-exp" placeholder="현재 경험치" min="0" style="flex:1;">
-                    <button onclick="addCharacter()" style="width:80px; flex:none;">추가</button>
+                    <button onclick="addCharacter()" style="width:90px; flex:none;">추가</button>
                 </div>
             </div>
             
@@ -363,6 +384,12 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
+    // 슬라이더 배경 채우기 함수 (회색 꼬리 제거용)
+    function updateSliderBackground(el, min, max, val) {
+        const percentage = ((val - min) / (max - min)) * 100;
+        el.style.background = `linear-gradient(to right, var(--primary) ${percentage}%, rgba(128,128,128,0.2) ${percentage}%)`;
+    }
+
     // 숙제 설정
     const taskConfig = {
         dailyImportant: { title: "중요 일일 숙제", type: "daily", items: [ "본성 픽셀 사용", "탐색 안내서(일퀘) 100 활약도", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번 (400호감도 아이템 사용)", "캐릭터 데이트", "시즌패스 일일 미션" ] },
@@ -387,6 +414,7 @@
         fiveWeekly: { title: "5주 간격 숙제", type: "5weekly", items: ["궤도 너머 특별 노선 클리어", "헌터 거래소 교환"] }
     };
 
+    // 1~9레벨 구간별 레벨업 필요 경험치 (총 누적 61500)
     const affectionExpReq = { 1: 500, 2: 1000, 3: 2000, 4: 3000, 5: 5000, 6: 8000, 7: 11000, 8: 15000, 9: 16000 };
 
     let currentUserAuthUid = null;
@@ -551,7 +579,6 @@
         const now = new Date().getTime();
         let needsSave = false;
         
-        // 캐스케이딩 연쇄 초기화 로직
         let resetFlags = { daily: false, weekly: false, biweekly: false, monthly: false, '5weekly': false };
 
         ['daily', 'weekly', 'biweekly', 'monthly', '5weekly'].forEach(type => {
@@ -563,7 +590,6 @@
             }
         });
 
-        // 2주 초기화 시 주간/일일 초기화 연쇄 적용, 주간 초기화 시 일일 연쇄 적용
         if (resetFlags.biweekly) { resetFlags.weekly = true; resetFlags.daily = true; }
         if (resetFlags.weekly) { resetFlags.daily = true; }
 
@@ -573,9 +599,7 @@
         }
 
         if (userData.customTasks) {
-            userData.customTasks.forEach(ct => {
-                if (resetFlags[ct.type]) ct.checked = false;
-            });
+            userData.customTasks.forEach(ct => { if (resetFlags[ct.type]) ct.checked = false; });
         }
         
         if (resetFlags.monthly) userData.itemCounters = {};
@@ -587,11 +611,15 @@
 
     function toggleTask(taskId) { userData.tasks[taskId] = !userData.tasks[taskId]; saveData(); renderTasks(); }
 
-    function updateItemSlider(id, val) {
+    function updateItemSlider(id, val, max) {
         if(!userData.itemCounters) userData.itemCounters = {};
         userData.itemCounters[id] = parseInt(val) || 0;
         document.getElementById(`slider-val-${id}`).innerText = userData.itemCounters[id];
         saveData();
+        
+        // 슬라이더 배경색 동적 조절
+        const el = document.getElementById(`slider-${id}`);
+        if(el) updateSliderBackground(el, 0, max, val);
     }
 
     function updateSpLevel(val) {
@@ -599,6 +627,9 @@
         document.getElementById('sp-slider').value = userData.spLevel;
         document.getElementById('sp-number').value = userData.spLevel;
         saveData();
+        
+        const el = document.getElementById('sp-slider');
+        if(el) updateSliderBackground(el, 1, 50, userData.spLevel);
     }
 
     function addCustomTask() {
@@ -631,7 +662,7 @@
         Object.keys(taskConfig).forEach(categoryKey => {
             const cat = taskConfig[categoryKey];
             const div = document.createElement('div');
-            div.className = 'task-category';
+            div.className = 'glass-panel task-category';
             let html = `<h2>${cat.title}</h2>`;
             
             // 일반 체크박스
@@ -645,12 +676,11 @@
                 if(cat.type === 'weekly' || cat.type === 'biweekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
             });
 
-            // 서브 아코디언 메뉴 (월간 드래그 및 주간 시즌패스 상세)
+            // 아코디언 메뉴
             if (cat.sub) {
                 html += `<details class="sub-tasks"><summary>${cat.sub.title}</summary><div class="sub-task-list">`;
                 
                 if (cat.sub.sliders) {
-                    // 월간 아이템 슬라이더
                     cat.sub.sliders.forEach(slider => {
                         let val = userData.itemCounters?.[slider.id] || 0;
                         html += `
@@ -659,11 +689,10 @@
                                 <span>${slider.name}</span>
                                 <span class="sp-input"><span id="slider-val-${slider.id}">${val}</span> / ${slider.max}</span>
                             </div>
-                            <input type="range" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value)" onchange="saveData()">
+                            <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
                         </div>`;
                     });
                 } else if (cat.sub.items) {
-                    // 주간 시즌패스 체크박스
                     cat.sub.items.forEach((item, idx) => {
                         const taskId = `${cat.type}_${categoryKey}_sub_${idx}`;
                         const isChecked = userData.tasks[taskId];
@@ -676,15 +705,15 @@
             }
 
             if(categoryKey === 'fiveWeekly') {
-                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)" style="background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; padding:2px;"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
+                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)" style="background:transparent; border:none; width:50px;"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
             }
             div.innerHTML = html;
             container.appendChild(div);
         });
 
-        // 커스텀 숙제 렌더링
+        // 커스텀 숙제
         const customDiv = document.createElement('div');
-        customDiv.className = 'task-category';
+        customDiv.className = 'glass-panel task-category';
         let customHtml = `<h2>커스텀 숙제 (개인용)</h2>
             <div class="custom-controls">
                 <select id="custom-task-type">
@@ -725,6 +754,18 @@
         document.getElementById('progress-daily-text').innerText = `${dailyPercent}%`;
         document.getElementById('progress-weekly-fill').style.width = `${weeklyPercent}%`;
         document.getElementById('progress-weekly-text').innerText = `${weeklyPercent}%`;
+
+        // 렌더링 후 슬라이더 배경 초기화
+        setTimeout(() => {
+            if(taskConfig.monthly.sub && taskConfig.monthly.sub.sliders) {
+                taskConfig.monthly.sub.sliders.forEach(slider => {
+                    const el = document.getElementById(`slider-${slider.id}`);
+                    if(el) updateSliderBackground(el, 0, slider.max, userData.itemCounters[slider.id] || 0);
+                });
+            }
+            const spSlider = document.getElementById('sp-slider');
+            if(spSlider) updateSliderBackground(spSlider, 1, 50, userData.spLevel);
+        }, 10);
     }
 
     // ==========================================
@@ -734,9 +775,7 @@
         const select = document.getElementById('char-name-select');
         const customInput = document.getElementById('char-name-custom');
         if (select.value === 'custom') {
-            customInput.style.display = 'block';
-            select.style.display = 'none';
-            customInput.focus();
+            customInput.style.display = 'block'; select.style.display = 'none'; customInput.focus();
         } else {
             customInput.style.display = 'none';
         }
@@ -745,7 +784,6 @@
     function addCharacter() {
         const select = document.getElementById('char-name-select');
         const customInput = document.getElementById('char-name-custom');
-        
         let name = select.value === 'custom' ? customInput.value.trim() : select.value;
         const level = parseInt(document.getElementById('char-level').value);
         const exp = parseInt(document.getElementById('char-exp').value);
@@ -760,12 +798,8 @@
         if(!userData.characters) userData.characters = [];
         userData.characters.push({ id: 'char_' + Date.now(), name, level, exp });
         
-        select.value = '민트';
-        select.style.display = 'block';
-        customInput.style.display = 'none';
-        customInput.value = '';
-        document.getElementById('char-level').value = '';
-        document.getElementById('char-exp').value = '';
+        select.value = '민트'; select.style.display = 'block'; customInput.style.display = 'none'; customInput.value = '';
+        document.getElementById('char-level').value = ''; document.getElementById('char-exp').value = '';
         saveData(); renderCharacters();
     }
 
@@ -775,37 +809,77 @@
         saveData(); renderCharacters();
     }
 
+    // 퀵 경험치 추가 함수 (버튼 연동)
+    function addAffectionExp(charId, expToAdd) {
+        let char = userData.characters.find(c => c.id === charId);
+        if(!char) return;
+        
+        if (char.level === 10) return; // 이미 만렙이면 무시
+
+        char.exp += expToAdd;
+        
+        // 경험치 초과 시 레벨업 처리
+        while (char.level < 10 && char.exp >= affectionExpReq[char.level]) {
+            if (char.level === 9) { // 9에서 10으로 넘어갈 때
+                char.level = 10;
+                char.exp = 0;
+                break;
+            } else {
+                char.exp -= affectionExpReq[char.level];
+                char.level++;
+            }
+        }
+
+        saveData(); renderCharacters();
+    }
+
     function renderCharacters() {
         const list = document.getElementById('character-list');
         list.innerHTML = '';
         if(!userData.characters || userData.characters.length === 0) {
-            list.innerHTML = '<p style="color:var(--text-muted);">추가된 캐릭터가 없습니다.</p>';
+            list.innerHTML = '<p style="color:var(--text-muted); padding:10px;">추가된 캐릭터가 없습니다.</p>';
             return;
         }
 
         userData.characters.forEach(char => {
+            let isMaxLevel = (char.level === 10);
             let remainingExpTo10 = 0;
-            remainingExpTo10 += (affectionExpReq[char.level] - char.exp);
-            for(let i = char.level + 1; i < 10; i++) remainingExpTo10 += affectionExpReq[i];
-
-            const daysLeft = Math.ceil(remainingExpTo10 / 1200);
-            const totalExpReq = 61500;
-            const currentTotalExp = totalExpReq - remainingExpTo10;
-            const progressPercent = Math.min(100, (currentTotalExp / totalExpReq) * 100);
+            let daysLeft = 0;
+            let progressPercent = 100;
+            
+            if (!isMaxLevel) {
+                remainingExpTo10 += (affectionExpReq[char.level] - char.exp);
+                for(let i = char.level + 1; i < 10; i++) remainingExpTo10 += affectionExpReq[i];
+                daysLeft = Math.ceil(remainingExpTo10 / 1200);
+                const totalExpReq = 61500;
+                const currentTotalExp = totalExpReq - remainingExpTo10;
+                progressPercent = Math.min(100, (currentTotalExp / totalExpReq) * 100);
+            }
 
             list.innerHTML += `
-            <div class="char-card">
-                <h3>${char.name} <button class="char-del-btn" onclick="deleteCharacter('${char.id}')">삭제</button></h3>
-                <div class="char-stat">현재 레벨: <strong>Lv. ${char.level}</strong></div>
-                <div class="char-stat">현재 경험치: <strong>${char.exp} / ${affectionExpReq[char.level]}</strong></div>
+            <div class="glass-panel char-card">
+                <h3>${char.name} <button class="delete-btn" style="margin:0; padding:4px 8px; width:auto;" onclick="deleteCharacter('${char.id}')">삭제</button></h3>
+                <div class="char-stat">현재 레벨: <strong>Lv. ${char.level} ${isMaxLevel ? '(MAX)' : ''}</strong></div>
+                <div class="char-stat">현재 경험치: <strong>${char.exp} ${isMaxLevel ? '' : '/ ' + affectionExpReq[char.level]}</strong></div>
                 
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: ${progressPercent}%;"></div>
+                ${!isMaxLevel ? `
+                <div class="char-exp-btns">
+                    <button onclick="addAffectionExp('${char.id}', 50)">+50</button>
+                    <button onclick="addAffectionExp('${char.id}', 200)">+200</button>
+                    <button onclick="addAffectionExp('${char.id}', 400)">+400</button>
+                    <button onclick="addAffectionExp('${char.id}', 1200)">+1200</button>
+                </div>
+                ` : `<div style="height:48px; display:flex; align-items:center; color:var(--primary); font-weight:800; margin:15px 0;">✨ 최고 레벨 달성 ✨</div>`}
+
+                <div class="char-progress-bar">
+                    <div class="char-progress-fill" style="width: ${progressPercent}%;"></div>
                 </div>
 
                 <div class="char-result">
+                    ${isMaxLevel ? `<p class="highlight" style="color:var(--primary); text-align:center;">호감도 마스터 완료!</p>` : `
                     <p>만렙까지 남은 경험치: <span class="highlight">${remainingExpTo10.toLocaleString()}</span></p>
                     <p>만렙까지 걸리는 시간: <span class="highlight">약 ${daysLeft}일</span></p>
+                    `}
                 </div>
             </div>`;
         });
