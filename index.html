@@ -73,7 +73,7 @@
         .login-box { background: var(--panel-bg); padding: 40px 30px; border-radius: 20px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); text-align: center; width: 100%; max-width: 380px; backdrop-filter: blur(8px); }
         .login-box h1 { font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        input, select { background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 10px; outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s; }
+        input, select { box-sizing: border-box; background: rgba(0,0,0,0.2); border: 1px solid var(--border); color: var(--text-main); padding: 14px 16px; border-radius: 10px; outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s; }
         select option { background-color: #1a1c23; color: #ffffff; }
         [data-theme="light"] input, [data-theme="light"] select { background: #f8fafc; color: #0f172a; }
         [data-theme="light"] select option { background-color: #ffffff; color: #0f172a; }
@@ -113,30 +113,31 @@
         .stamina-input-wrapper span { color: var(--text-muted); font-weight: 700; }
         .stamina-controls button { padding: 10px 16px; width: auto; font-size: 14px; }
 
-        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .timer-card { background: var(--panel-bg); border-radius: 16px; padding: 18px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .timer-card h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted); font-weight: 700; }
         .timer-card .time { font-size: 20px; font-weight: 800; color: var(--primary); font-family: monospace; letter-spacing: -0.5px; }
+
+        /* 진행도 위젯 (새로운 기능) */
+        .progress-widget { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .progress-card { background: var(--panel-bg); border-radius: 12px; padding: 15px 20px; border: 1px solid rgba(128,128,128,0.1); }
+        .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+        .progress-bar-bg { width: 100%; height: 8px; background: rgba(128,128,128,0.2); border-radius: 4px; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: var(--grad); transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
 
         .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
         .task-category { background: var(--panel-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .task-category h2 { margin-top: 0; font-size: 18px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid rgba(128,128,128,0.1); padding-bottom: 12px; margin-bottom: 18px; }
 
-        .task-item { display: flex; align-items: flex-start; margin-bottom: 16px; cursor: pointer; position: relative; }
-        .task-item input[type="checkbox"] { appearance: none; width: 24px; height: 24px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; margin-right: 12px; margin-top: -2px; cursor: pointer; position: relative; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: transparent; }
+        /* 체크박스 크기 축소 */
+        .task-item { display: flex; align-items: flex-start; margin-bottom: 14px; cursor: pointer; position: relative; }
+        .task-item input[type="checkbox"] { appearance: none; width: 20px; height: 20px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 5px; margin-right: 12px; margin-top: 0px; cursor: pointer; position: relative; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: transparent; }
         .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
-        .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #0f172a; font-size: 15px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .task-item span { font-size: 16px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 500; word-break: keep-all; }
+        .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #0f172a; font-size: 13px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .task-item span { font-size: 15px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 500; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.6; }
 
-        /* 월간 숙제 카운터 UI */
-        .counter-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; background: rgba(0,0,0,0.15); padding: 10px 15px; border-radius: 10px; border: 1px solid rgba(128,128,128,0.1); }
-        [data-theme="light"] .counter-item { background: #f8fafc; }
-        .counter-name { font-size: 15px; font-weight: 600; flex: 1; }
-        .counter-controls { display: flex; align-items: center; gap: 10px; }
-        .counter-controls button { width: 32px; height: 32px; padding: 0; font-size: 18px; line-height: 1; border-radius: 6px; }
-        .counter-val { font-size: 16px; font-weight: 800; font-family: monospace; color: var(--primary); min-width: 45px; text-align: center; }
-
+        /* 아코디언 메뉴 */
         details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 5px; border: 1px solid rgba(128,128,128,0.1); }
         [data-theme="light"] details.sub-tasks { background: #f8fafc; }
         details.sub-tasks summary { padding: 12px; font-weight: 700; font-size: 15px; cursor: pointer; color: var(--primary); list-style: none; display: flex; align-items: center; justify-content: space-between; }
@@ -145,16 +146,24 @@
         details[open] summary::after { transform: rotate(180deg); }
         .sub-task-list { padding: 15px 10px 5px 10px; border-top: 1px solid rgba(128,128,128,0.1); }
 
-        .slider-container { margin-top: 20px; background: rgba(128,128,128,0.05); padding: 18px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); }
+        /* 슬라이더 오버플로우 수정 */
+        .slider-container { margin-top: 10px; background: rgba(128,128,128,0.05); padding: 15px 18px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); margin-bottom: 10px; }
         .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 15px; font-weight: 600; }
-        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; height: 6px; }
-        .sp-input { width: 60px; text-align: center; padding: 6px; font-weight: 700; }
+        input[type="range"] { width: 100%; box-sizing: border-box; accent-color: var(--primary); cursor: pointer; height: 6px; margin: 0; }
+        .sp-input { text-align: right; font-weight: 700; font-size: 14px; color: var(--primary); }
+
+        .custom-controls { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+        .custom-controls select { padding: 10px; flex-shrink: 0; width: 85px; }
+        .custom-controls input { flex: 1; min-width: 140px; padding: 10px 12px; margin-bottom: 0; }
+        .custom-controls button { flex-shrink: 0; width: 70px; padding: 10px; font-size: 14px; }
+        .delete-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 6px 10px; font-size: 13px; border-radius: 6px; margin-left: auto; margin-top: -2px; }
+        .delete-btn:hover { background: rgba(239, 68, 68, 0.1); transform: none; box-shadow: none; }
 
         /* 호감도 계산기 UI */
         .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .char-add-box { background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--primary); box-shadow: 0 0 15px rgba(0,240,255,0.1); margin-bottom: 20px; }
-        .char-add-inputs { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; }
-        .char-add-inputs input { flex: 1; min-width: 80px; padding: 10px; }
+        .char-add-inputs { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; align-items: center; }
+        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 90px; padding: 10px; }
         .char-card { background: var(--panel-bg); border-radius: 16px; padding: 20px; border: 1px solid rgba(128,128,128,0.2); position: relative; }
         .char-card h3 { margin: 0 0 15px 0; font-size: 20px; color: var(--primary); font-weight: 800; display: flex; justify-content: space-between; }
         .char-del-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; font-size: 12px; border-radius: 6px; width: auto; }
@@ -166,7 +175,6 @@
         .progress-bar { width: 100%; height: 8px; background: rgba(128,128,128,0.2); border-radius: 4px; margin-top: 10px; overflow: hidden; }
         .progress-fill { height: 100%; background: var(--grad); transition: width 0.3s; }
 
-        /* 모바일 최적화 (글씨 작게, 레이아웃 조정) */
         @media (max-width: 600px) {
             body, html { font-size: 14px; }
             .container { padding: 15px; }
@@ -182,7 +190,6 @@
             .timer-card .time { font-size: 16px; }
             .task-category h2 { font-size: 16px; }
             .task-item span { font-size: 14px; }
-            .counter-name { font-size: 14px; }
             .tab-btn { font-size: 14px; padding: 8px 12px; }
             .char-card h3 { font-size: 18px; }
         }
@@ -195,7 +202,7 @@
     <div id="login-screen">
         <div class="login-box">
             <h1 style="margin-bottom: 10px;">NTE Tracker</h1>
-            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px; font-weight: 500;">한 번 로긴하면 기기 자동 기억됨</p>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px; font-weight: 500;">한 번 로그인하면 기기에 자동으로 기억됩니다.</p>
             
             <div class="input-group">
                 <input type="text" id="uid-input" placeholder="인게임 UID 입력">
@@ -206,7 +213,7 @@
                 <button id="btn-login" onclick="handleLogin()">로그인</button>
                 <button id="btn-signup" class="btn-signup" onclick="handleSignup()">가입하기</button>
             </div>
-            <div id="loading-text" style="color:var(--accent); margin-top:15px; display:none; font-weight:700;">인증 중... 대기ㄱㄱ</div>
+            <div id="loading-text" style="color:var(--accent); margin-top:15px; display:none; font-weight:700;">인증 중입니다...</div>
         </div>
     </div>
 
@@ -247,6 +254,18 @@
                 </div>
             </div>
 
+            <!-- 진행도 위젯 (추가 기능) -->
+            <div class="progress-widget">
+                <div class="progress-card">
+                    <div class="progress-header"><span>일일 숙제 진행도</span><span id="progress-daily-text">0%</span></div>
+                    <div class="progress-bar-bg"><div id="progress-daily-fill" class="progress-bar-fill"></div></div>
+                </div>
+                <div class="progress-card">
+                    <div class="progress-header"><span>주간 숙제 진행도</span><span id="progress-weekly-text">0%</span></div>
+                    <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill"></div></div>
+                </div>
+            </div>
+
             <div class="timers-grid">
                 <div class="timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time">계산 중...</div></div>
                 <div class="timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time">계산 중...</div></div>
@@ -265,14 +284,30 @@
             <div class="char-add-box">
                 <h2 style="margin:0 0 10px 0; font-size:18px;">캐릭터 호감도 추가</h2>
                 <p style="margin:0; font-size:13px; color:var(--text-muted);">
-                    * 하루 호감도템 3개 기준 (일 1200 획득)으로 계산됨.<br>
-                    * 현질 아이템(2000) 먹이면 기간 단축됨.
+                    * 하루 호감도템 3개 기준 (일 1200 획득)으로 계산됩니다.<br>
+                    * 과금 아이템(2000 획득) 사용 시 기간이 단축될 수 있습니다.
                 </p>
                 <div class="char-add-inputs">
-                    <input type="text" id="char-name" placeholder="캐릭터 이름">
-                    <input type="number" id="char-level" placeholder="현재 레벨 (1~9)" min="1" max="9">
-                    <input type="number" id="char-exp" placeholder="현재 경험치" min="0">
-                    <button onclick="addCharacter()" style="width:80px;">추가</button>
+                    <select id="char-name-select" onchange="toggleCustomChar()">
+                        <option value="민트">민트</option>
+                        <option value="나나리">나나리</option>
+                        <option value="스키아">스키아</option>
+                        <option value="파디아">파디아</option>
+                        <option value="에드가">에드가</option>
+                        <option value="다포딜">다포딜</option>
+                        <option value="구원">구원</option>
+                        <option value="하니엘">하니엘</option>
+                        <option value="하토르">하토르</option>
+                        <option value="백장">백장</option>
+                        <option value="치즈">치즈</option>
+                        <option value="사키리">사키리</option>
+                        <option value="우미츠키">우미츠키</option>
+                        <option value="custom">직접 입력...</option>
+                    </select>
+                    <input type="text" id="char-name-custom" placeholder="캐릭터명" style="display:none; flex:1;">
+                    <input type="number" id="char-level" placeholder="현재 레벨 (1~9)" min="1" max="9" style="flex:0.8;">
+                    <input type="number" id="char-exp" placeholder="현재 경험치" min="0" style="flex:1;">
+                    <button onclick="addCharacter()" style="width:80px; flex:none;">추가</button>
                 </div>
             </div>
             
@@ -338,19 +373,20 @@
             sub: { title: "시즌패스 주간 미션 상세", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
         },
         biweekly: { title: "2주 간격 숙제", type: "biweekly", items: ["핑크퍼스 은행털기"] },
-        // 월간 숙제는 카운터로 별도 처리
         monthly: { 
-            title: "월간 구매 숙제", type: "monthly", items: [],
-            counters: [
-                { id: "dice_deceit", name: "마켓 기만의 주사위", max: 5 },
-                { id: "dice_truth", name: "마켓 진실의 주사위", max: 5 },
-                { id: "key_triple", name: "마켓 삼중 열쇠", max: 20 }
-            ]
+            title: "월간 숙제", type: "monthly", items: [],
+            sub: { 
+                title: "상점 교환 품목",
+                sliders: [
+                    { id: "dice_deceit", name: "마켓 기만의 주사위", max: 5 },
+                    { id: "dice_truth", name: "마켓 진실의 주사위", max: 5 },
+                    { id: "key_triple", name: "마켓 삼중 열쇠", max: 20 }
+                ] 
+            }
         },
         fiveWeekly: { title: "5주 간격 숙제", type: "5weekly", items: ["궤도 너머 특별 노선 클리어", "헌터 거래소 교환"] }
     };
 
-    // 호감도 레벨별 요구 경험치 (해당 레벨에서 다음 레벨로 가기 위한 수치)
     const affectionExpReq = { 1: 500, 2: 1000, 3: 2000, 4: 3000, 5: 5000, 6: 8000, 7: 11000, 8: 15000, 9: 16000 };
 
     let currentUserAuthUid = null;
@@ -368,26 +404,26 @@
     function handleSignup() {
         const uid = document.getElementById('uid-input').value.trim();
         const pw = document.getElementById('pw-input').value.trim();
-        if (!uid || !pw) return alert("UID랑 비번 둘 다 적어라 ㅇㅇ");
-        if (pw.length < 6) return alert("비번은 최소 6자리 이상이어야 됨");
+        if (!uid || !pw) return alert("UID와 비밀번호를 모두 입력해 주세요.");
+        if (pw.length < 6) return alert("비밀번호는 최소 6자리 이상이어야 합니다.");
 
         document.getElementById('loading-text').style.display = 'block';
         auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
-            if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID임. 비번 치고 로그인 ㄱㄱ.");
-            else alert("에러 뜸: " + error.message);
+            if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID입니다. 비밀번호를 입력하고 로그인해 주세요.");
+            else alert("오류가 발생했습니다: " + error.message);
         });
     }
 
     function handleLogin() {
         const uid = document.getElementById('uid-input').value.trim();
         const pw = document.getElementById('pw-input').value.trim();
-        if (!uid || !pw) return alert("UID랑 비번 치고 눌러라");
+        if (!uid || !pw) return alert("UID와 비밀번호를 모두 입력해 주세요.");
 
         document.getElementById('loading-text').style.display = 'block';
         auth.signInWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입 안 된 UID거나 비번 틀렸음.");
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입되지 않은 UID이거나 비밀번호가 틀렸습니다.");
             else alert("로그인 실패: " + error.message);
         });
     }
@@ -439,15 +475,13 @@
         const val = parseInt(document.getElementById('stamina-input').value) || 0;
         let maxVal = parseInt(document.getElementById('stamina-max-input').value) || 320;
         
-        // 최대치 320 상한선 강제 적용
         maxVal = Math.min(maxVal, 320);
         document.getElementById('stamina-max-input').value = maxVal;
         
         userData.staminaMax = maxVal;
         userData.stamina = Math.min(val, maxVal);
         userData.staminaUpdated = Date.now();
-        saveData();
-        calcStamina();
+        saveData(); calcStamina();
         document.getElementById('stamina-input').value = ''; 
     }
 
@@ -516,36 +550,48 @@
     function checkAndResetTasks() {
         const now = new Date().getTime();
         let needsSave = false;
+        
+        // 캐스케이딩 연쇄 초기화 로직
+        let resetFlags = { daily: false, weekly: false, biweekly: false, monthly: false, '5weekly': false };
 
         ['daily', 'weekly', 'biweekly', 'monthly', '5weekly'].forEach(type => {
             let nextReset = getNextReset(type).getTime();
             if (!userData.resetTargets[type] || now > userData.resetTargets[type]) {
-                for(let key in userData.tasks) if(key.startsWith(type)) userData.tasks[key] = false;
-                if(userData.customTasks) userData.customTasks.forEach(ct => { if(ct.type === type) ct.checked = false; });
-                
-                // 월간 초기화 시 카운터도 리셋
-                if(type === 'monthly') userData.itemCounters = {};
-
+                resetFlags[type] = true;
                 userData.resetTargets[type] = nextReset;
                 needsSave = true;
             }
         });
+
+        // 2주 초기화 시 주간/일일 초기화 연쇄 적용, 주간 초기화 시 일일 연쇄 적용
+        if (resetFlags.biweekly) { resetFlags.weekly = true; resetFlags.daily = true; }
+        if (resetFlags.weekly) { resetFlags.daily = true; }
+
+        for (let key in userData.tasks) {
+            let type = key.split('_')[0];
+            if (resetFlags[type]) userData.tasks[key] = false;
+        }
+
+        if (userData.customTasks) {
+            userData.customTasks.forEach(ct => {
+                if (resetFlags[ct.type]) ct.checked = false;
+            });
+        }
+        
+        if (resetFlags.monthly) userData.itemCounters = {};
+
         if (needsSave) saveData();
     }
 
     function saveData() { if (currentUserAuthUid) database.ref('users/' + currentUserAuthUid).set(userData); }
 
-    function toggleTask(taskId) { userData.tasks[taskId] = !userData.tasks[taskId]; saveData(); }
+    function toggleTask(taskId) { userData.tasks[taskId] = !userData.tasks[taskId]; saveData(); renderTasks(); }
 
-    function updateCounter(id, delta, max) {
+    function updateItemSlider(id, val) {
         if(!userData.itemCounters) userData.itemCounters = {};
-        let curr = userData.itemCounters[id] || 0;
-        curr += delta;
-        if(curr < 0) curr = 0;
-        if(curr > max) curr = max;
-        userData.itemCounters[id] = curr;
+        userData.itemCounters[id] = parseInt(val) || 0;
+        document.getElementById(`slider-val-${id}`).innerText = userData.itemCounters[id];
         saveData();
-        renderTasks();
     }
 
     function updateSpLevel(val) {
@@ -567,10 +613,10 @@
     }
     function toggleCustomTask(id) {
         const task = userData.customTasks.find(t => t.id === id);
-        if (task) { task.checked = !task.checked; saveData(); }
+        if (task) { task.checked = !task.checked; saveData(); renderTasks(); }
     }
     function deleteCustomTask(id) {
-        if(!confirm("이 숙제 지움?")) return;
+        if(!confirm("이 항목을 삭제하시겠습니까?")) return;
         userData.customTasks = userData.customTasks.filter(t => t.id !== id);
         saveData(); renderTasks();
     }
@@ -579,47 +625,58 @@
         const container = document.getElementById('task-container');
         container.innerHTML = '';
 
+        let dailyTotal = 0, dailyDone = 0;
+        let weeklyTotal = 0, weeklyDone = 0;
+
         Object.keys(taskConfig).forEach(categoryKey => {
             const cat = taskConfig[categoryKey];
             const div = document.createElement('div');
             div.className = 'task-category';
             let html = `<h2>${cat.title}</h2>`;
             
-            // 일반 체크박스 숙제
+            // 일반 체크박스
             cat.items.forEach((item, idx) => {
                 const taskId = `${cat.type}_${categoryKey}_${idx}`;
-                const isChecked = userData.tasks[taskId] ? 'checked' : '';
-                html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${isChecked}><span>${item}</span></label>`;
+                const isChecked = userData.tasks[taskId];
+                const checkedAttr = isChecked ? 'checked' : '';
+                html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${checkedAttr}><span>${item}</span></label>`;
+                
+                if(cat.type === 'daily') { dailyTotal++; if(isChecked) dailyDone++; }
+                if(cat.type === 'weekly' || cat.type === 'biweekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
             });
 
-            // 월간 카운터 전용 렌더링
-            if (cat.counters) {
-                cat.counters.forEach(c => {
-                    let val = userData.itemCounters?.[c.id] || 0;
-                    html += `
-                    <div class="counter-item">
-                        <span class="counter-name">${c.name}</span>
-                        <div class="counter-controls">
-                            <button onclick="updateCounter('${c.id}', -1, ${c.max})">-</button>
-                            <span class="counter-val">${val} / ${c.max}</span>
-                            <button onclick="updateCounter('${c.id}', 1, ${c.max})">+</button>
-                        </div>
-                    </div>`;
-                });
-            }
-
+            // 서브 아코디언 메뉴 (월간 드래그 및 주간 시즌패스 상세)
             if (cat.sub) {
                 html += `<details class="sub-tasks"><summary>${cat.sub.title}</summary><div class="sub-task-list">`;
-                cat.sub.items.forEach((item, idx) => {
-                    const taskId = `${cat.type}_${categoryKey}_sub_${idx}`;
-                    const isChecked = userData.tasks[taskId] ? 'checked' : '';
-                    html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${isChecked}><span>${item}</span></label>`;
-                });
+                
+                if (cat.sub.sliders) {
+                    // 월간 아이템 슬라이더
+                    cat.sub.sliders.forEach(slider => {
+                        let val = userData.itemCounters?.[slider.id] || 0;
+                        html += `
+                        <div class="slider-container">
+                            <div class="slider-header">
+                                <span>${slider.name}</span>
+                                <span class="sp-input"><span id="slider-val-${slider.id}">${val}</span> / ${slider.max}</span>
+                            </div>
+                            <input type="range" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value)" onchange="saveData()">
+                        </div>`;
+                    });
+                } else if (cat.sub.items) {
+                    // 주간 시즌패스 체크박스
+                    cat.sub.items.forEach((item, idx) => {
+                        const taskId = `${cat.type}_${categoryKey}_sub_${idx}`;
+                        const isChecked = userData.tasks[taskId];
+                        const checkedAttr = isChecked ? 'checked' : '';
+                        html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${checkedAttr}><span>${item}</span></label>`;
+                        if(cat.type === 'weekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
+                    });
+                }
                 html += `</div></details>`;
             }
 
             if(categoryKey === 'fiveWeekly') {
-                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
+                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)" style="background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; padding:2px;"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
             }
             div.innerHTML = html;
             container.appendChild(div);
@@ -635,18 +692,23 @@
                     <option value="weekly">주간</option>
                     <option value="monthly">월간</option>
                 </select>
-                <input type="text" id="custom-task-input" placeholder="새 숙제 입력" onkeypress="if(event.key === 'Enter') addCustomTask()">
+                <input type="text" id="custom-task-input" placeholder="새 항목 입력" onkeypress="if(event.key === 'Enter') addCustomTask()">
                 <button onclick="addCustomTask()">추가</button>
             </div>`;
 
         if (userData.customTasks && userData.customTasks.length > 0) {
             userData.customTasks.forEach(task => {
-                const isChecked = task.checked ? 'checked' : '';
+                const isChecked = task.checked;
+                const checkedAttr = isChecked ? 'checked' : '';
                 const typeLabel = task.type === 'daily' ? '일일' : (task.type === 'weekly' ? '주간' : '월간');
+                
+                if(task.type === 'daily') { dailyTotal++; if(isChecked) dailyDone++; }
+                if(task.type === 'weekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
+
                 customHtml += `
                 <div class="task-item">
                     <label style="display:flex; align-items:flex-start; flex:1; cursor:pointer;">
-                        <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${isChecked}>
+                        <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${checkedAttr}>
                         <span><b style="color:var(--primary); font-size:12px; margin-right:6px; border:1px solid var(--primary); padding:2px 4px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
                     </label>
                     <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">삭제</button>
@@ -655,34 +717,60 @@
         }
         customDiv.innerHTML = customHtml;
         container.appendChild(customDiv);
+
+        // 진행도 업데이트
+        const dailyPercent = dailyTotal > 0 ? Math.round((dailyDone / dailyTotal) * 100) : 0;
+        const weeklyPercent = weeklyTotal > 0 ? Math.round((weeklyDone / weeklyTotal) * 100) : 0;
+        document.getElementById('progress-daily-fill').style.width = `${dailyPercent}%`;
+        document.getElementById('progress-daily-text').innerText = `${dailyPercent}%`;
+        document.getElementById('progress-weekly-fill').style.width = `${weeklyPercent}%`;
+        document.getElementById('progress-weekly-text').innerText = `${weeklyPercent}%`;
     }
 
     // ==========================================
     // 호감도 계산기 로직
     // ==========================================
+    function toggleCustomChar() {
+        const select = document.getElementById('char-name-select');
+        const customInput = document.getElementById('char-name-custom');
+        if (select.value === 'custom') {
+            customInput.style.display = 'block';
+            select.style.display = 'none';
+            customInput.focus();
+        } else {
+            customInput.style.display = 'none';
+        }
+    }
+
     function addCharacter() {
-        const name = document.getElementById('char-name').value.trim();
+        const select = document.getElementById('char-name-select');
+        const customInput = document.getElementById('char-name-custom');
+        
+        let name = select.value === 'custom' ? customInput.value.trim() : select.value;
         const level = parseInt(document.getElementById('char-level').value);
         const exp = parseInt(document.getElementById('char-exp').value);
 
         if (!name || isNaN(level) || isNaN(exp) || level < 1 || level > 9 || exp < 0) {
-            return alert("값 제대로 입력해라 ㅇㅇ (레벨은 1~9 사이)");
+            return alert("올바른 값을 입력해 주세요. (레벨은 1~9 사이)");
         }
         if (exp >= affectionExpReq[level]) {
-            return alert(`그 레벨에서 다음 레벨 가려면 경험치 ${affectionExpReq[level]} 필요함. 경험치 똑바로 적어라.`);
+            return alert(`해당 레벨의 최대 경험치는 ${affectionExpReq[level]}입니다. 올바른 경험치를 입력해 주세요.`);
         }
 
         if(!userData.characters) userData.characters = [];
         userData.characters.push({ id: 'char_' + Date.now(), name, level, exp });
         
-        document.getElementById('char-name').value = '';
+        select.value = '민트';
+        select.style.display = 'block';
+        customInput.style.display = 'none';
+        customInput.value = '';
         document.getElementById('char-level').value = '';
         document.getElementById('char-exp').value = '';
         saveData(); renderCharacters();
     }
 
     function deleteCharacter(id) {
-        if(!confirm("캐릭터 지움?")) return;
+        if(!confirm("이 캐릭터 정보를 삭제하시겠습니까?")) return;
         userData.characters = userData.characters.filter(c => c.id !== id);
         saveData(); renderCharacters();
     }
@@ -691,23 +779,16 @@
         const list = document.getElementById('character-list');
         list.innerHTML = '';
         if(!userData.characters || userData.characters.length === 0) {
-            list.innerHTML = '<p style="color:var(--text-muted);">추가된 캐릭터가 없다 이기</p>';
+            list.innerHTML = '<p style="color:var(--text-muted);">추가된 캐릭터가 없습니다.</p>';
             return;
         }
 
         userData.characters.forEach(char => {
-            // 남은 경험치 계산
             let remainingExpTo10 = 0;
-            // 1. 현재 레벨에서 다음 레벨로 가기 위해 남은 경험치
             remainingExpTo10 += (affectionExpReq[char.level] - char.exp);
-            // 2. 그 다음 레벨부터 10레벨까지 필요한 전체 경험치 더하기
-            for(let i = char.level + 1; i < 10; i++) {
-                remainingExpTo10 += affectionExpReq[i];
-            }
+            for(let i = char.level + 1; i < 10; i++) remainingExpTo10 += affectionExpReq[i];
 
             const daysLeft = Math.ceil(remainingExpTo10 / 1200);
-            
-            // 전체 1~10레벨 통산 경험치 61500 기준 진행도 바 계산
             const totalExpReq = 61500;
             const currentTotalExp = totalExpReq - remainingExpTo10;
             const progressPercent = Math.min(100, (currentTotalExp / totalExpReq) * 100);
