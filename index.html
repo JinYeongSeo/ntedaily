@@ -176,15 +176,24 @@
     // ==========================================
     // 🚨 본인 파이어베이스 설정으로 무조건 변경 🚨
     // ==========================================
-    const firebaseConfig = {
-      apiKey: "여기에_API_KEY_입력",
-      authDomain: "프로젝트명.firebaseapp.com",
-      databaseURL: "https://프로젝트명-default-rtdb.firebaseio.com",
-      projectId: "프로젝트명",
-      storageBucket: "프로젝트명.appspot.com",
-      messagingSenderId: "숫자",
-      appId: "앱아이디"
-    };
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDmHL4vrYAwSzw-59TeNE5eGQatCkT8_Aw",
+  authDomain: "nte-daily.firebaseapp.com",
+  databaseURL: "https://nte-daily-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "nte-daily",
+  storageBucket: "nte-daily.firebasestorage.app",
+  messagingSenderId: "584022791839",
+  appId: "1:584022791839:web:384f8f5794124344c0f4aa"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
     // ==========================================
 
     firebase.initializeApp(firebaseConfig);
