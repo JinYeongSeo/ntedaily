@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>이환(NTE) 1.0 숙제 트래커 - Vercel Ver.</title>
     
-    <!-- Pretendard 폰트 -->
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <!-- SUIT 폰트 (깔끔하고 트렌디함) -->
+    <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet">
     
     <!-- Firebase SDK (v8 CDN) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -16,33 +16,35 @@
     <style>
         :root {
             /* 다크모드 (기본) */
-            --bg-color: #0a0b10;
-            --panel-bg: rgba(20, 22, 32, 0.75);
+            --bg-color: #0a0b12;
+            --panel-bg: rgba(18, 20, 28, 0.85);
             --primary: #00f0ff;
-            --accent: #ff003c;
-            --text-main: #f0f4f8;
-            --text-muted: #8b949e;
-            --border: rgba(0, 240, 255, 0.25);
+            --accent: #ff0055;
+            --grad: linear-gradient(135deg, var(--primary), var(--accent));
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(0, 240, 255, 0.2);
             --danger: #ff4444;
-            --bg-overlay: rgba(10, 12, 18, 0.65);
+            --bg-overlay: rgba(10, 11, 18, 0.7);
         }
 
         [data-theme="light"] {
-            /* 라이트모드 */
-            --bg-color: #f3f4f6;
-            --panel-bg: rgba(255, 255, 255, 0.9);
-            --primary: #0284c7;
+            /* 화이트모드 */
+            --bg-color: #f1f5f9;
+            --panel-bg: rgba(255, 255, 255, 0.95);
+            --primary: #0ea5e9;
             --accent: #e11d48;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --border: rgba(2, 132, 199, 0.3);
+            --grad: linear-gradient(135deg, var(--primary), var(--accent));
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: rgba(14, 165, 233, 0.3);
             --danger: #ef4444;
-            --bg-overlay: rgba(255, 255, 255, 0.85);
+            --bg-overlay: rgba(255, 255, 255, 0.6);
         }
 
         body, html {
             margin: 0; padding: 0;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            font-family: 'SUIT', -apple-system, sans-serif;
             background: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
@@ -59,111 +61,136 @@
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-overlay); 
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: -1;
             transition: background-color 0.3s;
         }
 
-        /* 라이트모드일 때 배경 숨기고 깔끔하게 */
         [data-theme="light"] .bg-image { display: none; }
         [data-theme="light"] .bg-overlay { backdrop-filter: none; background: var(--bg-color); }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 
         /* 로그인 화면 */
         #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         .login-box {
-            background: var(--panel-bg); padding: 40px 30px; border-radius: 16px;
-            border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            text-align: center; width: 100%; max-width: 360px; backdrop-filter: blur(4px);
+            background: var(--panel-bg); padding: 40px 30px; border-radius: 20px;
+            border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            text-align: center; width: 100%; max-width: 380px; backdrop-filter: blur(8px);
         }
+        .login-box h1 { font-weight: 800; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
         .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
         input[type="text"], input[type="password"], input[type="number"], select {
-            background: rgba(0,0,0,0.1); border: 1px solid var(--border);
-            color: var(--text-main); padding: 12px 16px; border-radius: 8px;
+            background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+            color: var(--text-main); padding: 14px 16px; border-radius: 10px;
             outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s;
         }
-        [data-theme="light"] input, [data-theme="light"] select { background: #fff; color: #000; }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(0,240,255,0.2); }
+        
+        /* Select 드롭다운 화이트 글씨 안 보이는 버그 수정 */
+        select option { background-color: #1a1c23; color: #ffffff; }
+        
+        [data-theme="light"] input, [data-theme="light"] select { background: #f8fafc; color: #0f172a; }
+        [data-theme="light"] select option { background-color: #ffffff; color: #0f172a; }
+        
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 12px rgba(0,240,255,0.2); }
 
         .btn-group { display: flex; gap: 10px; justify-content: center; }
         button {
-            background: var(--primary); color: #fff; border: none; flex: 1;
-            padding: 12px; border-radius: 8px; font-weight: 700; font-family: inherit;
-            cursor: pointer; transition: all 0.2s; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            background: var(--primary); color: #0f172a; border: none; flex: 1; /* 글자색 진하게 수정 */
+            padding: 14px; border-radius: 10px; font-weight: 800; font-family: inherit;
+            cursor: pointer; transition: all 0.2s; font-size: 15px; 
         }
-        [data-theme="light"] button { color: #fff; }
-
-        button.btn-signup { background: transparent; border: 1px solid var(--primary); color: var(--primary); text-shadow: none; }
-        button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-        button:disabled { background: #555; border-color: #555; color: #999; cursor: not-allowed; transform: none; text-shadow: none;}
+        button.btn-signup { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,240,255,0.3); }
+        button:disabled { background: #334155; border-color: #334155; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none;}
 
         /* 대시보드 화면 */
         #app-screen { display: none; }
         
         header {
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-            border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;
+            border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 25px;
         }
 
-        h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); }
-        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 600; margin-left: 4px; }
-        .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; flex-wrap: wrap; }
+        header h1 { margin: 0; font-size: 28px; font-weight: 900; background: var(--grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 700; margin-left: 4px; }
+        .user-info { display: flex; align-items: center; gap: 12px; font-size: 15px; flex-wrap: wrap; }
 
-        /* 스태미나 위젯 */
+        /* 스태미나 위젯 (직접 입력 UI 개선) */
         .stamina-widget {
-            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
-            padding: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;
+            background: var(--panel-bg); border-radius: 16px;
+            padding: 20px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2); position: relative; overflow: hidden;
         }
-        .stamina-info h3 { margin: 0 0 5px 0; font-size: 15px; color: var(--primary); }
-        .stamina-val { font-size: 24px; font-weight: 800; font-family: monospace; }
-        .stamina-timer { font-size: 13px; color: var(--text-muted); font-weight: 600; }
-        .stamina-controls { display: flex; gap: 8px; }
-        .stamina-controls input { width: 80px; padding: 8px; font-size: 14px; text-align: center; }
-        .stamina-controls button { padding: 8px 12px; font-size: 13px; flex: none; }
+        .stamina-widget::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: var(--grad);
+        }
+        .stamina-info h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 700; color: var(--primary); }
+        .stamina-val { font-size: 28px; font-weight: 900; font-family: monospace; letter-spacing: -0.5px; }
+        .stamina-max-text { font-size: 18px; color: var(--text-muted); font-weight: 600; }
+        .stamina-timer { font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: 5px; }
+        
+        .stamina-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .stamina-input-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.2); padding: 5px 10px; border-radius: 8px; border: 1px solid var(--border); }
+        [data-theme="light"] .stamina-input-wrapper { background: #f8fafc; }
+        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 60px; text-align: center; font-weight: 700; box-shadow: none; font-size: 16px; }
+        .stamina-input-wrapper span { color: var(--text-muted); font-weight: 700; }
+        .stamina-controls button { padding: 10px 16px; width: auto; font-size: 14px; }
 
-        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .timer-card { background: var(--panel-bg); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; padding: 15px; text-align: center; }
-        .timer-card h3 { margin: 0 0 8px 0; font-size: 13px; color: var(--text-muted); font-weight: 600; }
-        .timer-card .time { font-size: 18px; font-weight: 700; color: var(--primary); font-family: monospace; }
+        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .timer-card { background: var(--panel-bg); border-radius: 16px; padding: 18px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .timer-card h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted); font-weight: 700; }
+        .timer-card .time { font-size: 20px; font-weight: 800; color: var(--primary); font-family: monospace; letter-spacing: -0.5px; }
 
-        .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .task-category { background: var(--panel-bg); border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); padding: 20px; }
-        .task-category h2 { margin-top: 0; font-size: 17px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 12px; margin-bottom: 15px; }
+        .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .task-category { background: var(--panel-bg); border-radius: 16px; padding: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .task-category h2 { margin-top: 0; font-size: 18px; font-weight: 800; color: var(--text-main); border-bottom: 2px solid rgba(128,128,128,0.1); padding-bottom: 12px; margin-bottom: 18px; }
 
-        .task-item { display: flex; align-items: flex-start; margin-bottom: 14px; cursor: pointer; position: relative; }
+        .task-item { display: flex; align-items: flex-start; margin-bottom: 16px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] {
-            appearance: none; width: 22px; height: 22px; flex-shrink: 0;
+            appearance: none; width: 24px; height: 24px; flex-shrink: 0;
             border: 2px solid var(--text-muted); border-radius: 6px;
-            margin-right: 12px; margin-top: -1px; cursor: pointer; position: relative; transition: all 0.2s; background: transparent;
+            margin-right: 12px; margin-top: -2px; cursor: pointer; position: relative; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: transparent;
         }
         .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
         .task-item input[type="checkbox"]:checked::after {
-            content: '✔'; position: absolute; color: #fff; font-size: 14px; font-weight: 900;
+            content: '✔'; position: absolute; color: #0f172a; font-size: 15px; font-weight: 900;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
-        [data-theme="light"] .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
-        
-        .task-item span { font-size: 15px; line-height: 1.4; transition: 0.2s; color: var(--text-main); word-break: keep-all; }
-        .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; }
+        .task-item span { font-size: 16px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 500; word-break: keep-all; }
+        .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.6; }
 
-        .custom-controls { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .custom-controls select { padding: 8px; flex-shrink: 0; }
-        .custom-controls input { flex: 1; min-width: 150px; padding: 8px 12px; margin-bottom: 0; }
-        .custom-controls button { flex-shrink: 0; width: 60px; padding: 8px; }
-        .delete-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; font-size: 12px; border-radius: 4px; margin-left: auto; margin-top: -2px; }
-        .delete-btn:hover { background: rgba(255, 68, 68, 0.1); }
+        /* 시즌패스 아코디언 메뉴 UI */
+        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.15); border-radius: 10px; padding: 5px; border: 1px solid rgba(128,128,128,0.1); }
+        [data-theme="light"] details.sub-tasks { background: #f8fafc; }
+        details.sub-tasks summary { 
+            padding: 12px; font-weight: 700; font-size: 15px; cursor: pointer; color: var(--primary); 
+            list-style: none; display: flex; align-items: center; justify-content: space-between;
+        }
+        details.sub-tasks summary::-webkit-details-marker { display: none; }
+        details.sub-tasks summary::after { content: '▼'; font-size: 12px; transition: 0.3s; }
+        details[open] summary::after { transform: rotate(180deg); }
+        .sub-task-list { padding: 15px 10px 5px 10px; border-top: 1px solid rgba(128,128,128,0.1); }
 
-        .slider-container { margin-top: 20px; background: rgba(128,128,128,0.1); padding: 15px; border-radius: 10px; }
-        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; }
-        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
-        .sp-input { width: 60px; text-align: center; padding: 6px; }
+        .custom-controls { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+        .custom-controls select { padding: 10px; flex-shrink: 0; width: 85px; }
+        .custom-controls input { flex: 1; min-width: 140px; padding: 10px 12px; margin-bottom: 0; }
+        .custom-controls button { flex-shrink: 0; width: 70px; padding: 10px; font-size: 14px; }
+        .delete-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 6px 10px; font-size: 13px; border-radius: 6px; margin-left: auto; margin-top: -2px; }
+        .delete-btn:hover { background: rgba(239, 68, 68, 0.1); transform: none; box-shadow: none; }
+
+        .slider-container { margin-top: 20px; background: rgba(128,128,128,0.05); padding: 18px; border-radius: 12px; border: 1px solid rgba(128,128,128,0.1); }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 15px; font-weight: 600; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; height: 6px; }
+        .sp-input { width: 60px; text-align: center; padding: 6px; font-weight: 700; }
         
-        .theme-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); padding: 6px 12px; border-radius: 6px; font-size: 13px; text-shadow: none; }
+        .theme-btn { background: transparent; border: 2px solid var(--text-muted); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; }
+        .theme-btn:hover { background: var(--text-muted); color: var(--bg-color); box-shadow: none; transform: none; }
         
-        #loading-text { color: var(--accent); margin-top: 15px; display: none; font-weight: 600; font-size: 14px; }
+        #loading-text { color: var(--accent); margin-top: 15px; display: none; font-weight: 700; font-size: 14px; }
 
         @media (max-width: 600px) {
             .timers-grid { grid-template-columns: repeat(2, 1fr); }
@@ -172,7 +199,8 @@
             .user-info { width: 100%; justify-content: space-between; }
             .stamina-widget { flex-direction: column; align-items: flex-start; }
             .stamina-controls { width: 100%; }
-            .stamina-controls input { flex: 1; }
+            .stamina-input-wrapper { flex: 1; justify-content: center; }
+            .stamina-input-wrapper input { width: 100%; }
         }
     </style>
 </head>
@@ -182,8 +210,8 @@
     
     <div id="login-screen">
         <div class="login-box">
-            <h1 style="margin-bottom: 5px;">NTE Tracker <span class="version">v1.0</span></h1>
-            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">한 번 로긴하면 자동 기억됨</p>
+            <h1 style="margin-bottom: 10px;">NTE Tracker</h1>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 15px; font-weight: 500;">한 번 로긴하면 자동 기억됨</p>
             
             <div class="input-group">
                 <input type="text" id="uid-input" placeholder="인게임 UID 입력">
@@ -194,7 +222,7 @@
                 <button id="btn-login" onclick="handleLogin()">로그인</button>
                 <button id="btn-signup" class="btn-signup" onclick="handleSignup()">가입하기</button>
             </div>
-            <div id="loading-text">인증 중...</div>
+            <div id="loading-text">인증 중... 대기ㄱㄱ</div>
         </div>
     </div>
 
@@ -202,22 +230,29 @@
         <header>
             <h1>이환 숙제 트래커 <span class="version">v1.0</span></h1>
             <div class="user-info">
-                <span id="display-uid" style="font-weight: bold;"></span>
-                <button class="theme-btn" onclick="toggleTheme()">테마 변경</button>
-                <button onclick="handleLogout()" style="padding: 6px 12px; font-size: 13px; background: transparent; border: 1px solid var(--accent); color: var(--accent); text-shadow:none;">로그아웃</button>
+                <span id="display-uid" style="font-weight: 800; font-size: 18px;"></span>
+                <button id="theme-btn" class="theme-btn" onclick="toggleTheme()">화이트 모드 변경</button>
+                <button onclick="handleLogout()" style="padding: 8px 14px; font-size: 14px; background: transparent; border: 2px solid var(--accent); color: var(--accent); font-weight: 700;">로그아웃</button>
             </div>
         </header>
 
-        <!-- 스태미나 위젯 -->
+        <!-- 스태미나 위젯 (커스텀 최대치 입력 가능) -->
         <div class="stamina-widget">
             <div class="stamina-info">
                 <h3>본성 픽셀 (6분당 1 회복)</h3>
-                <div class="stamina-val"><span id="curr-stamina">0</span> / 240</div>
+                <div class="stamina-val">
+                    <span id="curr-stamina">0</span> 
+                    <span class="stamina-max-text">/ <span id="display-max-stamina">240</span></span>
+                </div>
                 <div id="stamina-timer" class="stamina-timer">계산 중...</div>
             </div>
             <div class="stamina-controls">
-                <input type="number" id="stamina-input" placeholder="잔량 입력">
-                <button onclick="syncStamina()">동기화</button>
+                <div class="stamina-input-wrapper">
+                    <input type="number" id="stamina-input" placeholder="현재">
+                    <span>/</span>
+                    <input type="number" id="stamina-max-input" placeholder="최대" value="240">
+                </div>
+                <button onclick="syncStamina()">시작</button>
             </div>
         </div>
 
@@ -245,7 +280,7 @@
         </div>
 
         <div class="task-grid" id="task-container">
-            <!-- 자바스크립트로 자동 생성됨 -->
+            <!-- JS 렌더링 -->
         </div>
     </div>
 
@@ -267,10 +302,21 @@
     const auth = firebase.auth();
     const database = firebase.database();
 
-    // 테마 설정
+    // 테마 설정 로직 (버튼 텍스트 동적 변경 추가)
+    function updateThemeBtnText() {
+        const btn = document.getElementById('theme-btn');
+        if(document.documentElement.getAttribute('data-theme') === 'light') {
+            btn.innerText = "다크 모드 변경";
+        } else {
+            btn.innerText = "화이트 모드 변경";
+        }
+    }
+
     if(localStorage.getItem('theme') === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
     }
+    updateThemeBtnText();
+
     function toggleTheme() {
         if(document.documentElement.getAttribute('data-theme') === 'light') {
             document.documentElement.removeAttribute('data-theme');
@@ -279,20 +325,31 @@
             document.documentElement.setAttribute('data-theme', 'light');
             localStorage.setItem('theme', 'light');
         }
+        updateThemeBtnText();
     }
 
-    // 주간 숙제 세분화 적용
+    // 시즌패스 주간 분리 적용
     const taskConfig = {
         dailyImportant: { title: "중요 일일 숙제", type: "daily", items: [ "본성 픽셀 사용", "탐색 안내서(일퀘) 100 활약도", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번 (400호감도 아이템 사용)", "캐릭터 데이트", "시즌패스 일일 미션" ] },
         dailyOther: { title: "그 외 일일 숙제", type: "daily", items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠페다 분수 기도하기", "소원나무 선물 납품", "캐릭터 호감도작 (같이 차 타기, 집 안 교류)", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술" ] },
-        weekly: { title: "주간 숙제", type: "weekly", items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령", "시즌패스: 본성 픽셀 720P 소모", "시즌패스: 도시 활력제 200P 소모", "시즌패스: 300,000 폰즈 획득", "시즌패스: 콘솔 되감기 10회 진행", "시즌패스: 토끼굴 3회 클리어", "시즌패스: 이상 순례 2회 클리어", "시즌패스: 비틀 코인 100,000개 소모", "시즌패스: 선물 10회 증정" ] },
+        weekly: { 
+            title: "주간 숙제", type: "weekly", 
+            items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령" ],
+            sub: {
+                title: "시즌패스 주간 미션 상세",
+                items: [
+                    "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행",
+                    "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정"
+                ]
+            }
+        },
         biweekly: { title: "2주 간격 숙제", type: "biweekly", items: ["핑크퍼스 은행털기"] },
         monthly: { title: "월간 숙제", type: "monthly", items: ["마켓 기만의 주사위 교환", "마켓 진실의 주사위 교환", "마켓 삼중 열쇠 교환"] },
         fiveWeekly: { title: "5주 간격 숙제", type: "5weekly", items: ["궤도 너머 특별 노선 클리어", "헌터 거래소 교환"] }
     };
 
     let currentUserAuthUid = null;
-    let userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaUpdated: 0 };
+    let userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 240, staminaUpdated: 0 };
     let timerInterval = null;
 
     function getFakeEmail(uid) { return uid + "@nte-tracker.com"; }
@@ -303,7 +360,6 @@
         document.getElementById('loading-text').style.display = show ? 'block' : 'none';
     }
 
-    // 자동 로그인 감지
     auth.onAuthStateChanged((user) => {
         if (user && !currentUserAuthUid) {
             const displayUid = user.email.split('@')[0];
@@ -314,13 +370,13 @@
     function handleSignup() {
         const uid = document.getElementById('uid-input').value.trim();
         const pw = document.getElementById('pw-input').value.trim();
-        if (!uid || !pw) return alert("UID랑 비번 둘 다 쳐라 ㅇㅇ");
+        if (!uid || !pw) return alert("UID랑 비번 둘 다 적어라 ㅇㅇ");
         if (pw.length < 6) return alert("비번은 최소 6자리 이상이어야 됨");
 
         toggleLoading(true);
         auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
             toggleLoading(false);
-            if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID임. 비번 치고 로그인 버튼 눌러라.");
+            if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID임. 비번 치고 로그인 ㄱㄱ.");
             else alert("에러 뜸: " + error.message);
         });
     }
@@ -328,7 +384,7 @@
     function handleLogin() {
         const uid = document.getElementById('uid-input').value.trim();
         const pw = document.getElementById('pw-input').value.trim();
-        if (!uid || !pw) return alert("UID랑 비번 둘 다 쳐라 ㅇㅇ");
+        if (!uid || !pw) return alert("UID랑 비번 치고 눌러라");
 
         toggleLoading(true);
         auth.signInWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
@@ -348,9 +404,10 @@
                 if(!userData.tasks) userData.tasks = {};
                 if(!userData.customTasks) userData.customTasks = [];
                 if(!userData.resetTargets) userData.resetTargets = {};
-                if(!userData.stamina) userData.stamina = 0;
+                if(userData.stamina === undefined) userData.stamina = 0;
+                if(!userData.staminaMax) userData.staminaMax = 240;
             } else {
-                userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaUpdated: Date.now() };
+                userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 240, staminaUpdated: Date.now() };
             }
             
             checkAndResetTasks();
@@ -359,6 +416,8 @@
             document.getElementById('app-screen').style.display = 'block';
             document.getElementById('display-uid').innerText = `UID: ${displayUid}`;
             document.getElementById('stamina-input').value = '';
+            document.getElementById('stamina-max-input').value = userData.staminaMax;
+            
             toggleLoading(false);
             
             renderTasks();
@@ -383,27 +442,32 @@
         });
     }
 
-    // 본성 픽셀(스태미나) 로직
+    // 본성 픽셀 로직 (최대치 적용)
     function syncStamina() {
         const val = parseInt(document.getElementById('stamina-input').value);
-        if(isNaN(val) || val < 0) return alert("숫자 제대로 적어라");
+        const maxVal = parseInt(document.getElementById('stamina-max-input').value);
+        if(isNaN(val) || val < 0 || isNaN(maxVal) || maxVal <= 0) return alert("숫자 제대로 써라 ㅇㅇ");
         
-        userData.stamina = Math.min(val, 240); // 일단 이환 최대치 대충 240 잡음
+        userData.staminaMax = maxVal;
+        userData.stamina = Math.min(val, maxVal);
         userData.staminaUpdated = Date.now();
         saveData();
         calcStamina();
-        document.getElementById('stamina-input').value = '';
+        document.getElementById('stamina-input').value = ''; // 입력 후 비워줌
     }
 
     function calcStamina() {
         if(!userData.staminaUpdated) return;
+        const maxStamina = userData.staminaMax || 240;
+        document.getElementById('display-max-stamina').innerText = maxStamina;
+
         const now = Date.now();
         const diff = now - userData.staminaUpdated;
         const generated = Math.floor(diff / (6 * 60 * 1000));
         let current = (userData.stamina || 0) + generated;
         
-        if (current >= 240) {
-            current = 240;
+        if (current >= maxStamina) {
+            current = maxStamina;
             document.getElementById('stamina-timer').innerText = "최대치 도달 (MAX)";
         } else {
             let nextTick = (6 * 60 * 1000) - (diff % (6 * 60 * 1000));
@@ -414,7 +478,6 @@
         document.getElementById('curr-stamina').innerText = current;
     }
 
-    // 초기화 날짜 계산 (5주 기준일 4월 29일)
     function getNextReset(type, now = new Date()) {
         let d = new Date(now);
         let resetToday = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 5, 0, 0);
@@ -507,7 +570,7 @@
     }
 
     function deleteCustomTask(id) {
-        if(!confirm("이 커스텀 숙제 지움?")) return;
+        if(!confirm("이 숙제 지움?")) return;
         userData.customTasks = userData.customTasks.filter(t => t.id !== id);
         saveData();
         renderTasks();
@@ -529,6 +592,20 @@
                 html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${isChecked}><span>${item}</span></label>`;
             });
 
+            // 서브 카테고리 (시즌패스 아코디언)
+            if (cat.sub) {
+                html += `<details class="sub-tasks">
+                            <summary>${cat.sub.title}</summary>
+                            <div class="sub-task-list">`;
+                cat.sub.items.forEach((item, idx) => {
+                    const taskId = `${cat.type}_${categoryKey}_sub_${idx}`;
+                    const isChecked = userData.tasks[taskId] ? 'checked' : '';
+                    html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${isChecked}><span>${item}</span></label>`;
+                });
+                html += `   </div>
+                         </details>`;
+            }
+
             if(categoryKey === 'fiveWeekly') {
                 html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
             }
@@ -536,6 +613,7 @@
             container.appendChild(div);
         });
 
+        // 커스텀 숙제 렌더링
         const customDiv = document.createElement('div');
         customDiv.className = 'task-category';
         let customHtml = `<h2>커스텀 숙제 (개인용)</h2>
@@ -557,7 +635,7 @@
                 <div class="task-item">
                     <label style="display:flex; align-items:flex-start; flex:1; cursor:pointer;">
                         <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${isChecked}>
-                        <span><b style="color:var(--primary); font-size:12px; margin-right:5px;">[${typeLabel}]</b> ${task.text}</span>
+                        <span><b style="color:var(--primary); font-size:12px; margin-right:6px; border:1px solid var(--primary); padding:2px 4px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
                     </label>
                     <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">삭제</button>
                 </div>`;
