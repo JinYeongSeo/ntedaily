@@ -15,44 +15,46 @@
     
     <style>
         :root {
-            /* 다크모드 트렌디 컬러 팔레트 */
-            --bg-color: #05050a;
-            --panel-bg: rgba(18, 20, 28, 0.7);
-            --panel-border: 1px solid rgba(255, 255, 255, 0.08);
+            /* 다크모드 트렌디 컬러 팔레트 (다채롭게 변경) */
+            --bg-color: #06060c;
+            --panel-bg: rgba(22, 24, 34, 0.75);
+            --panel-border: 1px solid rgba(255, 255, 255, 0.1);
             
-            --primary: #00f0ff;    /* Cyan */
-            --secondary: #a855f7;  /* Purple */
-            --accent: #ff0055;     /* Pink */
-            --success: #10b981;    /* Green */
-            --warning: #f59e0b;    /* Orange */
+            --primary: #00e5ff;    /* Cyan */
+            --secondary: #d946ef;  /* Fuchsia/Purple */
+            --accent: #f43f5e;     /* Neon Pink */
+            --success: #10b981;    /* Emerald */
+            --warning: #f59e0b;    /* Amber */
             
-            --grad-main: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            --grad-sub: linear-gradient(135deg, var(--secondary), var(--primary));
+            --grad-main: linear-gradient(135deg, var(--primary), var(--secondary));
+            --grad-sub: linear-gradient(135deg, var(--secondary), var(--accent));
+            --grad-stamina: linear-gradient(135deg, #3b82f6, var(--primary));
             
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-main: #ffffff; /* 가시성 떡상 (완전 흰색) */
+            --text-muted: #cbd5e1;
             --danger: #ef4444;
-            --bg-overlay: rgba(5, 5, 10, 0.8);
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-            --inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            --bg-overlay: rgba(6, 6, 12, 0.85);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            --inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
         }
 
         [data-theme="light"] {
             /* 화이트모드 */
             --bg-color: #f8fafc;
-            --panel-bg: rgba(255, 255, 255, 0.9);
-            --panel-border: 1px solid rgba(0, 0, 0, 0.1);
+            --panel-bg: rgba(255, 255, 255, 0.95);
+            --panel-border: 1px solid rgba(0, 0, 0, 0.12);
             
-            --primary: #0ea5e9;
-            --secondary: #8b5cf6;
+            --primary: #0284c7;
+            --secondary: #7e22ce;
             --accent: #e11d48;
             
-            --grad-main: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
-            --grad-sub: linear-gradient(135deg, var(--secondary), var(--primary));
+            --grad-main: linear-gradient(135deg, var(--primary), var(--secondary));
+            --grad-sub: linear-gradient(135deg, var(--secondary), var(--accent));
+            --grad-stamina: linear-gradient(135deg, #2563eb, var(--primary));
             
             --text-main: #0f172a;
-            --text-muted: #64748b;
-            --bg-overlay: rgba(255, 255, 255, 0.5);
+            --text-muted: #475569;
+            --bg-overlay: rgba(255, 255, 255, 0.6);
             --shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
             --inner-glow: inset 0 1px 0px rgba(255, 255, 255, 1);
         }
@@ -72,178 +74,180 @@
         [data-theme="light"] .bg-image { display: none; }
         [data-theme="light"] .bg-overlay { backdrop-filter: none; background: var(--bg-color); }
 
-        .container { max-width: 1100px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+        .container { max-width: 1150px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 
         .glass-panel {
             background: var(--panel-bg);
             border: var(--panel-border);
             box-shadow: var(--shadow), var(--inner-glow);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            border-radius: 18px;
             position: relative;
         }
 
         /* 로그인 */
         #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         .login-box { padding: 45px 35px; border-radius: 24px; text-align: center; width: 100%; max-width: 400px; }
-        .login-box h1 { font-weight: 900; font-size: 32px; margin-bottom: 10px; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        input, select { box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: var(--text-main); padding: 14px 16px; border-radius: 12px; outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s; }
+        .login-box h1 { font-weight: 900; font-size: 34px; margin-bottom: 12px; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .input-group { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+        input, select { box-sizing: border-box; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: var(--text-main); padding: 15px 18px; border-radius: 12px; outline: none; font-size: 16px; font-family: inherit; font-weight: 600; transition: all 0.2s; }
         select option { background-color: #1a1c23; color: #ffffff; }
-        [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: rgba(0,0,0,0.15); }
+        [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: rgba(0,0,0,0.2); }
         [data-theme="light"] select option { background-color: #ffffff; color: #0f172a; }
-        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(0, 229, 255, 0.4); }
         .btn-group { display: flex; gap: 12px; justify-content: center; }
-        button { background: var(--grad-main); color: #fff; border: none; flex: 1; padding: 14px; border-radius: 12px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 15px; box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3); }
-        button.btn-signup { background: transparent; border: 2px solid var(--secondary); color: var(--secondary); box-shadow: none; }
-        button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.15); box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4); }
+        button { background: var(--grad-main); color: #fff; border: none; flex: 1; padding: 15px; border-radius: 12px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 16px; box-shadow: 0 4px 15px rgba(217, 70, 239, 0.3); }
+        button.btn-signup { background: transparent; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
+        button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.15); box-shadow: 0 6px 20px rgba(217, 70, 239, 0.4); }
         button:disabled { background: #334155; border-color: #334155; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; filter:none;}
 
         #app-screen { display: none; }
         header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; border-bottom: 1px solid var(--panel-border); padding-bottom: 20px; margin-bottom: 25px; }
         header h1 { margin: 0; font-size: 28px; font-weight: 900; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 800; margin-left: 4px; }
-        .user-info { display: flex; align-items: center; gap: 12px; font-size: 15px; flex-wrap: wrap; }
+        .version { font-size: 14px; color: var(--accent); vertical-align: top; font-weight: 800; margin-left: 4px; }
         
-        /* 다중 계정 스위처 UI */
-        .account-select { background: rgba(168, 85, 247, 0.15); border: 1px solid var(--secondary); color: var(--secondary); font-weight: 800; padding: 8px 14px; border-radius: 8px; font-size: 15px; cursor: pointer; box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
-        [data-theme="light"] .account-select { background: rgba(139, 92, 246, 0.1); border-color: var(--secondary); color: var(--secondary); }
-        .account-select:focus { outline: none; }
+        .user-info { display: flex; align-items: center; gap: 10px; font-size: 15px; flex-wrap: wrap; }
+        .account-select { background: rgba(0, 229, 255, 0.15); border: 1px solid var(--primary); color: var(--primary); font-weight: 800; padding: 8px 12px; border-radius: 8px; font-size: 14px; cursor: pointer; box-shadow: 0 0 10px rgba(0, 229, 255, 0.2); }
+        [data-theme="light"] .account-select { background: rgba(2, 132, 199, 0.1); border-color: var(--primary); color: var(--primary); }
         
-        .theme-btn { background: transparent; border: 2px solid var(--text-muted); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; box-shadow: none; }
+        .add-account-btn { background: var(--secondary); color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 800; border: none; box-shadow: 0 0 10px rgba(217, 70, 239, 0.3); flex: none; }
+        .theme-btn { background: transparent; border: 2px solid var(--text-muted); color: var(--text-main); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; flex: none; box-shadow: none; }
+        .logout-btn { background: transparent; border: 2px solid var(--danger); color: var(--danger); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; flex: none; box-shadow: none; }
         .theme-btn:hover { background: var(--text-muted); color: var(--bg-color); }
-        .logout-btn { background: transparent; border: 2px solid var(--danger); color: var(--danger); padding: 8px 14px; border-radius: 8px; font-size: 14px; font-weight: 700; box-shadow: none; }
         .logout-btn:hover { background: rgba(239, 68, 68, 0.15); }
 
         /* 탭 메뉴 */
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; padding-bottom: 10px; overflow-x: auto; }
-        .tab-btn { background: transparent; color: var(--text-muted); border: none; font-size: 16px; font-weight: 800; padding: 10px 20px; cursor: pointer; border-radius: 10px; white-space: nowrap; transition: 0.2s; }
-        .tab-btn.active { background: rgba(168, 85, 247, 0.15); color: var(--secondary); border: 1px solid var(--secondary); box-shadow: inset 0 0 10px rgba(168, 85, 247, 0.1); }
-        .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.05); }
+        .tabs { display: flex; gap: 12px; margin-bottom: 25px; padding-bottom: 10px; overflow-x: auto; }
+        .tab-btn { background: transparent; color: var(--text-muted); border: none; font-size: 17px; font-weight: 800; padding: 12px 24px; cursor: pointer; border-radius: 12px; white-space: nowrap; transition: 0.2s; box-shadow: none; }
+        .tab-btn.active { background: rgba(0, 229, 255, 0.15); color: var(--primary); border: 1px solid var(--primary); box-shadow: inset 0 0 10px rgba(0, 229, 255, 0.1); }
+        .tab-btn:hover:not(.active) { background: rgba(255,255,255,0.08); }
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 스태미나 위젯 */
         .stamina-widget { padding: 25px 30px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
-        .stamina-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--grad-main); border-radius: 16px 0 0 16px; }
-        .stamina-info h3 { margin: 0 0 8px 0; font-size: 16px; font-weight: 800; color: var(--secondary); }
-        .stamina-val { font-size: 34px; font-weight: 900; font-family: monospace; letter-spacing: -1px; text-shadow: 0 2px 15px rgba(168, 85, 247, 0.4); background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .stamina-max-text { font-size: 20px; color: var(--text-muted); font-weight: 700; -webkit-text-fill-color: var(--text-muted); }
-        .stamina-timer { font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: 5px; }
+        .stamina-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%; background: var(--grad-stamina); border-radius: 18px 0 0 18px; }
+        .stamina-info h3 { margin: 0 0 8px 0; font-size: 17px; font-weight: 800; color: var(--primary); }
+        .stamina-val { font-size: 38px; font-weight: 900; font-family: monospace; letter-spacing: -1px; background: var(--grad-stamina); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 2px 15px rgba(0, 229, 255, 0.4); }
+        .stamina-max-text { font-size: 22px; color: var(--text-muted); font-weight: 800; -webkit-text-fill-color: var(--text-muted); text-shadow: none; }
+        .stamina-timer { font-size: 15px; color: var(--text-muted); font-weight: 700; margin-top: 8px; line-height: 1.5; }
         .stamina-controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-        .stamina-input-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
-        [data-theme="light"] .stamina-input-wrapper { background: #ffffff; border-color:rgba(0,0,0,0.1); }
-        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 65px; text-align: center; font-weight: 800; box-shadow: none; font-size: 16px; color: var(--text-main); }
-        .stamina-input-wrapper span { color: var(--text-muted); font-weight: 700; }
-        .stamina-controls button { padding: 12px 22px; width: auto; font-size: 14px; background: var(--grad-sub); border-radius: 12px; }
+        .stamina-input-wrapper { display: flex; align-items: center; gap: 5px; background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.3); }
+        [data-theme="light"] .stamina-input-wrapper { background: #ffffff; border-color:rgba(0,0,0,0.15); }
+        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 65px; text-align: center; font-weight: 800; box-shadow: none; font-size: 17px; color: var(--primary); }
+        .stamina-input-wrapper span { color: var(--text-muted); font-weight: 800; }
+        .stamina-controls button { padding: 12px 24px; width: auto; font-size: 15px; background: var(--grad-stamina); border-radius: 12px; }
 
         /* 진행도 위젯 */
-        .progress-widget { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .progress-card { padding: 20px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 15px; font-weight: 800; margin-bottom: 12px; }
-        .progress-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.4); border-radius: 6px; overflow: hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); }
+        .progress-widget { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-bottom: 30px; }
+        .progress-card { padding: 22px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; margin-bottom: 12px; }
+        .progress-bar-bg { width: 100%; height: 14px; background: rgba(0,0,0,0.5); border-radius: 7px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.5); }
         [data-theme="light"] .progress-bar-bg { background: rgba(0,0,0,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .progress-bar-fill { height: 100%; background: var(--grad-main); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+        .progress-bar-fill { height: 100%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; }
 
-        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .timer-card { padding: 20px; text-align: center; border-top: 3px solid transparent; transition: 0.3s; }
+        /* 카운터 그리드 */
+        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 30px; }
+        .timer-card { padding: 20px; text-align: center; border-top: 4px solid transparent; transition: 0.3s; }
         .timer-card:hover { border-top-color: var(--secondary); transform: translateY(-4px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
         [data-theme="light"] .timer-card:hover { box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-        .timer-card h3 { margin: 0 0 12px 0; font-size: 14px; color: var(--text-muted); font-weight: 800; }
-        .timer-card .time { font-size: 20px; font-weight: 900; color: var(--primary); font-family: monospace; letter-spacing: -0.5px; }
+        .timer-card h3 { margin: 0 0 12px 0; font-size: 15px; color: var(--text-muted); font-weight: 800; }
+        .timer-card .time { font-size: 22px; font-weight: 900; color: var(--text-main); font-family: monospace; letter-spacing: -0.5px; }
 
-        .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 22px; }
         .task-category { padding: 25px; }
-        .task-category h2 { margin-top: 0; font-size: 20px; font-weight: 900; color: var(--text-main); border-bottom: 2px solid rgba(255,255,255,0.05); padding-bottom: 14px; margin-bottom: 20px; display: flex; align-items: center; }
-        [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.05); }
-        .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 20px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
+        .task-category h2 { margin-top: 0; font-size: 21px; font-weight: 900; color: var(--text-main); border-bottom: 2px solid rgba(255,255,255,0.08); padding-bottom: 16px; margin-bottom: 20px; display: flex; align-items: center; }
+        [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.08); }
+        .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 22px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
 
         .task-item { display: flex; align-items: flex-start; margin-bottom: 18px; cursor: pointer; position: relative; }
-        .task-item input[type="checkbox"] { appearance: none; width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; margin-right: 14px; margin-top: 1px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(0,0,0,0.3); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
+        .task-item input[type="checkbox"] { appearance: none; width: 24px; height: 24px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; margin-right: 14px; margin-top: 1px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(0,0,0,0.4); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
         [data-theme="light"] .task-item input[type="checkbox"] { background: #fff; }
-        .task-item input[type="checkbox"]:checked { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 12px rgba(0,240,255,0.5); }
-        .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #000; font-size: 14px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .task-item span { font-size: 16px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 600; word-break: keep-all; }
+        .task-item input[type="checkbox"]:checked { background: var(--success); border-color: var(--success); box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+        .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #fff; font-size: 15px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .task-item span { font-size: 17px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
-        /* 커스텀 슬라이더 UI (회색 꼬리 제거 완벽 호환) */
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; margin: 15px 0 5px 0; background: rgba(0,0,0,0.5); box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); }
-        [data-theme="light"] input[type="range"] { background: rgba(0,0,0,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--text-main); cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.3); border: 3px solid var(--secondary); margin-top: -7px; transition: transform 0.1s; }
+        /* 커스텀 슬라이더 UI (시즌패스 박스 짤림 픽스) */
+        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; margin: 15px 0 5px 0; background: rgba(0,0,0,0.6); box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); }
+        [data-theme="light"] input[type="range"] { background: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 12px rgba(0,0,0,0.4); border: 3px solid var(--secondary); margin-top: -7px; transition: transform 0.1s; }
         input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
         input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; border: none; }
         
-        .slider-container { margin-top: 15px; background: rgba(0,0,0,0.3); padding: 18px 20px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
-        [data-theme="light"] .slider-container { background: #ffffff; border-color: rgba(0,0,0,0.1); }
-        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 15px; font-weight: 800; }
-        .sp-input { text-align: right; font-weight: 800; font-size: 16px; color: var(--secondary); }
+        .slider-container { margin-top: 15px; background: rgba(0,0,0,0.35); padding: 18px 22px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; }
+        [data-theme="light"] .slider-container { background: #ffffff; border-color: rgba(0,0,0,0.12); }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 16px; font-weight: 800; }
+        
+        /* 스핀박스 인풋 박스 완벽 수정 */
+        .sp-input-box { background: rgba(0,0,0,0.5); border: 1px solid var(--primary); color: #fff; padding: 6px 10px; border-radius: 8px; width: 65px; text-align: center; font-weight: 900; font-size: 16px; margin-left: 10px; }
+        [data-theme="light"] .sp-input-box { background: #fff; color: #000; }
+        .sp-input-box:focus { box-shadow: 0 0 10px rgba(0,229,255,0.4); border-color: var(--primary); }
 
-        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        [data-theme="light"] details.sub-tasks { background: #ffffff; border-color: rgba(0,0,0,0.1); }
-        details.sub-tasks summary { padding: 15px 18px; font-weight: 800; font-size: 15px; cursor: pointer; color: var(--secondary); list-style: none; display: flex; align-items: center; justify-content: space-between; border-radius: 12px; transition: 0.2s; }
-        details.sub-tasks summary:hover { background: rgba(255,255,255,0.05); }
+        /* 아코디언 메뉴 */
+        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.35); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); }
+        [data-theme="light"] details.sub-tasks { background: #ffffff; border-color: rgba(0,0,0,0.12); }
+        details.sub-tasks summary { padding: 16px 20px; font-weight: 800; font-size: 16px; cursor: pointer; color: var(--secondary); list-style: none; display: flex; align-items: center; justify-content: space-between; border-radius: 12px; transition: 0.2s; }
+        details.sub-tasks summary:hover { background: rgba(255,255,255,0.08); }
         details.sub-tasks summary::-webkit-details-marker { display: none; }
         details.sub-tasks summary::after { content: '▼'; font-size: 12px; transition: 0.3s; }
         details[open] summary::after { transform: rotate(180deg); }
-        .sub-task-list { padding: 15px 18px 5px 18px; border-top: 1px solid rgba(255,255,255,0.05); }
-        [data-theme="light"] .sub-task-list { border-top-color: rgba(0,0,0,0.05); }
+        .sub-task-list { padding: 15px 20px 5px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+        [data-theme="light"] .sub-task-list { border-top-color: rgba(0,0,0,0.08); }
 
-        .custom-controls { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
-        .custom-controls select { padding: 12px; flex-shrink: 0; width: 90px; }
-        .custom-controls input { flex: 1; min-width: 140px; padding: 12px 16px; margin-bottom: 0; }
-        .custom-controls button { flex-shrink: 0; width: 75px; padding: 12px; font-size: 14px; }
-        
-        /* 삭제 버튼 콤팩트 디자인 */
-        .delete-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; border-radius: 8px; margin-left: auto; margin-top: -2px; box-shadow: none; transition: 0.2s; }
-        .delete-btn:hover { background: var(--danger); color: #fff; transform: scale(1.05); box-shadow: 0 0 10px rgba(239, 68, 68, 0.4); }
+        .custom-controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .custom-controls select { padding: 14px; flex-shrink: 0; width: 95px; }
+        .custom-controls input { flex: 1; min-width: 150px; padding: 14px 18px; margin-bottom: 0; }
+        .custom-controls button { flex-shrink: 0; width: 80px; padding: 14px; font-size: 15px; }
+        .delete-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; border-radius: 8px; margin-left: auto; margin-top: -3px; box-shadow: none; transition: 0.2s; }
+        .delete-btn:hover { background: var(--danger); color: #fff; transform: scale(1.1); box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
 
-        /* 호감도 계산기 UI */
-        .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+        /* 호감도 계산기 */
+        .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 22px; }
         .char-add-box { padding: 25px 30px; margin-bottom: 30px; position: relative; overflow: hidden; }
-        .char-add-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--grad-sub); }
+        .char-add-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: var(--grad-main); }
         .char-add-inputs { display: flex; gap: 12px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
-        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 100px; padding: 12px 14px; }
+        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 110px; padding: 14px; }
         
         .char-card { padding: 25px; position: relative; display: flex; flex-direction: column; }
-        .char-card h3 { margin: 0 0 18px 0; font-size: 22px; color: var(--text-main); font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
-        .char-stat { font-size: 15px; margin-bottom: 10px; color: var(--text-muted); font-weight: 600; }
-        .char-stat strong { color: var(--text-main); font-weight: 800; font-size: 16px; }
+        .char-card h3 { margin: 0 0 18px 0; font-size: 24px; color: var(--text-main); font-weight: 900; display: flex; justify-content: space-between; align-items: center; }
+        .char-stat { font-size: 16px; margin-bottom: 10px; color: var(--text-muted); font-weight: 700; }
+        .char-stat strong { color: var(--text-main); font-weight: 900; font-size: 17px; }
         
-        /* 호감도 + / - 버튼 그룹 세밀화 */
-        .char-exp-wrapper { display: flex; flex-direction: column; gap: 8px; margin: 18px 0; }
-        .char-exp-row { display: flex; gap: 8px; flex-wrap: wrap; }
-        .char-exp-btn { background: rgba(0, 240, 255, 0.1); border: 1px solid rgba(0, 240, 255, 0.2); color: var(--primary); padding: 8px; font-size: 13px; font-weight: 800; flex: 1; border-radius: 8px; transition: 0.2s; box-shadow: none; min-width: 45px; }
-        .char-exp-btn.minus { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); color: var(--danger); }
-        .char-exp-btn.custom { background: rgba(168, 85, 247, 0.1); border-color: rgba(168, 85, 247, 0.2); color: var(--secondary); flex: 2; }
+        .char-exp-wrapper { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+        .char-exp-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .char-exp-btn { background: rgba(0, 229, 255, 0.1); border: 1px solid rgba(0, 229, 255, 0.25); color: var(--primary); padding: 10px; font-size: 14px; font-weight: 800; flex: 1; border-radius: 8px; transition: 0.2s; box-shadow: none; min-width: 45px; }
+        .char-exp-btn.minus { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.25); color: var(--danger); }
+        .char-exp-btn.custom { background: rgba(217, 70, 239, 0.1); border-color: rgba(217, 70, 239, 0.25); color: var(--secondary); flex: 2; }
         
-        .char-exp-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 12px rgba(0,240,255,0.4); transform: translateY(-2px); }
-        .char-exp-btn.minus:hover { background: var(--danger); color: #fff; box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
-        .char-exp-btn.custom:hover { background: var(--secondary); color: #fff; box-shadow: 0 0 12px rgba(168, 85, 247, 0.4); }
+        .char-exp-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px rgba(0,229,255,0.4); transform: translateY(-2px); }
+        .char-exp-btn.minus:hover { background: var(--danger); color: #fff; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .char-exp-btn.custom:hover { background: var(--secondary); color: #fff; box-shadow: 0 0 15px rgba(217, 70, 239, 0.4); }
         
-        .char-exp-btn:disabled { background: rgba(128,128,128,0.1); border-color: rgba(128,128,128,0.2); color: rgba(128,128,128,0.5); cursor: not-allowed; box-shadow: none; transform: none; }
+        .char-exp-btn:disabled { background: rgba(128,128,128,0.15); border-color: rgba(128,128,128,0.25); color: rgba(128,128,128,0.5); cursor: not-allowed; box-shadow: none; transform: none; }
 
-        .char-result { margin-top: auto; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 2px 8px rgba(0,0,0,0.3); }
-        [data-theme="light"] .char-result { background: #ffffff; border-color: rgba(0,0,0,0.1); box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
-        .char-result p { margin: 8px 0; font-size: 15px; font-weight: 700; color: var(--text-muted); }
-        .highlight { color: var(--primary); font-size: 18px; font-weight: 900; }
+        .char-result { margin-top: auto; padding: 22px; background: rgba(0,0,0,0.4); border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 8px rgba(0,0,0,0.4); }
+        [data-theme="light"] .char-result { background: #ffffff; border-color: rgba(0,0,0,0.15); box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .char-result p { margin: 8px 0; font-size: 16px; font-weight: 700; color: var(--text-muted); }
+        .highlight { color: var(--text-main); font-size: 19px; font-weight: 900; }
         
-        .char-progress-bar { width: 100%; height: 12px; background: rgba(0,0,0,0.5); border-radius: 6px; margin: 15px 0 20px 0; overflow: hidden; box-shadow: inset 0 1px 4px rgba(0,0,0,0.6); }
-        [data-theme="light"] .char-progress-bar { background: rgba(0,0,0,0.1); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        .char-progress-fill { height: 100%; background: var(--grad-main); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px rgba(168, 85, 247, 0.5); }
+        .char-progress-bar { width: 100%; height: 14px; background: rgba(0,0,0,0.6); border-radius: 7px; margin: 18px 0 22px 0; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.6); }
+        [data-theme="light"] .char-progress-bar { background: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        .char-progress-fill { height: 100%; background: var(--grad-main); transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px rgba(217, 70, 239, 0.5); }
 
         @media (max-width: 600px) {
-            body, html { font-size: 14px; }
+            body, html { font-size: 15px; }
             .container { padding: 15px; }
             header h1 { font-size: 24px; }
-            .user-info { font-size: 13px; }
-            .stamina-val { font-size: 28px; }
-            .stamina-widget, .char-add-box, .task-category, .timer-card, .progress-card, .char-card { padding: 20px; }
+            .user-info { font-size: 14px; }
+            .stamina-val { font-size: 32px; }
+            .stamina-widget, .char-add-box, .task-category, .timer-card, .progress-card, .char-card { padding: 22px; }
             .stamina-widget { flex-direction: column; align-items: flex-start; gap: 15px; }
             .stamina-controls { width: 100%; }
             .stamina-input-wrapper { flex: 1; justify-content: center; }
             .stamina-input-wrapper input { width: 100%; }
-            .account-select, .theme-btn, .logout-btn { padding: 6px 10px; font-size: 13px; }
+            .account-select, .add-account-btn, .theme-btn, .logout-btn { padding: 8px 12px; font-size: 14px; }
         }
     </style>
 </head>
@@ -251,10 +255,11 @@
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
     
+    <!-- 로그인 스크린 -->
     <div id="login-screen">
         <div class="glass-panel login-box">
             <h1 style="margin-bottom: 10px;">NTE Tracker</h1>
-            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 14px; font-weight: 600;">한 번 로그인하면 기기에 자동으로 기록됩니다.</p>
+            <p style="color: var(--text-muted); margin-bottom: 30px; font-size: 15px; font-weight: 700;">한 번 로그인하면 기기에 자동으로 기록됩니다.</p>
             
             <div class="input-group">
                 <input type="text" id="uid-input" placeholder="인게임 UID 입력">
@@ -265,7 +270,8 @@
                 <button id="btn-login" onclick="handleLogin()">로그인</button>
                 <button id="btn-signup" class="btn-signup" onclick="handleSignup()">가입하기</button>
             </div>
-            <div id="loading-text" style="color:var(--secondary); margin-top:20px; display:none; font-weight:800;">데이터를 불러오는 중입니다...</div>
+            <div id="loading-text" style="color:var(--secondary); margin-top:20px; display:none; font-weight:900;">데이터를 불러오는 중입니다...</div>
+            <button id="btn-cancel-login" onclick="cancelLogin()" style="margin-top:15px; background:transparent; border:none; color:var(--text-muted); font-size:14px; box-shadow:none; display:none;">돌아가기</button>
         </div>
     </div>
 
@@ -274,7 +280,8 @@
             <h1>이환 숙제 트래커 <span class="version">v1.0</span></h1>
             <div class="user-info">
                 <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
-                <button id="theme-btn" class="theme-btn" onclick="toggleTheme()">화이트 모드 변경</button>
+                <button class="add-account-btn" onclick="showLoginScreen()">+ 새 계정</button>
+                <button id="theme-btn" class="theme-btn" onclick="toggleTheme()">화이트 모드</button>
                 <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
             </div>
         </header>
@@ -302,7 +309,7 @@
                         <span>/</span>
                         <input type="number" id="stamina-max-input" placeholder="최대" value="320" max="320">
                     </div>
-                    <button onclick="syncStamina()">시작</button>
+                    <button onclick="syncStamina()">적용</button>
                 </div>
             </div>
 
@@ -310,16 +317,16 @@
             <div class="progress-widget">
                 <div class="glass-panel progress-card">
                     <div class="progress-header"><span style="color:var(--primary);">일일 숙제 달성률</span><span id="progress-daily-text" style="color:var(--text-main);">0%</span></div>
-                    <div class="progress-bar-bg"><div id="progress-daily-fill" class="progress-bar-fill"></div></div>
+                    <div class="progress-bar-bg"><div id="progress-daily-fill" class="progress-bar-fill" style="background:var(--grad-stamina); box-shadow:0 0 15px var(--primary);"></div></div>
                 </div>
                 <div class="glass-panel progress-card">
                     <div class="progress-header"><span style="color:var(--secondary);">주간 숙제 달성률</span><span id="progress-weekly-text" style="color:var(--text-main);">0%</span></div>
-                    <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill" style="background:var(--grad-sub); box-shadow:0 0 15px var(--primary);"></div></div>
+                    <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill" style="background:var(--grad-sub); box-shadow:0 0 15px var(--secondary);"></div></div>
                 </div>
             </div>
 
             <div class="timers-grid">
-                <div class="glass-panel timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--accent);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time" style="color:var(--success);">계산 중...</div></div>
@@ -334,8 +341,8 @@
         <!-- 호감도 계산기 탭 -->
         <div id="tab-affection" class="tab-content">
             <div class="glass-panel char-add-box">
-                <h2 style="margin:0 0 10px 0; font-size:20px; font-weight:900; color:var(--text-main);">캐릭터 호감도 추가</h2>
-                <p style="margin:0; font-size:14px; color:var(--text-muted); font-weight:600; line-height:1.5;">
+                <h2 style="margin:0 0 10px 0; font-size:21px; font-weight:900; color:var(--text-main);">캐릭터 호감도 추가</h2>
+                <p style="margin:0; font-size:15px; color:var(--text-muted); font-weight:700; line-height:1.6;">
                     * 하루 호감도 아이템 3개 선물 기준 (일일 1200 획득)으로 일수가 계산됩니다.<br>
                     * 과금 아이템(2000 획득) 사용 시 만렙 달성 기간이 단축될 수 있습니다.
                 </p>
@@ -390,8 +397,8 @@
     // 테마 설정
     function updateThemeBtnText() {
         const btn = document.getElementById('theme-btn');
-        if(document.documentElement.getAttribute('data-theme') === 'light') btn.innerText = "다크 모드 변경";
-        else btn.innerText = "화이트 모드 변경";
+        if(document.documentElement.getAttribute('data-theme') === 'light') btn.innerText = "다크 모드";
+        else btn.innerText = "화이트 모드";
     }
     if(localStorage.getItem('theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
     updateThemeBtnText();
@@ -407,7 +414,6 @@
         updateThemeBtnText();
     }
 
-    // 탭 전환
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -415,15 +421,29 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
-    // 슬라이더 색상 채우기 (회색 꼬리 버그 완벽 픽스)
     function updateSliderBackground(el, min, max, val) {
         const percentage = ((val - min) / (max - min)) * 100;
-        const color = document.documentElement.getAttribute('data-theme') === 'light' ? '#0ea5e9' : '#00f0ff';
-        const bg = document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.1)' : 'rgba(0,0,0,0.5)';
+        const color = document.documentElement.getAttribute('data-theme') === 'light' ? '#0ea5e9' : '#00e5ff';
+        const bg = document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.6)';
         el.style.background = `linear-gradient(to right, ${color} ${percentage}%, ${bg} ${percentage}%)`;
     }
 
-    // 다중 계정 저장 로직 (로컬 스토리지)
+    // 계정 전환 기능 (새 계정 로그인)
+    function showLoginScreen() {
+        document.getElementById('app-screen').style.display = 'none';
+        document.getElementById('login-screen').style.display = 'flex';
+        document.getElementById('uid-input').value = '';
+        document.getElementById('pw-input').value = '';
+        document.getElementById('btn-cancel-login').style.display = currentUserAuthUid ? 'block' : 'none';
+    }
+
+    function cancelLogin() {
+        if(currentUserAuthUid) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'block';
+        }
+    }
+
     function saveAccountLocal(uid, pw) {
         let accounts = JSON.parse(localStorage.getItem('nte_accounts') || '{}');
         accounts[uid] = pw;
@@ -452,6 +472,7 @@
         document.getElementById('login-screen').style.display = 'flex';
         document.getElementById('loading-text').style.display = 'block';
         document.getElementById('loading-text').innerText = "계정 전환 중입니다...";
+        document.getElementById('btn-cancel-login').style.display = 'none';
 
         auth.signOut().then(() => {
             return auth.signInWithEmailAndPassword(getFakeEmail(uid), pw);
@@ -461,20 +482,19 @@
         });
     }
 
-    // 숙제 설정
     const taskConfig = {
         dailyImportant: { title: "중요 일일 숙제", type: "daily", items: [ "본성 픽셀 사용", "탐색 안내서(일퀘) 100 활약도", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번 (400호감도 아이템 사용)", "캐릭터 데이트", "시즌패스 일일 미션" ] },
         dailyOther: { title: "그 외 일일 숙제", type: "daily", items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠페다 분수 기도하기", "소원나무 선물 납품", "캐릭터 호감도작 (같이 차 타기, 집 안 교류)", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술" ] },
         weekly: { 
             title: "주간 숙제", type: "weekly", 
             items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령" ],
-            sub: { title: "시즌패스 주간 미션 상세", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
+            sub: { title: "시즌패스 주간 미션 상세", id: "sp_weekly", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
         },
         biweekly: { title: "2주 간격 숙제", type: "biweekly", items: ["핑크퍼스 은행털기"] },
         monthly: { 
             title: "월간 숙제", type: "monthly", items: [],
             sub: { 
-                title: "상점 교환 품목",
+                title: "상점 교환 품목", id: "shop_monthly",
                 sliders: [
                     { id: "dice_deceit", name: "마켓 기만의 주사위", max: 5 },
                     { id: "dice_truth", name: "마켓 진실의 주사위", max: 5 },
@@ -570,6 +590,7 @@
             document.getElementById('app-screen').style.display = 'none';
             document.getElementById('uid-input').value = '';
             document.getElementById('pw-input').value = '';
+            document.getElementById('btn-cancel-login').style.display = 'none';
             if(timerInterval) clearInterval(timerInterval);
         });
     }
@@ -605,7 +626,13 @@
             let nextTick = (6 * 60 * 1000) - (diff % (6 * 60 * 1000));
             let min = Math.floor(nextTick / 60000);
             let sec = Math.floor((nextTick % 60000) / 1000);
-            document.getElementById('stamina-timer').innerText = `1 회복까지 ${min}분 ${sec}초`;
+            
+            // 완충 시간 계산
+            let totalMinsLeft = (maxStamina - current) * 6;
+            let fullH = Math.floor(totalMinsLeft / 60);
+            let fullM = totalMinsLeft % 60;
+            
+            document.getElementById('stamina-timer').innerHTML = `1 회복까지 ${min}분 ${sec}초 <br> <span style="color:var(--secondary); font-size:14px; font-weight:800;">(완충까지 약 ${fullH}시간 ${fullM}분)</span>`;
         }
         document.getElementById('curr-stamina').innerText = current;
     }
@@ -684,7 +711,11 @@
 
     function saveData() { if (currentUserAuthUid) database.ref('users/' + currentUserAuthUid).set(userData); }
 
-    function toggleTask(taskId) { userData.tasks[taskId] = !userData.tasks[taskId]; saveData(); renderTasks(); }
+    function toggleTask(taskId) { 
+        userData.tasks[taskId] = !userData.tasks[taskId]; 
+        saveData(); 
+        renderTasks(); 
+    }
 
     function updateItemSlider(id, val, max) {
         if(!userData.itemCounters) userData.itemCounters = {};
@@ -728,6 +759,13 @@
 
     function renderTasks() {
         const container = document.getElementById('task-container');
+        
+        // 렌더링 전 아코디언 메뉴(details) 열림 상태 캐싱 (버그 픽스)
+        const openStates = {};
+        document.querySelectorAll('details.sub-tasks').forEach(d => {
+            if(d.id) openStates[d.id] = d.open;
+        });
+
         container.innerHTML = '';
 
         let dailyTotal = 0, dailyDone = 0;
@@ -749,8 +787,11 @@
                 if(cat.type === 'weekly' || cat.type === 'biweekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
             });
 
+            // 아코디언 메뉴 렌더링
             if (cat.sub) {
-                html += `<details class="sub-tasks"><summary>${cat.sub.title}</summary><div class="sub-task-list">`;
+                const detailsId = `details_${cat.sub.id}`;
+                const openAttr = openStates[detailsId] ? 'open' : '';
+                html += `<details id="${detailsId}" class="sub-tasks" ${openAttr}><summary>${cat.sub.title}</summary><div class="sub-task-list">`;
                 
                 if (cat.sub.sliders) {
                     cat.sub.sliders.forEach(slider => {
@@ -777,12 +818,13 @@
             }
 
             if(categoryKey === 'fiveWeekly') {
-                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)" style="background:transparent; border:none; width:50px;"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
+                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input-box" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
             }
             div.innerHTML = html;
             container.appendChild(div);
         });
 
+        // 커스텀 숙제
         const customDiv = document.createElement('div');
         customDiv.className = 'glass-panel task-category';
         let customHtml = `<h2>커스텀 숙제 (개인용)</h2>
@@ -809,7 +851,7 @@
                 <div class="task-item">
                     <label style="display:flex; align-items:flex-start; flex:1; cursor:pointer;">
                         <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${checkedAttr}>
-                        <span><b style="color:var(--primary); font-size:12px; margin-right:6px; border:1px solid var(--primary); padding:2px 4px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
+                        <span><b style="color:var(--primary); font-size:13px; margin-right:8px; border:1px solid var(--primary); padding:2px 6px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
                     </label>
                     <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">✕</button>
                 </div>`;
@@ -887,27 +929,23 @@
         addAffectionExp(charId, val);
     }
 
-    // 퀵 & 커스텀 경험치 통합 증감 로직 (레벨 롤백 포함)
     function addAffectionExp(charId, expToAdd) {
         let char = userData.characters.find(c => c.id === charId);
         if(!char) return;
-        if (char.level === 10 && expToAdd > 0) return; // 만렙 시 추가 불가
+        if (char.level === 10 && expToAdd > 0) return; 
 
         char.exp += expToAdd;
         
-        // 경험치 감소 시 레벨 강등(롤백) 처리
         while (char.exp < 0 && char.level > 1) {
             char.level--;
             char.exp += affectionExpReq[char.level];
         }
         
-        // 최저점 고정
         if (char.exp < 0) {
             char.exp = 0;
             char.level = 1;
         }
 
-        // 경험치 초과 시 레벨업 처리
         while (char.level < 10 && char.exp >= affectionExpReq[char.level]) {
             if (char.level === 9) {
                 char.level = 10;
@@ -926,7 +964,7 @@
         const list = document.getElementById('character-list');
         list.innerHTML = '';
         if(!userData.characters || userData.characters.length === 0) {
-            list.innerHTML = '<p style="color:var(--text-muted); padding:10px;">추가된 캐릭터가 없습니다.</p>';
+            list.innerHTML = '<p style="color:var(--text-muted); padding:10px; font-weight:700;">추가된 캐릭터가 없습니다.</p>';
             return;
         }
 
