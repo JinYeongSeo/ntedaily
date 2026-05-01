@@ -2,8 +2,12 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>이환(NTE) 1.0 숙제 트래커 - Vercel Ver.</title>
+    
+    <!-- Pretendard 폰트 -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
     <!-- Firebase SDK (v8 CDN) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -11,114 +15,146 @@
     
     <style>
         :root {
-            --bg-color: #0f111a;
-            --panel-bg: rgba(25, 28, 41, 0.85);
+            --bg-color: #0a0b10;
+            --panel-bg: rgba(20, 22, 32, 0.75);
             --primary: #00f0ff;
             --accent: #ff003c;
-            --text-main: #e0e6ed;
+            --text-main: #f0f4f8;
             --text-muted: #8b949e;
-            --border: rgba(0, 240, 255, 0.3);
+            --border: rgba(0, 240, 255, 0.25);
+            --danger: #ff4444;
         }
 
         body, html {
             margin: 0; padding: 0;
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             background: var(--bg-color);
             color: var(--text-main);
-            height: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* 배경 이미지에 블러 및 어둡게 처리 */
         .bg-image {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(15, 17, 26, 0.8), rgba(15, 17, 26, 0.9)), 
-                        url('https://images.unsplash.com/photo-1605806616949-1e87b487cb2a?q=80&w=2070&auto=format&fit=crop') no-repeat center center/cover;
+            background: url('bg.png') center center/cover no-repeat;
+            z-index: -2;
+        }
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10, 12, 18, 0.65); /* 어둡게 */
+            backdrop-filter: blur(8px); /* 블러 처리 */
+            -webkit-backdrop-filter: blur(8px);
             z-index: -1;
         }
 
-        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 
         /* 로그인 화면 */
         #login-screen {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box;
         }
 
         .login-box {
-            background: var(--panel-bg); padding: 40px; border-radius: 12px;
-            border: 1px solid var(--border); box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
-            text-align: center; width: 300px;
+            background: var(--panel-bg); padding: 40px 30px; border-radius: 16px;
+            border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            text-align: center; width: 100%; max-width: 360px; backdrop-filter: blur(4px);
         }
 
-        .input-group { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+        .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
         
-        input[type="text"], input[type="password"], input[type="number"] {
-            background: rgba(0,0,0,0.5); border: 1px solid var(--border);
-            color: var(--primary); padding: 10px 15px; border-radius: 6px;
-            outline: none; font-size: 16px;
+        input[type="text"], input[type="password"], input[type="number"], select {
+            background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            color: var(--primary); padding: 12px 16px; border-radius: 8px;
+            outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s;
         }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(0,240,255,0.2); }
 
         .btn-group { display: flex; gap: 10px; justify-content: center; }
         
         button {
             background: var(--primary); color: #000; border: none; flex: 1;
-            padding: 10px; border-radius: 6px; font-weight: bold;
+            padding: 12px; border-radius: 8px; font-weight: 700; font-family: inherit;
             cursor: pointer; transition: all 0.2s; font-size: 15px;
         }
 
-        button.btn-signup { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-        button:hover { box-shadow: 0 0 10px var(--primary); }
-        button.btn-signup:hover { background: rgba(0, 240, 255, 0.1); }
-        button:disabled { background: #555; border-color: #555; color: #aaa; cursor: not-allowed; box-shadow: none; }
+        button.btn-signup { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); }
+        button:hover:not(:disabled) { box-shadow: 0 0 15px rgba(0,240,255,0.4); transform: translateY(-1px); }
+        button:disabled { background: #333; border-color: #333; color: #777; cursor: not-allowed; box-shadow: none; transform: none; }
 
         /* 대시보드 화면 */
         #app-screen { display: none; }
         
         header {
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 2px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
+            border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 25px;
         }
 
-        h1 { margin: 0; font-size: 24px; color: var(--primary); text-shadow: 0 0 5px rgba(0,240,255,0.5); }
-        .version { font-size: 14px; color: var(--accent); vertical-align: super; }
-        .user-info { display: flex; align-items: center; gap: 15px; }
+        h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 600; margin-left: 4px; }
+        .user-info { display: flex; align-items: center; gap: 15px; font-size: 14px; }
 
-        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .timer-card { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px; text-align: center; }
-        .timer-card h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted); }
-        .timer-card .time { font-size: 18px; font-weight: bold; color: var(--primary); font-family: monospace; }
+        .timers-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
+            gap: 15px; margin-bottom: 30px; 
+        }
+        .timer-card { 
+            background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 12px; padding: 15px; text-align: center; backdrop-filter: blur(4px);
+        }
+        .timer-card h3 { margin: 0 0 8px 0; font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .timer-card .time { font-size: 18px; font-weight: 700; color: var(--primary); font-family: monospace; letter-spacing: 0.5px; }
 
         .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .task-category { background: var(--panel-bg); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.1); padding: 20px; }
-        .task-category h2 { margin-top: 0; font-size: 18px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .task-category { background: var(--panel-bg); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; backdrop-filter: blur(4px); }
+        .task-category h2 { margin-top: 0; font-size: 17px; font-weight: 700; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px; }
 
-        .task-item { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; }
+        .task-item { display: flex; align-items: flex-start; margin-bottom: 14px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] {
-            appearance: none; width: 20px; height: 20px;
-            border: 2px solid var(--text-muted); border-radius: 4px;
-            margin-right: 10px; cursor: pointer; position: relative;
+            appearance: none; width: 22px; height: 22px; flex-shrink: 0;
+            border: 2px solid var(--text-muted); border-radius: 6px;
+            margin-right: 12px; margin-top: -1px; cursor: pointer; position: relative; transition: all 0.2s;
         }
-        .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
+        .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
         .task-item input[type="checkbox"]:checked::after {
-            content: '✔'; position: absolute; color: #000; font-size: 14px;
+            content: '✔'; position: absolute; color: #000; font-size: 14px; font-weight: 900;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
-        .task-item span { font-size: 15px; transition: 0.2s; }
+        .task-item span { font-size: 15px; line-height: 1.4; transition: 0.2s; color: var(--text-main); word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; }
 
-        .slider-container { margin-top: 15px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; }
-        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        input[type="range"] { width: 100%; accent-color: var(--primary); }
-        .sp-input { width: 60px; text-align: center; }
+        /* 커스텀 숙제 영역 */
+        .custom-controls { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .custom-controls select { padding: 8px; flex-shrink: 0; }
+        .custom-controls input { flex: 1; min-width: 150px; padding: 8px 12px; margin-bottom: 0; }
+        .custom-controls button { flex-shrink: 0; width: 60px; padding: 8px; }
+        .delete-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; font-size: 12px; border-radius: 4px; margin-left: auto; margin-top: -2px; }
+        .delete-btn:hover { background: rgba(255, 68, 68, 0.1); box-shadow: none; }
+
+        .slider-container { margin-top: 20px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; }
+        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
+        .sp-input { width: 60px; text-align: center; padding: 6px; }
         
-        #loading-text { color: var(--accent); margin-top: 15px; display: none; font-weight: bold; font-size: 14px; }
+        #loading-text { color: var(--accent); margin-top: 15px; display: none; font-weight: 600; font-size: 14px; }
+
+        /* 모바일 대응 */
+        @media (max-width: 600px) {
+            .timers-grid { grid-template-columns: repeat(2, 1fr); }
+            .task-grid { grid-template-columns: 1fr; }
+            header { flex-direction: column; align-items: flex-start; }
+            .user-info { width: 100%; justify-content: space-between; }
+        }
     </style>
 </head>
 <body>
     <div class="bg-image"></div>
+    <div class="bg-overlay"></div>
     
     <!-- 로그인/회원가입 화면 -->
     <div id="login-screen">
         <div class="login-box">
-            <h1 style="margin-bottom: 10px;">NTE Tracker <span class="version">v1.0</span></h1>
+            <h1 style="margin-bottom: 5px;">NTE Tracker <span class="version">v1.0</span></h1>
             <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">본인 UID와 사용할 비번을 입력해라</p>
             
             <div class="input-group">
@@ -139,8 +175,8 @@
         <header>
             <h1>이환 숙제 트래커 <span class="version">v1.0</span></h1>
             <div class="user-info">
-                <span id="display-uid" style="font-weight: bold;"></span>
-                <button onclick="handleLogout()" style="padding: 5px 10px; font-size: 14px; background: var(--accent); color: #fff;">로그아웃</button>
+                <span id="display-uid" style="font-weight: bold; color: #fff;"></span>
+                <button onclick="handleLogout()" style="padding: 6px 12px; font-size: 13px; background: transparent; border: 1px solid var(--accent); color: var(--accent);">로그아웃</button>
             </div>
         </header>
 
@@ -150,7 +186,7 @@
                 <div id="timer-daily" class="time">계산 중...</div>
             </div>
             <div class="timer-card">
-                <h3>주간 초기화 (월 5AM)</h3>
+                <h3>주간 초기화 (월)</h3>
                 <div id="timer-weekly" class="time">계산 중...</div>
             </div>
             <div class="timer-card">
@@ -158,7 +194,7 @@
                 <div id="timer-biweekly" class="time">계산 중...</div>
             </div>
             <div class="timer-card">
-                <h3>월간 초기화 (1일 5AM)</h3>
+                <h3>월간 초기화 (1일)</h3>
                 <div id="timer-monthly" class="time">계산 중...</div>
             </div>
             <div class="timer-card">
@@ -173,7 +209,9 @@
     </div>
 
 <script>
-    // 네 파이어베이스 키값 들어간 세팅 (건드리지 마셈)
+    // ==========================================
+    // 🚨 본인 파이어베이스 설정으로 무조건 변경 🚨
+    // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyDmHL4vrYAwSzw-59TeNE5eGQatCkT8_Aw",
       authDomain: "nte-daily.firebaseapp.com",
@@ -184,7 +222,6 @@
       appId: "1:584022791839:web:384f8f5794124344c0f4aa"
     };
 
-    // 파이어베이스 초기화 (v8 방식)
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const database = firebase.database();
@@ -199,7 +236,7 @@
     };
 
     let currentUserAuthUid = null;
-    let userData = { tasks: {}, spLevel: 1, resetTargets: {} };
+    let userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {} };
     let timerInterval = null;
 
     function getFakeEmail(uid) { return uid + "@nte-tracker.com"; }
@@ -214,12 +251,11 @@
         const uid = document.getElementById('uid-input').value.trim();
         const pw = document.getElementById('pw-input').value.trim();
         if (!uid || !pw) return alert("UID랑 비번 둘 다 쳐라 ㅇㅇ");
-        if (pw.length < 6) return alert("파이어베이스 룰 땜에 비번은 최소 6자리 이상이어야 됨");
+        if (pw.length < 6) return alert("비번은 최소 6자리 이상이어야 됨");
 
         toggleLoading(true);
         auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw)
             .then((userCredential) => {
-                alert("가입 완료! 바로 대시보드로 넘어감.");
                 initUserSpace(userCredential.user.uid, uid);
             })
             .catch((error) => {
@@ -241,7 +277,7 @@
             })
             .catch((error) => {
                 toggleLoading(false);
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입 안 된 UID거나 비번 틀렸음. 처음 왔으면 가입하기 눌러라.");
+                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입 안 된 UID거나 비번 틀렸음.");
                 else alert("로그인 실패: " + error.message);
             });
     }
@@ -254,9 +290,10 @@
             if (snapshot.exists()) {
                 userData = snapshot.val();
                 if(!userData.tasks) userData.tasks = {};
+                if(!userData.customTasks) userData.customTasks = [];
                 if(!userData.resetTargets) userData.resetTargets = {};
             } else {
-                userData = { tasks: {}, spLevel: 1, resetTargets: {} };
+                userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {} };
             }
             
             checkAndResetTasks();
@@ -284,6 +321,7 @@
         });
     }
 
+    // 초기화 날짜 계산 로직 (5주 기준일 4월 29일 반영)
     function getNextReset(type, now = new Date()) {
         let d = new Date(now);
         let resetToday = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 5, 0, 0);
@@ -295,10 +333,21 @@
         if (type === 'monthly') { let md = new Date(nextDaily); md.setMonth(md.getMonth() + 1); md.setDate(1); return md; }
         
         let baseDate = new Date(2024, 0, 1, 5, 0, 0).getTime();
+        // 5주 간격 기준일: 2026년 4월 29일 오전 5시 (Month는 0부터 시작하므로 3이 4월임)
+        let baseDate5w = new Date(2026, 3, 29, 5, 0, 0).getTime(); 
+        
         let currentTs = now.getTime();
         
-        if (type === 'biweekly') { let period = 14 * 24 * 60 * 60 * 1000; return new Date(baseDate + (Math.floor((currentTs - baseDate) / period) + 1) * period); }
-        if (type === '5weekly') { let period = 35 * 24 * 60 * 60 * 1000; return new Date(baseDate + (Math.floor((currentTs - baseDate) / period) + 1) * period); }
+        if (type === 'biweekly') { 
+            let period = 14 * 24 * 60 * 60 * 1000; 
+            return new Date(baseDate + (Math.floor((currentTs - baseDate) / period) + 1) * period); 
+        }
+        if (type === '5weekly') { 
+            let period = 35 * 24 * 60 * 60 * 1000; 
+            let passed = Math.floor((currentTs - baseDate5w) / period);
+            if(currentTs < baseDate5w) passed = -1; // 4월 29일 이전 처리
+            return new Date(baseDate5w + (passed + 1) * period); 
+        }
     }
 
     function formatTimeLeft(targetDate) {
@@ -325,7 +374,14 @@
         ['daily', 'weekly', 'biweekly', 'monthly', '5weekly'].forEach(type => {
             let nextReset = getNextReset(type).getTime();
             if (!userData.resetTargets[type] || now > userData.resetTargets[type]) {
+                // 기본 숙제 초기화
                 for(let key in userData.tasks) if(key.startsWith(type)) userData.tasks[key] = false;
+                
+                // 커스텀 숙제 초기화
+                if(userData.customTasks) {
+                    userData.customTasks.forEach(ct => { if(ct.type === type) ct.checked = false; });
+                }
+
                 userData.resetTargets[type] = nextReset;
                 needsSave = true;
             }
@@ -350,10 +406,40 @@
         saveData();
     }
 
+    // 커스텀 숙제 관련 로직
+    function addCustomTask() {
+        const input = document.getElementById('custom-task-input');
+        const text = input.value.trim();
+        const type = document.getElementById('custom-task-type').value;
+        if (!text) return;
+        
+        if (!userData.customTasks) userData.customTasks = [];
+        userData.customTasks.push({ id: 'c_' + Date.now(), type: type, text: text, checked: false });
+        input.value = '';
+        saveData();
+        renderTasks();
+    }
+
+    function toggleCustomTask(id) {
+        const task = userData.customTasks.find(t => t.id === id);
+        if (task) {
+            task.checked = !task.checked;
+            saveData();
+        }
+    }
+
+    function deleteCustomTask(id) {
+        if(!confirm("이 커스텀 숙제 삭제할 거임?")) return;
+        userData.customTasks = userData.customTasks.filter(t => t.id !== id);
+        saveData();
+        renderTasks();
+    }
+
     function renderTasks() {
         const container = document.getElementById('task-container');
         container.innerHTML = '';
 
+        // 기본 숙제 렌더링
         Object.keys(taskConfig).forEach(categoryKey => {
             const cat = taskConfig[categoryKey];
             const div = document.createElement('div');
@@ -367,11 +453,54 @@
             });
 
             if(categoryKey === 'fiveWeekly') {
-                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
+                html += `
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span>시즌 패스 보상 수령 (Lv)</span>
+                        <input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)">
+                    </div>
+                    <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
+                </div>`;
             }
             div.innerHTML = html;
             container.appendChild(div);
         });
+
+        // 커스텀 숙제 렌더링 영역 추가
+        const customDiv = document.createElement('div');
+        customDiv.className = 'task-category';
+        let customHtml = `<h2>커스텀 숙제 (개인용)</h2>`;
+        
+        // 추가 컨트롤
+        customHtml += `
+            <div class="custom-controls">
+                <select id="custom-task-type">
+                    <option value="daily">일일</option>
+                    <option value="weekly">주간</option>
+                    <option value="monthly">월간</option>
+                </select>
+                <input type="text" id="custom-task-input" placeholder="새 숙제 입력" onkeypress="if(event.key === 'Enter') addCustomTask()">
+                <button onclick="addCustomTask()">추가</button>
+            </div>
+        `;
+
+        if (userData.customTasks && userData.customTasks.length > 0) {
+            userData.customTasks.forEach(task => {
+                const isChecked = task.checked ? 'checked' : '';
+                const typeLabel = task.type === 'daily' ? '일일' : (task.type === 'weekly' ? '주간' : '월간');
+                customHtml += `
+                <div class="task-item">
+                    <label style="display:flex; align-items:center; flex:1; cursor:pointer;">
+                        <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${isChecked}>
+                        <span><b style="color:var(--primary); font-size:12px; margin-right:5px;">[${typeLabel}]</b> ${task.text}</span>
+                    </label>
+                    <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">삭제</button>
+                </div>`;
+            });
+        }
+        
+        customDiv.innerHTML = customHtml;
+        container.appendChild(customDiv);
     }
 </script>
 </body>
