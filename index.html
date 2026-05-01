@@ -15,6 +15,7 @@
     
     <style>
         :root {
+            /* 다크모드 (기본) */
             --bg-color: #0a0b10;
             --panel-bg: rgba(20, 22, 32, 0.75);
             --primary: #00f0ff;
@@ -23,18 +24,33 @@
             --text-muted: #8b949e;
             --border: rgba(0, 240, 255, 0.25);
             --danger: #ff4444;
+            --bg-overlay: rgba(10, 12, 18, 0.65);
+        }
+
+        [data-theme="light"] {
+            /* 라이트모드 */
+            --bg-color: #f3f4f6;
+            --panel-bg: rgba(255, 255, 255, 0.9);
+            --primary: #0284c7;
+            --accent: #e11d48;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border: rgba(2, 132, 199, 0.3);
+            --danger: #ef4444;
+            --bg-overlay: rgba(255, 255, 255, 0.85);
         }
 
         body, html {
             margin: 0; padding: 0;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
             background: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
         }
 
-        /* 배경 이미지에 블러 및 어둡게 처리 */
+        /* 배경 이미지 */
         .bg-image {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('bg.png') center center/cover no-repeat;
@@ -42,108 +58,121 @@
         }
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 12, 18, 0.65); /* 어둡게 */
-            backdrop-filter: blur(8px); /* 블러 처리 */
+            background: var(--bg-overlay); 
+            backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: -1;
+            transition: background-color 0.3s;
         }
+
+        /* 라이트모드일 때 배경 숨기고 깔끔하게 */
+        [data-theme="light"] .bg-image { display: none; }
+        [data-theme="light"] .bg-overlay { backdrop-filter: none; background: var(--bg-color); }
 
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
 
         /* 로그인 화면 */
-        #login-screen {
-            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box;
-        }
-
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         .login-box {
             background: var(--panel-bg); padding: 40px 30px; border-radius: 16px;
-            border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             text-align: center; width: 100%; max-width: 360px; backdrop-filter: blur(4px);
         }
 
         .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        
         input[type="text"], input[type="password"], input[type="number"], select {
-            background: rgba(0,0,0,0.4); border: 1px solid var(--border);
-            color: var(--primary); padding: 12px 16px; border-radius: 8px;
+            background: rgba(0,0,0,0.1); border: 1px solid var(--border);
+            color: var(--text-main); padding: 12px 16px; border-radius: 8px;
             outline: none; font-size: 15px; font-family: inherit; transition: all 0.2s;
         }
+        [data-theme="light"] input, [data-theme="light"] select { background: #fff; color: #000; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(0,240,255,0.2); }
 
         .btn-group { display: flex; gap: 10px; justify-content: center; }
-        
         button {
-            background: var(--primary); color: #000; border: none; flex: 1;
+            background: var(--primary); color: #fff; border: none; flex: 1;
             padding: 12px; border-radius: 8px; font-weight: 700; font-family: inherit;
-            cursor: pointer; transition: all 0.2s; font-size: 15px;
+            cursor: pointer; transition: all 0.2s; font-size: 15px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
+        [data-theme="light"] button { color: #fff; }
 
-        button.btn-signup { background: rgba(0, 240, 255, 0.1); border: 1px solid var(--primary); color: var(--primary); }
-        button:hover:not(:disabled) { box-shadow: 0 0 15px rgba(0,240,255,0.4); transform: translateY(-1px); }
-        button:disabled { background: #333; border-color: #333; color: #777; cursor: not-allowed; box-shadow: none; transform: none; }
+        button.btn-signup { background: transparent; border: 1px solid var(--primary); color: var(--primary); text-shadow: none; }
+        button:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+        button:disabled { background: #555; border-color: #555; color: #999; cursor: not-allowed; transform: none; text-shadow: none;}
 
         /* 대시보드 화면 */
         #app-screen { display: none; }
         
         header {
             display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;
-            border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 25px;
+            border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px;
         }
 
-        h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); text-shadow: 0 0 10px rgba(0,240,255,0.3); }
+        h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--primary); }
         .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 600; margin-left: 4px; }
-        .user-info { display: flex; align-items: center; gap: 15px; font-size: 14px; }
+        .user-info { display: flex; align-items: center; gap: 10px; font-size: 14px; flex-wrap: wrap; }
 
-        .timers-grid { 
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); 
-            gap: 15px; margin-bottom: 30px; 
+        /* 스태미나 위젯 */
+        .stamina-widget {
+            background: var(--panel-bg); border: 1px solid var(--border); border-radius: 12px;
+            padding: 15px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;
         }
-        .timer-card { 
-            background: var(--panel-bg); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 12px; padding: 15px; text-align: center; backdrop-filter: blur(4px);
-        }
+        .stamina-info h3 { margin: 0 0 5px 0; font-size: 15px; color: var(--primary); }
+        .stamina-val { font-size: 24px; font-weight: 800; font-family: monospace; }
+        .stamina-timer { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+        .stamina-controls { display: flex; gap: 8px; }
+        .stamina-controls input { width: 80px; padding: 8px; font-size: 14px; text-align: center; }
+        .stamina-controls button { padding: 8px 12px; font-size: 13px; flex: none; }
+
+        .timers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .timer-card { background: var(--panel-bg); border: 1px solid rgba(128,128,128,0.2); border-radius: 12px; padding: 15px; text-align: center; }
         .timer-card h3 { margin: 0 0 8px 0; font-size: 13px; color: var(--text-muted); font-weight: 600; }
-        .timer-card .time { font-size: 18px; font-weight: 700; color: var(--primary); font-family: monospace; letter-spacing: 0.5px; }
+        .timer-card .time { font-size: 18px; font-weight: 700; color: var(--primary); font-family: monospace; }
 
         .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .task-category { background: var(--panel-bg); border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.08); padding: 20px; backdrop-filter: blur(4px); }
-        .task-category h2 { margin-top: 0; font-size: 17px; font-weight: 700; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px; margin-bottom: 15px; }
+        .task-category { background: var(--panel-bg); border-radius: 12px; border: 1px solid rgba(128,128,128,0.2); padding: 20px; }
+        .task-category h2 { margin-top: 0; font-size: 17px; font-weight: 700; color: var(--text-main); border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 12px; margin-bottom: 15px; }
 
         .task-item { display: flex; align-items: flex-start; margin-bottom: 14px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] {
             appearance: none; width: 22px; height: 22px; flex-shrink: 0;
             border: 2px solid var(--text-muted); border-radius: 6px;
-            margin-right: 12px; margin-top: -1px; cursor: pointer; position: relative; transition: all 0.2s;
+            margin-right: 12px; margin-top: -1px; cursor: pointer; position: relative; transition: all 0.2s; background: transparent;
         }
-        .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px rgba(0,240,255,0.3); }
+        .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
         .task-item input[type="checkbox"]:checked::after {
-            content: '✔'; position: absolute; color: #000; font-size: 14px; font-weight: 900;
+            content: '✔'; position: absolute; color: #fff; font-size: 14px; font-weight: 900;
             top: 50%; left: 50%; transform: translate(-50%, -50%);
         }
+        [data-theme="light"] .task-item input[type="checkbox"]:checked { background-color: var(--primary); border-color: var(--primary); }
+        
         .task-item span { font-size: 15px; line-height: 1.4; transition: 0.2s; color: var(--text-main); word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; }
 
-        /* 커스텀 숙제 영역 */
         .custom-controls { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .custom-controls select { padding: 8px; flex-shrink: 0; }
         .custom-controls input { flex: 1; min-width: 150px; padding: 8px 12px; margin-bottom: 0; }
         .custom-controls button { flex-shrink: 0; width: 60px; padding: 8px; }
         .delete-btn { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 4px 8px; font-size: 12px; border-radius: 4px; margin-left: auto; margin-top: -2px; }
-        .delete-btn:hover { background: rgba(255, 68, 68, 0.1); box-shadow: none; }
+        .delete-btn:hover { background: rgba(255, 68, 68, 0.1); }
 
-        .slider-container { margin-top: 20px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 10px; }
+        .slider-container { margin-top: 20px; background: rgba(128,128,128,0.1); padding: 15px; border-radius: 10px; }
         .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 14px; }
         input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
         .sp-input { width: 60px; text-align: center; padding: 6px; }
         
+        .theme-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); padding: 6px 12px; border-radius: 6px; font-size: 13px; text-shadow: none; }
+        
         #loading-text { color: var(--accent); margin-top: 15px; display: none; font-weight: 600; font-size: 14px; }
 
-        /* 모바일 대응 */
         @media (max-width: 600px) {
             .timers-grid { grid-template-columns: repeat(2, 1fr); }
             .task-grid { grid-template-columns: 1fr; }
             header { flex-direction: column; align-items: flex-start; }
             .user-info { width: 100%; justify-content: space-between; }
+            .stamina-widget { flex-direction: column; align-items: flex-start; }
+            .stamina-controls { width: 100%; }
+            .stamina-controls input { flex: 1; }
         }
     </style>
 </head>
@@ -151,11 +180,10 @@
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
     
-    <!-- 로그인/회원가입 화면 -->
     <div id="login-screen">
         <div class="login-box">
             <h1 style="margin-bottom: 5px;">NTE Tracker <span class="version">v1.0</span></h1>
-            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">본인 UID와 사용할 비번을 입력해라</p>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px;">한 번 로긴하면 자동 기억됨</p>
             
             <div class="input-group">
                 <input type="text" id="uid-input" placeholder="인게임 UID 입력">
@@ -166,19 +194,32 @@
                 <button id="btn-login" onclick="handleLogin()">로그인</button>
                 <button id="btn-signup" class="btn-signup" onclick="handleSignup()">가입하기</button>
             </div>
-            <div id="loading-text">서버 통신 중... 대기좀</div>
+            <div id="loading-text">인증 중...</div>
         </div>
     </div>
 
-    <!-- 메인 대시보드 화면 -->
     <div id="app-screen" class="container">
         <header>
             <h1>이환 숙제 트래커 <span class="version">v1.0</span></h1>
             <div class="user-info">
-                <span id="display-uid" style="font-weight: bold; color: #fff;"></span>
-                <button onclick="handleLogout()" style="padding: 6px 12px; font-size: 13px; background: transparent; border: 1px solid var(--accent); color: var(--accent);">로그아웃</button>
+                <span id="display-uid" style="font-weight: bold;"></span>
+                <button class="theme-btn" onclick="toggleTheme()">테마 변경</button>
+                <button onclick="handleLogout()" style="padding: 6px 12px; font-size: 13px; background: transparent; border: 1px solid var(--accent); color: var(--accent); text-shadow:none;">로그아웃</button>
             </div>
         </header>
+
+        <!-- 스태미나 위젯 -->
+        <div class="stamina-widget">
+            <div class="stamina-info">
+                <h3>본성 픽셀 (6분당 1 회복)</h3>
+                <div class="stamina-val"><span id="curr-stamina">0</span> / 240</div>
+                <div id="stamina-timer" class="stamina-timer">계산 중...</div>
+            </div>
+            <div class="stamina-controls">
+                <input type="number" id="stamina-input" placeholder="잔량 입력">
+                <button onclick="syncStamina()">동기화</button>
+            </div>
+        </div>
 
         <div class="timers-grid">
             <div class="timer-card">
@@ -226,17 +267,32 @@
     const auth = firebase.auth();
     const database = firebase.database();
 
+    // 테마 설정
+    if(localStorage.getItem('theme') === 'light') {
+        document.documentElement.setAttribute('data-theme', 'light');
+    }
+    function toggleTheme() {
+        if(document.documentElement.getAttribute('data-theme') === 'light') {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // 주간 숙제 세분화 적용
     const taskConfig = {
         dailyImportant: { title: "중요 일일 숙제", type: "daily", items: [ "본성 픽셀 사용", "탐색 안내서(일퀘) 100 활약도", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번 (400호감도 아이템 사용)", "캐릭터 데이트", "시즌패스 일일 미션" ] },
         dailyOther: { title: "그 외 일일 숙제", type: "daily", items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠페다 분수 기도하기", "소원나무 선물 납품", "캐릭터 호감도작 (같이 차 타기, 집 안 교류)", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술" ] },
-        weekly: { title: "주간 숙제", type: "weekly", items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "시즌패스 주간 미션", "주간 보스 처치", "마몬 잡고 폰즈 수령" ] },
+        weekly: { title: "주간 숙제", type: "weekly", items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령", "시즌패스: 본성 픽셀 720P 소모", "시즌패스: 도시 활력제 200P 소모", "시즌패스: 300,000 폰즈 획득", "시즌패스: 콘솔 되감기 10회 진행", "시즌패스: 토끼굴 3회 클리어", "시즌패스: 이상 순례 2회 클리어", "시즌패스: 비틀 코인 100,000개 소모", "시즌패스: 선물 10회 증정" ] },
         biweekly: { title: "2주 간격 숙제", type: "biweekly", items: ["핑크퍼스 은행털기"] },
         monthly: { title: "월간 숙제", type: "monthly", items: ["마켓 기만의 주사위 교환", "마켓 진실의 주사위 교환", "마켓 삼중 열쇠 교환"] },
         fiveWeekly: { title: "5주 간격 숙제", type: "5weekly", items: ["궤도 너머 특별 노선 클리어", "헌터 거래소 교환"] }
     };
 
     let currentUserAuthUid = null;
-    let userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {} };
+    let userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaUpdated: 0 };
     let timerInterval = null;
 
     function getFakeEmail(uid) { return uid + "@nte-tracker.com"; }
@@ -247,6 +303,14 @@
         document.getElementById('loading-text').style.display = show ? 'block' : 'none';
     }
 
+    // 자동 로그인 감지
+    auth.onAuthStateChanged((user) => {
+        if (user && !currentUserAuthUid) {
+            const displayUid = user.email.split('@')[0];
+            initUserSpace(user.uid, displayUid);
+        }
+    });
+
     function handleSignup() {
         const uid = document.getElementById('uid-input').value.trim();
         const pw = document.getElementById('pw-input').value.trim();
@@ -254,15 +318,11 @@
         if (pw.length < 6) return alert("비번은 최소 6자리 이상이어야 됨");
 
         toggleLoading(true);
-        auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw)
-            .then((userCredential) => {
-                initUserSpace(userCredential.user.uid, uid);
-            })
-            .catch((error) => {
-                toggleLoading(false);
-                if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID임. 비번 치고 로그인 버튼 눌러라.");
-                else alert("에러 뜸: " + error.message);
-            });
+        auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
+            toggleLoading(false);
+            if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID임. 비번 치고 로그인 버튼 눌러라.");
+            else alert("에러 뜸: " + error.message);
+        });
     }
 
     function handleLogin() {
@@ -271,15 +331,11 @@
         if (!uid || !pw) return alert("UID랑 비번 둘 다 쳐라 ㅇㅇ");
 
         toggleLoading(true);
-        auth.signInWithEmailAndPassword(getFakeEmail(uid), pw)
-            .then((userCredential) => {
-                initUserSpace(userCredential.user.uid, uid);
-            })
-            .catch((error) => {
-                toggleLoading(false);
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입 안 된 UID거나 비번 틀렸음.");
-                else alert("로그인 실패: " + error.message);
-            });
+        auth.signInWithEmailAndPassword(getFakeEmail(uid), pw).catch((error) => {
+            toggleLoading(false);
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입 안 된 UID거나 비번 틀렸음.");
+            else alert("로그인 실패: " + error.message);
+        });
     }
 
     function initUserSpace(authUid, displayUid) {
@@ -292,8 +348,9 @@
                 if(!userData.tasks) userData.tasks = {};
                 if(!userData.customTasks) userData.customTasks = [];
                 if(!userData.resetTargets) userData.resetTargets = {};
+                if(!userData.stamina) userData.stamina = 0;
             } else {
-                userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {} };
+                userData = { tasks: {}, customTasks: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaUpdated: Date.now() };
             }
             
             checkAndResetTasks();
@@ -301,12 +358,17 @@
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
             document.getElementById('display-uid').innerText = `UID: ${displayUid}`;
+            document.getElementById('stamina-input').value = '';
             toggleLoading(false);
             
             renderTasks();
             if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(updateTimers, 1000);
+            timerInterval = setInterval(() => {
+                updateTimers();
+                calcStamina();
+            }, 1000);
             updateTimers();
+            calcStamina();
         });
     }
 
@@ -321,7 +383,38 @@
         });
     }
 
-    // 초기화 날짜 계산 로직 (5주 기준일 4월 29일 반영)
+    // 본성 픽셀(스태미나) 로직
+    function syncStamina() {
+        const val = parseInt(document.getElementById('stamina-input').value);
+        if(isNaN(val) || val < 0) return alert("숫자 제대로 적어라");
+        
+        userData.stamina = Math.min(val, 240); // 일단 이환 최대치 대충 240 잡음
+        userData.staminaUpdated = Date.now();
+        saveData();
+        calcStamina();
+        document.getElementById('stamina-input').value = '';
+    }
+
+    function calcStamina() {
+        if(!userData.staminaUpdated) return;
+        const now = Date.now();
+        const diff = now - userData.staminaUpdated;
+        const generated = Math.floor(diff / (6 * 60 * 1000));
+        let current = (userData.stamina || 0) + generated;
+        
+        if (current >= 240) {
+            current = 240;
+            document.getElementById('stamina-timer').innerText = "최대치 도달 (MAX)";
+        } else {
+            let nextTick = (6 * 60 * 1000) - (diff % (6 * 60 * 1000));
+            let min = Math.floor(nextTick / 60000);
+            let sec = Math.floor((nextTick % 60000) / 1000);
+            document.getElementById('stamina-timer').innerText = `1 회복까지 ${min}분 ${sec}초`;
+        }
+        document.getElementById('curr-stamina').innerText = current;
+    }
+
+    // 초기화 날짜 계산 (5주 기준일 4월 29일)
     function getNextReset(type, now = new Date()) {
         let d = new Date(now);
         let resetToday = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 5, 0, 0);
@@ -333,19 +426,14 @@
         if (type === 'monthly') { let md = new Date(nextDaily); md.setMonth(md.getMonth() + 1); md.setDate(1); return md; }
         
         let baseDate = new Date(2024, 0, 1, 5, 0, 0).getTime();
-        // 5주 간격 기준일: 2026년 4월 29일 오전 5시 (Month는 0부터 시작하므로 3이 4월임)
         let baseDate5w = new Date(2026, 3, 29, 5, 0, 0).getTime(); 
-        
         let currentTs = now.getTime();
         
-        if (type === 'biweekly') { 
-            let period = 14 * 24 * 60 * 60 * 1000; 
-            return new Date(baseDate + (Math.floor((currentTs - baseDate) / period) + 1) * period); 
-        }
+        if (type === 'biweekly') { let period = 14 * 24 * 60 * 60 * 1000; return new Date(baseDate + (Math.floor((currentTs - baseDate) / period) + 1) * period); }
         if (type === '5weekly') { 
             let period = 35 * 24 * 60 * 60 * 1000; 
             let passed = Math.floor((currentTs - baseDate5w) / period);
-            if(currentTs < baseDate5w) passed = -1; // 4월 29일 이전 처리
+            if(currentTs < baseDate5w) passed = -1;
             return new Date(baseDate5w + (passed + 1) * period); 
         }
     }
@@ -374,14 +462,8 @@
         ['daily', 'weekly', 'biweekly', 'monthly', '5weekly'].forEach(type => {
             let nextReset = getNextReset(type).getTime();
             if (!userData.resetTargets[type] || now > userData.resetTargets[type]) {
-                // 기본 숙제 초기화
                 for(let key in userData.tasks) if(key.startsWith(type)) userData.tasks[key] = false;
-                
-                // 커스텀 숙제 초기화
-                if(userData.customTasks) {
-                    userData.customTasks.forEach(ct => { if(ct.type === type) ct.checked = false; });
-                }
-
+                if(userData.customTasks) userData.customTasks.forEach(ct => { if(ct.type === type) ct.checked = false; });
                 userData.resetTargets[type] = nextReset;
                 needsSave = true;
             }
@@ -406,7 +488,6 @@
         saveData();
     }
 
-    // 커스텀 숙제 관련 로직
     function addCustomTask() {
         const input = document.getElementById('custom-task-input');
         const text = input.value.trim();
@@ -422,14 +503,11 @@
 
     function toggleCustomTask(id) {
         const task = userData.customTasks.find(t => t.id === id);
-        if (task) {
-            task.checked = !task.checked;
-            saveData();
-        }
+        if (task) { task.checked = !task.checked; saveData(); }
     }
 
     function deleteCustomTask(id) {
-        if(!confirm("이 커스텀 숙제 삭제할 거임?")) return;
+        if(!confirm("이 커스텀 숙제 지움?")) return;
         userData.customTasks = userData.customTasks.filter(t => t.id !== id);
         saveData();
         renderTasks();
@@ -439,7 +517,6 @@
         const container = document.getElementById('task-container');
         container.innerHTML = '';
 
-        // 기본 숙제 렌더링
         Object.keys(taskConfig).forEach(categoryKey => {
             const cat = taskConfig[categoryKey];
             const div = document.createElement('div');
@@ -453,26 +530,15 @@
             });
 
             if(categoryKey === 'fiveWeekly') {
-                html += `
-                <div class="slider-container">
-                    <div class="slider-header">
-                        <span>시즌 패스 보상 수령 (Lv)</span>
-                        <input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)">
-                    </div>
-                    <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
-                </div>`;
+                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
             }
             div.innerHTML = html;
             container.appendChild(div);
         });
 
-        // 커스텀 숙제 렌더링 영역 추가
         const customDiv = document.createElement('div');
         customDiv.className = 'task-category';
-        let customHtml = `<h2>커스텀 숙제 (개인용)</h2>`;
-        
-        // 추가 컨트롤
-        customHtml += `
+        let customHtml = `<h2>커스텀 숙제 (개인용)</h2>
             <div class="custom-controls">
                 <select id="custom-task-type">
                     <option value="daily">일일</option>
@@ -481,8 +547,7 @@
                 </select>
                 <input type="text" id="custom-task-input" placeholder="새 숙제 입력" onkeypress="if(event.key === 'Enter') addCustomTask()">
                 <button onclick="addCustomTask()">추가</button>
-            </div>
-        `;
+            </div>`;
 
         if (userData.customTasks && userData.customTasks.length > 0) {
             userData.customTasks.forEach(task => {
@@ -490,7 +555,7 @@
                 const typeLabel = task.type === 'daily' ? '일일' : (task.type === 'weekly' ? '주간' : '월간');
                 customHtml += `
                 <div class="task-item">
-                    <label style="display:flex; align-items:center; flex:1; cursor:pointer;">
+                    <label style="display:flex; align-items:flex-start; flex:1; cursor:pointer;">
                         <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${isChecked}>
                         <span><b style="color:var(--primary); font-size:12px; margin-right:5px;">[${typeLabel}]</b> ${task.text}</span>
                     </label>
