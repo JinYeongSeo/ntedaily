@@ -15,7 +15,7 @@
     
     <style>
         :root {
-            /* 다크모드 트렌디 컬러 팔레트 (다채롭게 변경) */
+            /* 다크모드 트렌디 컬러 팔레트 */
             --bg-color: #06060c;
             --panel-bg: rgba(22, 24, 34, 0.75);
             --panel-border: 1px solid rgba(255, 255, 255, 0.1);
@@ -30,7 +30,7 @@
             --grad-sub: linear-gradient(135deg, var(--secondary), var(--accent));
             --grad-stamina: linear-gradient(135deg, #3b82f6, var(--primary));
             
-            --text-main: #ffffff; /* 가시성 떡상 (완전 흰색) */
+            --text-main: #ffffff; 
             --text-muted: #cbd5e1;
             --danger: #ef4444;
             --bg-overlay: rgba(6, 6, 12, 0.85);
@@ -85,7 +85,7 @@
             position: relative;
         }
 
-        /* 로그인 */
+        /* 로그인 스크린 */
         #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
         .login-box { padding: 45px 35px; border-radius: 24px; text-align: center; width: 100%; max-width: 400px; }
         .login-box h1 { font-weight: 900; font-size: 34px; margin-bottom: 12px; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -161,15 +161,36 @@
         [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.08); }
         .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 22px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
 
+        /* ✅ 개선된 체크박스 UI (짜치는 초록색 제거 & 사이버틱하게 변경) */
         .task-item { display: flex; align-items: flex-start; margin-bottom: 18px; cursor: pointer; position: relative; }
-        .task-item input[type="checkbox"] { appearance: none; width: 24px; height: 24px; flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; margin-right: 14px; margin-top: 1px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); background: rgba(0,0,0,0.4); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); }
+        .task-item input[type="checkbox"] { 
+            appearance: none; width: 24px; height: 24px; flex-shrink: 0; 
+            border: 2px solid var(--text-muted); border-radius: 6px; 
+            margin-right: 14px; margin-top: 1px; cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: rgba(0,0,0,0.4); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); 
+            position: relative;
+        }
         [data-theme="light"] .task-item input[type="checkbox"] { background: #fff; }
-        .task-item input[type="checkbox"]:checked { background: var(--success); border-color: var(--success); box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
-        .task-item input[type="checkbox"]:checked::after { content: '✔'; position: absolute; color: #fff; font-size: 15px; font-weight: 900; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        
+        .task-item input[type="checkbox"]:checked { 
+            background: var(--grad-main); 
+            border-color: transparent; 
+            box-shadow: 0 0 12px rgba(217, 70, 239, 0.4); 
+        }
+        
+        /* 커스텀 V마크 (기본 이모지 대신 CSS 테두리로 예쁘게 그림) */
+        .task-item input[type="checkbox"]:checked::after { 
+            content: ''; position: absolute; 
+            left: 7px; top: 3px; width: 5px; height: 11px; 
+            border: solid #ffffff; border-width: 0 3px 3px 0; 
+            transform: rotate(45deg); 
+        }
+        
         .task-item span { font-size: 17px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
-        /* 커스텀 슬라이더 UI (시즌패스 박스 짤림 픽스) */
+        /* 커스텀 슬라이더 */
         input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; margin: 15px 0 5px 0; background: rgba(0,0,0,0.6); box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); }
         [data-theme="light"] input[type="range"] { background: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
         input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 12px rgba(0,0,0,0.4); border: 3px solid var(--secondary); margin-top: -7px; transition: transform 0.1s; }
@@ -180,7 +201,6 @@
         [data-theme="light"] .slider-container { background: #ffffff; border-color: rgba(0,0,0,0.12); }
         .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 16px; font-weight: 800; }
         
-        /* 스핀박스 인풋 박스 완벽 수정 */
         .sp-input-box { background: rgba(0,0,0,0.5); border: 1px solid var(--primary); color: #fff; padding: 6px 10px; border-radius: 8px; width: 65px; text-align: center; font-weight: 900; font-size: 16px; margin-left: 10px; }
         [data-theme="light"] .sp-input-box { background: #fff; color: #000; }
         .sp-input-box:focus { box-shadow: 0 0 10px rgba(0,229,255,0.4); border-color: var(--primary); }
@@ -200,7 +220,9 @@
         .custom-controls select { padding: 14px; flex-shrink: 0; width: 95px; }
         .custom-controls input { flex: 1; min-width: 150px; padding: 14px 18px; margin-bottom: 0; }
         .custom-controls button { flex-shrink: 0; width: 80px; padding: 14px; font-size: 15px; }
-        .delete-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 4px; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 900; border-radius: 8px; margin-left: auto; margin-top: -3px; box-shadow: none; transition: 0.2s; }
+        
+        /* ✅ X 버튼 늘어남 현상 방지 & 크기 고정 */
+        .delete-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 0; width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; border-radius: 8px; margin-left: auto; margin-top: -3px; box-shadow: none; transition: 0.2s; flex: none; }
         .delete-btn:hover { background: var(--danger); color: #fff; transform: scale(1.1); box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
 
         /* 호감도 계산기 */
@@ -224,7 +246,6 @@
         .char-exp-btn:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px rgba(0,229,255,0.4); transform: translateY(-2px); }
         .char-exp-btn.minus:hover { background: var(--danger); color: #fff; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
         .char-exp-btn.custom:hover { background: var(--secondary); color: #fff; box-shadow: 0 0 15px rgba(217, 70, 239, 0.4); }
-        
         .char-exp-btn:disabled { background: rgba(128,128,128,0.15); border-color: rgba(128,128,128,0.25); color: rgba(128,128,128,0.5); cursor: not-allowed; box-shadow: none; transform: none; }
 
         .char-result { margin-top: auto; padding: 22px; background: rgba(0,0,0,0.4); border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 8px rgba(0,0,0,0.4); }
@@ -271,7 +292,7 @@
                 <button id="btn-signup" class="btn-signup" onclick="handleSignup()">가입하기</button>
             </div>
             <div id="loading-text" style="color:var(--secondary); margin-top:20px; display:none; font-weight:900;">데이터를 불러오는 중입니다...</div>
-            <button id="btn-cancel-login" onclick="cancelLogin()" style="margin-top:15px; background:transparent; border:none; color:var(--text-muted); font-size:14px; box-shadow:none; display:none;">돌아가기</button>
+            <button id="btn-cancel-login" onclick="cancelLogin()" style="margin-top:15px; background:transparent; border:none; color:var(--text-muted); font-size:14px; box-shadow:none; display:none; cursor:pointer;">돌아가기</button>
         </div>
     </div>
 
@@ -326,10 +347,10 @@
             </div>
 
             <div class="timers-grid">
-                <div class="glass-panel timer-card"><h3>일일 초기화 (5AM)</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>주간 초기화 (월)</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>일일 초기화</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>주간 초기화</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--accent);">계산 중...</div></div>
-                <div class="glass-panel timer-card"><h3>월간 초기화 (1일)</h3><div id="timer-monthly" class="time" style="color:var(--success);">계산 중...</div></div>
+                <div class="glass-panel timer-card"><h3>월간 초기화</h3><div id="timer-monthly" class="time" style="color:var(--success);">계산 중...</div></div>
                 <div class="glass-panel timer-card"><h3>5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--warning);">계산 중...</div></div>
             </div>
 
@@ -394,7 +415,6 @@
     const auth = firebase.auth();
     const database = firebase.database();
 
-    // 테마 설정
     function updateThemeBtnText() {
         const btn = document.getElementById('theme-btn');
         if(document.documentElement.getAttribute('data-theme') === 'light') btn.innerText = "다크 모드";
@@ -428,7 +448,6 @@
         el.style.background = `linear-gradient(to right, ${color} ${percentage}%, ${bg} ${percentage}%)`;
     }
 
-    // 계정 전환 기능 (새 계정 로그인)
     function showLoginScreen() {
         document.getElementById('app-screen').style.display = 'none';
         document.getElementById('login-screen').style.display = 'flex';
@@ -627,7 +646,7 @@
             let min = Math.floor(nextTick / 60000);
             let sec = Math.floor((nextTick % 60000) / 1000);
             
-            // 완충 시간 계산
+            // 완충 시간 계산 추가
             let totalMinsLeft = (maxStamina - current) * 6;
             let fullH = Math.floor(totalMinsLeft / 60);
             let fullM = totalMinsLeft % 60;
@@ -760,7 +779,7 @@
     function renderTasks() {
         const container = document.getElementById('task-container');
         
-        // 렌더링 전 아코디언 메뉴(details) 열림 상태 캐싱 (버그 픽스)
+        // 렌더링 전 아코디언 메뉴(details) 열림 상태 저장 로직 추가
         const openStates = {};
         document.querySelectorAll('details.sub-tasks').forEach(d => {
             if(d.id) openStates[d.id] = d.open;
@@ -787,7 +806,7 @@
                 if(cat.type === 'weekly' || cat.type === 'biweekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
             });
 
-            // 아코디언 메뉴 렌더링
+            // 아코디언 렌더링 시 이전 상태(openStates) 복구
             if (cat.sub) {
                 const detailsId = `details_${cat.sub.id}`;
                 const openAttr = openStates[detailsId] ? 'open' : '';
