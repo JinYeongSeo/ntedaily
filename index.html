@@ -161,14 +161,14 @@
         [data-theme="light"] .task-category h2 { border-bottom-color: rgba(0,0,0,0.08); }
         .task-category h2::before { content: ''; display: inline-block; width: 6px; height: 22px; background: var(--grad-sub); margin-right: 12px; border-radius: 4px; }
 
-        /* ✅ 개선된 체크박스 UI (크기 축소 및 정밀 조정) */
-        .task-item { display: flex; align-items: flex-start; margin-bottom: 18px; cursor: pointer; position: relative; }
+        /* ✅ 개선된 체크박스 UI (크기 축소 15px 및 정밀 조정) */
+        .task-item { display: flex; align-items: center; margin-bottom: 16px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] { 
-            appearance: none; width: 18px; height: 18px; flex-shrink: 0; 
-            border: 2px solid var(--text-muted); border-radius: 5px; 
-            margin-right: 12px; margin-top: 3px; cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            background: rgba(0,0,0,0.4); box-shadow: inset 0 1px 3px rgba(0,0,0,0.2); 
+            appearance: none; width: 15px; height: 15px; flex-shrink: 0; 
+            border: 2px solid var(--text-muted); border-radius: 4px; 
+            margin-right: 12px; cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: rgba(0,0,0,0.4); box-shadow: inset 0 1px 2px rgba(0,0,0,0.2); 
             position: relative;
         }
         [data-theme="light"] .task-item input[type="checkbox"] { background: #fff; }
@@ -176,25 +176,45 @@
         .task-item input[type="checkbox"]:checked { 
             background: var(--grad-main); 
             border-color: transparent; 
-            box-shadow: 0 0 10px rgba(217, 70, 239, 0.4); 
+            box-shadow: 0 0 10px rgba(217, 70, 239, 0.5); 
         }
         
         .task-item input[type="checkbox"]:checked::after { 
             content: ''; position: absolute; 
-            left: 5px; top: 1px; width: 4px; height: 9px; 
+            left: 4px; top: 1px; width: 3px; height: 7px; 
             border: solid #ffffff; border-width: 0 2px 2px 0; 
             transform: rotate(45deg); 
         }
         
-        .task-item span { font-size: 16px; line-height: 1.5; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
+        .task-item span { font-size: 16px; line-height: 1.4; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
-        /* 커스텀 슬라이더 */
-        input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; outline: none; margin: 15px 0 5px 0; background: rgba(0,0,0,0.6); box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); }
-        [data-theme="light"] input[type="range"] { background: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 12px rgba(0,0,0,0.4); border: 3px solid var(--secondary); margin-top: -7px; transition: transform 0.1s; }
+        /* ✅ 커스텀 슬라이더 UI (오차 완벽 해결 방식) */
+        .range-wrapper {
+            position: relative; width: 100%; height: 20px; 
+            display: flex; align-items: center; margin-top: 15px; margin-bottom: 5px;
+        }
+        .range-bg {
+            position: absolute; width: 100%; height: 8px; background: rgba(0,0,0,0.6); 
+            border-radius: 4px; box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); z-index: 1;
+        }
+        [data-theme="light"] .range-bg { background: rgba(0,0,0,0.15); box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+        .range-fill {
+            position: absolute; height: 8px; background: var(--grad-main); 
+            border-radius: 4px; z-index: 2; pointer-events: none; transition: width 0.1s linear;
+            box-shadow: 0 0 10px rgba(0,229,255,0.4);
+        }
+        input[type="range"] { 
+            -webkit-appearance: none; appearance: none; width: 100%; height: 20px; 
+            background: transparent; position: relative; z-index: 3; margin: 0; outline: none; box-shadow: none; 
+        }
+        input[type="range"]::-webkit-slider-thumb { 
+            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; 
+            border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 10px rgba(0,0,0,0.5); 
+            border: 3px solid var(--secondary); transition: transform 0.1s; margin-top: 0; 
+        }
         input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-        input[type="range"]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; border: none; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 20px; background: transparent; border: none; }
         
         .slider-container { margin-top: 15px; background: rgba(0,0,0,0.35); padding: 18px 22px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); margin-bottom: 10px; }
         [data-theme="light"] .slider-container { background: #ffffff; border-color: rgba(0,0,0,0.12); }
@@ -219,6 +239,7 @@
         .custom-controls select { padding: 14px; flex-shrink: 0; width: 95px; }
         .custom-controls input { flex: 1; min-width: 150px; padding: 14px 18px; margin-bottom: 0; }
         .custom-controls button { flex-shrink: 0; width: 80px; padding: 14px; font-size: 15px; }
+        
         .delete-btn { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); padding: 0; width: 32px; height: 32px; min-width: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 900; border-radius: 8px; margin-left: auto; margin-top: -3px; box-shadow: none; transition: 0.2s; flex: none; }
         .delete-btn:hover { background: var(--danger); color: #fff; transform: scale(1.1); box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
 
@@ -438,14 +459,13 @@
         document.getElementById('btn-tab-' + tabId).classList.add('active');
     }
 
-    // ✅ 슬라이더 오차 수정: 원(Thumb)의 22px 폭을 고려하여 calc() 공식을 적용해 백그라운드 색상이 정중앙에 맞게 조절했습니다.
-    function updateSliderBackground(el, min, max, val) {
+    // ✅ 슬라이더 오차 수정 (calc 공식 도입으로 정중앙 완벽 일치)
+    function updateSliderVisuals(elId, min, max, val) {
+        const el = document.getElementById(elId);
+        if(!el) return;
         const percentage = ((val - min) / (max - min)) * 100;
-        const color = document.documentElement.getAttribute('data-theme') === 'light' ? '#0ea5e9' : '#00e5ff';
-        const bg = document.documentElement.getAttribute('data-theme') === 'light' ? 'rgba(0,0,0,0.15)' : 'rgba(0,0,0,0.6)';
-        
-        const thumbOffset = 11 - (percentage * 0.22); // 22px thumb 기준
-        el.style.background = `linear-gradient(to right, ${color} calc(${percentage}% + ${thumbOffset}px), ${bg} calc(${percentage}% + ${thumbOffset}px))`;
+        // Thumb 반경 10px을 반영한 calc() 식
+        el.style.width = `calc(${percentage}% + (${10 - (percentage * 0.2)}px))`;
     }
 
     function showLoginScreen() {
@@ -741,8 +761,7 @@
         document.getElementById(`slider-val-${id}`).innerText = userData.itemCounters[id];
         saveData();
         
-        const el = document.getElementById(`slider-${id}`);
-        if(el) updateSliderBackground(el, 0, max, val);
+        updateSliderVisuals(`slider-fill-${id}`, 0, max, val);
     }
 
     function updateSpLevel(val) {
@@ -751,8 +770,7 @@
         document.getElementById('sp-number').value = userData.spLevel;
         saveData();
         
-        const el = document.getElementById('sp-slider');
-        if(el) updateSliderBackground(el, 1, 50, userData.spLevel);
+        updateSliderVisuals('slider-fill-sp', 1, 50, userData.spLevel);
     }
 
     function addCustomTask() {
@@ -818,7 +836,11 @@
                                 <span>${slider.name}</span>
                                 <span class="sp-input"><span id="slider-val-${slider.id}">${val}</span> / ${slider.max}</span>
                             </div>
-                            <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
+                            <div class="range-wrapper">
+                                <div class="range-bg"></div>
+                                <div class="range-fill" id="slider-fill-${slider.id}"></div>
+                                <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
+                            </div>
                         </div>`;
                     });
                 } else if (cat.sub.items) {
@@ -834,7 +856,18 @@
             }
 
             if(categoryKey === 'fiveWeekly') {
-                html += `<div class="slider-container"><div class="slider-header"><span>시즌 패스 보상 수령 (Lv)</span><input type="number" id="sp-number" class="sp-input-box" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)"></div><input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)"></div>`;
+                html += `
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <span>시즌 패스 보상 수령 (Lv)</span>
+                        <input type="number" id="sp-number" class="sp-input-box" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)">
+                    </div>
+                    <div class="range-wrapper">
+                        <div class="range-bg"></div>
+                        <div class="range-fill" id="slider-fill-sp"></div>
+                        <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
+                    </div>
+                </div>`;
             }
             div.innerHTML = html;
             container.appendChild(div);
@@ -864,7 +897,7 @@
 
                 customHtml += `
                 <div class="task-item">
-                    <label style="display:flex; align-items:flex-start; flex:1; cursor:pointer;">
+                    <label style="display:flex; align-items:center; flex:1; cursor:pointer;">
                         <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${checkedAttr}>
                         <span><b style="color:var(--primary); font-size:13px; margin-right:8px; border:1px solid var(--primary); padding:2px 6px; border-radius:4px;">${typeLabel}</b> ${task.text}</span>
                     </label>
@@ -885,12 +918,10 @@
         setTimeout(() => {
             if(taskConfig.monthly.sub && taskConfig.monthly.sub.sliders) {
                 taskConfig.monthly.sub.sliders.forEach(slider => {
-                    const el = document.getElementById(`slider-${slider.id}`);
-                    if(el) updateSliderBackground(el, 0, slider.max, userData.itemCounters[slider.id] || 0);
+                    updateSliderVisuals(`slider-fill-${slider.id}`, 0, slider.max, userData.itemCounters[slider.id] || 0);
                 });
             }
-            const spSlider = document.getElementById('sp-slider');
-            if(spSlider) updateSliderBackground(spSlider, 1, 50, userData.spLevel);
+            updateSliderVisuals('slider-fill-sp', 1, 50, userData.spLevel);
         }, 10);
     }
 
