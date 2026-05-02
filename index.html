@@ -4,52 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <!-- ✅ Vercel Analytics (방문자 분석) -->
     <script defer src="/_vercel/insights/script.js"></script>
     
-    <!-- ✅ 브라우저 탭 아이콘 (파비콘) 설정 -->
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="img/favicon.png"> <!-- 아이폰용 -->
-
-    <!-- ✅ 링크 공유 시 뜨는 썸네일 (오픈 그래프) 설정 -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-vercel-url.vercel.app"> <!-- 본인 버셀 주소로 수정 권장 -->
-    <meta property="og:title" content="이환(NTE) 1.0 숙제 트래커">
+    <link rel="apple-touch-icon" href="img/favicon.png"> <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-vercel-url.vercel.app"> <meta property="og:title" content="이환(NTE) 1.0 숙제 트래커">
     <meta property="og:description" content="일일/주간 숙제부터 호감도 계산까지, 이환 유저를 위한 필수 도구">
-    <meta property="og:image" content="img/thumbnail.png"> <!-- 썸네일 이미지 경로 -->
-    
-    <!-- 트위터/X용 썸네일 -->
-    <meta name="twitter:card" content="summary_large_image">
+    <meta property="og:image" content="img/thumbnail.png"> <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="이환(NTE) 1.0 숙제 트래커">
     <meta name="twitter:description" content="이환 숙제와 본성 픽셀을 한눈에 관리하세요.">
     <meta name="twitter:image" content="img/thumbnail.png">
 
     <title>이환(NTE) 1.0 숙제 트래커</title>
     
-    <!-- SUIT 폰트 -->
     <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet">
     
-    <!-- Firebase SDK (v8 CDN) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
     <style>
-        /* [기존 CSS 스타일 그대로 유지] */
         :root {
+            /* 이환(NTE) 공식 아트워크 기반 몽환적인 사이버펑크 팔레트 */
             --bg-color: #0b0c15;
             --panel-bg: rgba(22, 21, 36, 0.7);
             --panel-border: 1px solid rgba(168, 85, 247, 0.25);
-            --primary: #60a5fa;
-            --secondary: #a855f7;
-            --accent: #ec4899;
+            
+            --primary: #60a5fa;    /* Light Blue */
+            --secondary: #a855f7;  /* Purple */
+            --accent: #ec4899;     /* Pink */
+            --success: #10b981;    
+            --warning: #f59e0b;    
+            --danger: #f43f5e;     
+            
             --grad-main: linear-gradient(135deg, var(--secondary), var(--primary));
             --grad-sub: linear-gradient(135deg, var(--accent), var(--secondary));
             --grad-stamina: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            
             --text-main: #f8fafc; 
             --text-muted: #94a3b8;
             --bg-overlay: rgba(7, 8, 16, 0.85);
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
         }
 
         [data-theme="light"] {
@@ -303,7 +299,6 @@
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
     
-    <!-- 로그인 스크린 -->
     <div id="login-screen">
         <div class="glass-panel login-box">
             <h1 style="margin-bottom: 8px;">NTE Tracker</h1>
@@ -341,16 +336,13 @@
             </div>
         </header>
 
-        <!-- 탭 메뉴 -->
         <div class="tabs">
             <button class="tab-btn active" id="btn-tab-homework" onclick="switchTab('homework')">✅ 숙제 트래커</button>
             <button class="tab-btn" id="btn-tab-affection" onclick="switchTab('affection')">💖 호감도 계산기</button>
         </div>
 
-        <!-- 숙제 트래커 탭 -->
         <div id="tab-homework" class="tab-content active">
             
-            <!-- 대시보드 상단 (스태미나 + 진행도) -->
             <div class="dashboard-top">
                 <div class="glass-panel stamina-widget">
                     <div class="stamina-header">
@@ -385,7 +377,6 @@
                 </div>
             </div>
 
-            <!-- 콤팩트 타이머 바 -->
             <div class="timers-bar">
                 <div class="timer-badge"><h3>일일 초기화</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
                 <div class="timer-badge"><h3>주간 초기화</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
@@ -394,12 +385,14 @@
                 <div class="timer-badge"><h3>5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--text-main);">계산 중...</div></div>
             </div>
 
-            <div class="task-grid" id="task-container">
-                <!-- JS 렌더링 -->
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; padding: 0 10px;">
+                <button class="outline-btn" style="color: var(--danger); border-color: var(--danger); font-weight: 800;" onclick="uncheckAllTasks()">전체 체크 해제</button>
             </div>
+
+            <div class="task-grid" id="task-container">
+                </div>
         </div>
 
-        <!-- 호감도 계산기 탭 -->
         <div id="tab-affection" class="tab-content">
             <div class="glass-panel char-add-box">
                 <h2 style="margin:0 0 10px 0; font-size:18px; font-weight:800; color:var(--text-main);">캐릭터 호감도 추가</h2>
@@ -432,8 +425,7 @@
             </div>
             
             <div class="affection-grid" id="character-list">
-                <!-- JS 렌더링 -->
-            </div>
+                </div>
         </div>
     </div>
 
@@ -542,12 +534,13 @@
         });
     }
 
+    // ✅ 주간 숙제 항목에 "이상 가구 우편함에서 이상 의뢰 수행" 추가 완료
     const taskConfig = {
         dailyImportant: { title: "중요 일일 숙제", type: "daily", items: [ "본성 픽셀 사용", "탐색 안내서(일퀘) 100 활약도", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번 (400호감도 아이템 사용)", "캐릭터 데이트", "시즌패스 일일 미션" ] },
         dailyOther: { title: "그 외 일일 숙제", type: "daily", items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠페다 분수 기도하기", "소원나무 선물 납품", "캐릭터 호감도작 (같이 차 타기, 집 안 교류)", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술" ] },
         weekly: { 
             title: "주간 숙제", type: "weekly", 
-            items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령" ],
+            items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행" ],
             sub: { title: "시즌패스 주간 미션 상세", id: "sp_weekly", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
         },
         biweekly: { title: "2주 간격 숙제", type: "biweekly", items: ["핑크퍼스 은행털기"] },
@@ -769,6 +762,22 @@
         if (needsSave) saveData();
     }
 
+    // ✅ 원클릭 전체 해제 함수 구현
+    function uncheckAllTasks() {
+        if (!confirm("모든 숙제 체크를 해제하시겠습니까?")) return;
+        
+        for (let key in userData.tasks) {
+            userData.tasks[key] = false;
+        }
+        
+        if (userData.customTasks) {
+            userData.customTasks.forEach(task => task.checked = false);
+        }
+        
+        saveData();
+        renderTasks();
+    }
+
     function saveData() { if (currentUserAuthUid) database.ref('users/' + currentUserAuthUid).set(userData); }
 
     function toggleTask(taskId) { 
@@ -858,7 +867,9 @@
                                 <span>${slider.name}</span>
                                 <span class="sp-input"><span id="slider-val-${slider.id}">${val}</span> / ${slider.max}</span>
                             </div>
-                            <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
+                            <div class="range-wrapper">
+                                <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
+                            </div>
                         </div>`;
                     });
                 } else if (cat.sub.items) {
@@ -880,7 +891,9 @@
                         <span>시즌 패스 보상 수령 (Lv)</span>
                         <input type="number" id="sp-number" class="sp-input-box" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)">
                     </div>
-                    <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
+                    <div class="range-wrapper">
+                        <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
+                    </div>
                 </div>`;
             }
             div.innerHTML = html;
