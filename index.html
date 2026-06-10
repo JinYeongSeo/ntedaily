@@ -35,7 +35,7 @@
             --dashboard-bg: #25252c;
             
             /* 파스텔톤 컬러 (눈 피로 최소화) */
-            --primary: #74a1e6;    
+            --primary: #74a1e6;   
             --secondary: #a37ee3;  
             --accent: #e074a7;     
             --success: #6bbd92;    
@@ -894,15 +894,15 @@
     const taskConfig = {
         dailyImportant: { 
             title: "중요 일일 숙제", type: "daily", color: "var(--primary)",
-            items: [ "본성 픽셀 사용", "탐색 안내서(일퀘), 시즌패스 일일 미션", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번", "캐릭터 데이트", "베이글 관리" ] 
+            items: [ "본성 픽셀 사용", "탐색 안내서(일퀘), 시즌패스 일일 미션", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번", "캐릭터 데이트 (영화관 등)" ] 
         },
         dailyOther: { 
             title: "그 외 일일 숙제", type: "daily", color: "var(--primary)",
-            items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠펜다의 연못 기도하기", "소원나무 선물 납품", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술", "npc 지갑, 핸드백, 밀키트 뺏기(각각 일일 4개 제한)" ] 
+            items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠펜다의 연못 기도하기", "소원나무 선물 납품", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술", "npc 지갑, 핸드백, 밀키트 뺏기(각각 일일 4개 제한)", '<a href="https://arca.live/b/nevernesstoeverness/172825172" target="_blank" style="color:var(--primary); text-decoration:underline;" onclick="event.stopPropagation()">베이글 관리(조회 5번, 좋아요 3번, 댓글 3번)</a>' ] 
         },
         weekly: { 
             title: "주간 숙제", type: "weekly", color: "var(--secondary)",
-            items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행", "15000폰즈 금고 털기", '떨어진 지갑 줍기(<a href="https://arca.live/b/nevernesstoeverness/173300296" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">고정 스폰</a>)' ],
+            items: [ "도시 활력제 사용", "경매 참가", "이상가구 몽몽솜 수령", "이상 순례 3번 돌기", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행", '<a href="https://arca.live/b/nevernesstoeverness/170277488" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">15000폰즈 금고 털기(금고위치)</a>', '떨어진 지갑 줍기(<a href="https://arca.live/b/nevernesstoeverness/173300296" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">고정 스폰</a>)' ],
             sub: { title: "시즌패스 주간 미션 상세", id: "sp_weekly", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
         },
         biweeklyPinkpus: { title: "핑크퍼스 은행털기 (2주)", type: "biweeklyPinkpus", color: "var(--accent)", items: ["핑크퍼스 은행털기"] },
@@ -1320,7 +1320,7 @@
         // 커스텀 숙제 (왼쪽 정렬 완료)
         const customDiv = document.createElement('div');
         customDiv.className = 'glass-panel task-category';
-        let customHtml = `<h2 style="--cat-color: var(--text-muted);">커스텀 숙제 (개인용)</h2>
+        let customHtml = `<h2 style="--cat-color: var(--text-muted); justify-content: flex-start; gap: 8px;"><span style="display: flex; align-items: center;">커스텀 숙제 (개인용)</span></h2>
             <div class="custom-controls">
                 <select id="custom-task-type">
                     <option value="daily">일일</option>
