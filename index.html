@@ -7,17 +7,20 @@
     <script defer src="/_vercel/insights/script.js"></script>
     
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="img/favicon.png"> <meta property="og:type" content="website">
-    <meta property="og:url" content="https://your-vercel-url.vercel.app"> <meta property="og:title" content="이환(NTE) 1.1 숙제 트래커">
-    <meta property="og:description" content="일일/주간 숙제부터 호감도 계산까지, 이환 유저를 위한 필수 도구">
-    <meta property="og:image" content="img/thumbnail.png"> <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="이환(NTE) 1.1 숙제 트래커">
-    <meta name="twitter:description" content="이환 숙제와 본성 픽셀을 한눈에 관리하세요.">
+    <link rel="apple-touch-icon" href="img/favicon.png"> 
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://your-vercel-url.vercel.app"> 
+    <meta property="og:title" content="이환(NTE) 1.1 숙제 트래커 & 카페 관리">
+    <meta property="og:description" content="일일/주간 숙제부터 호감도, 카페 최고 예상 수익 산출까지">
+    <meta property="og:image" content="img/thumbnail.png"> 
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="이환(NTE) 1.1 숙제 트래커 & 카페 관리">
+    <meta name="twitter:description" content="이환 숙제와 카페 수익을 한눈에 관리하세요.">
     <meta name="twitter:image" content="img/thumbnail.png">
 
-    <title>이환(NTE) 1.1 숙제 트래커</title>
+    <title>이환(NTE) 1.1 숙제 트래커 & 카페 관리</title>
     
-    <link href="https://cdn.jsdelivr.net/gh/sunn-us/SUIT/fonts/static/woff2/SUIT.css" rel="stylesheet">
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -25,53 +28,76 @@
     
     <style>
         :root {
-            /* 이환(NTE) 공식 아트워크 기반 몽환적인 사이버펑크 팔레트 */
-            --bg-color: #0b0c15;
-            --panel-bg: rgba(22, 21, 36, 0.7);
-            --panel-border: 1px solid rgba(168, 85, 247, 0.25);
+            /* 눈이 편안한 차분한 다크 모드 (Discord/Notion 스타일) */
+            --bg-color: #121216;
+            --panel-bg: #1e1e24;
+            --panel-border: 1px solid #2e2e36;
+            --dashboard-bg: #25252c;
             
-            --primary: #60a5fa;    
-            --secondary: #a855f7;  
-            --accent: #ec4899;     
-            --success: #10b981;    
-            --warning: #f59e0b;    
-            --danger: #f43f5e;     
+            /* 파스텔톤 컬러 (눈 피로 최소화) */
+            --primary: #74a1e6;    
+            --secondary: #a37ee3;  
+            --accent: #e074a7;     
+            --success: #6bbd92;    
+            --warning: #db9e56;    
+            --danger: #e36877;     
             
             --grad-main: linear-gradient(135deg, var(--secondary), var(--primary));
             --grad-sub: linear-gradient(135deg, var(--accent), var(--secondary));
-            --grad-stamina: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            --grad-stamina: linear-gradient(135deg, #816ad6, #5d8be6);
             
-            --text-main: #f8fafc; 
-            --text-muted: #94a3b8;
-            --bg-overlay: rgba(7, 8, 16, 0.75); 
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            --inner-glow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            --text-main: #e4e4e7; 
+            --text-muted: #a1a1aa;
+            --bg-overlay: rgba(18, 18, 22, 0.85); 
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            --inner-glow: none;
+            
+            /* 카페 계산기 전용 변수 호환 */
+            --yellow-text: #db9e56;
+            --trend-bg: #e36877;
+            --modal-bg: rgba(0, 0, 0, 0.6);
+            --accent-blue: #74a1e6;
+            --border-color: #2e2e36;
         }
 
         [data-theme="light"] {
-            /* 화이트모드 */
-            --bg-color: #f5f3ff;
-            --panel-bg: rgba(255, 255, 255, 0.9);
-            --panel-border: 1px solid rgba(139, 92, 246, 0.2);
+            /* 눈이 편안한 라이트 모드 */
+            --bg-color: #f4f4f5;
+            --panel-bg: #ffffff;
+            --panel-border: 1px solid #e4e4e7;
+            --dashboard-bg: #f8f8f9;
             
-            --primary: #3b82f6;
-            --secondary: #8b5cf6;
-            --accent: #db2777;
+            --primary: #4b83d1;
+            --secondary: #8c5cd6;
+            --accent: #c44f86;
+            --success: #4a9e71;
+            --warning: #c28134;
+            --danger: #d1495a;
             
             --grad-main: linear-gradient(135deg, var(--secondary), var(--primary));
             --grad-sub: linear-gradient(135deg, var(--accent), var(--secondary));
             --grad-stamina: linear-gradient(135deg, #7c3aed, #2563eb);
             
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --bg-overlay: rgba(245, 243, 255, 0.85); 
-            --shadow: 0 4px 20px rgba(139, 92, 246, 0.1);
-            --inner-glow: inset 0 1px 0px rgba(255, 255, 255, 1);
+            --text-main: #27272a;
+            --text-muted: #71717a;
+            --bg-overlay: rgba(244, 244, 245, 0.9); 
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            
+            --yellow-text: #c28134;
+            --trend-bg: #d1495a;
+            --accent-blue: #4b83d1;
+            --border-color: #e4e4e7;
         }
+
+        * { box-sizing: border-box; }
 
         body, html {
             margin: 0; padding: 0;
-            font-family: 'SUIT', -apple-system, sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
             background-color: var(--bg-color);
             color: var(--text-main);
             min-height: 100vh;
@@ -79,252 +105,327 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* ✅ 배경 이미지 경로 및 가시성 완벽 픽스 */
         .bg-image { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: url('./img/bg.png') center center/cover no-repeat; 
-            z-index: -2; opacity: 0.8; 
+            z-index: -2; opacity: 0.15; /* 눈 피로를 위해 배경 투명도 대폭 낮춤 */
         }
         .bg-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: var(--bg-overlay); 
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); 
             z-index: -1; transition: background-color 0.3s; 
         }
         
-        [data-theme="light"] .bg-image { opacity: 0.2; display: block; } 
+        [data-theme="light"] .bg-image { opacity: 0.05; } 
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
         .glass-panel {
             background: var(--panel-bg);
             border: var(--panel-border);
-            box-shadow: var(--shadow), var(--inner-glow);
-            backdrop-filter: blur(16px);
-            border-radius: 16px;
+            box-shadow: var(--shadow);
+            border-radius: 12px;
             position: relative;
         }
 
         /* 로그인 스크린 */
-        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; box-sizing: border-box; }
-        .login-box { padding: 45px 35px; border-radius: 20px; text-align: center; width: 100%; max-width: 400px; }
-        .login-box h1 { font-weight: 900; font-size: 32px; margin-bottom: 10px; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .login-box { padding: 45px 35px; border-radius: 16px; text-align: center; width: 100%; max-width: 400px; }
+        .login-box h1 { font-weight: 800; font-size: 32px; margin-bottom: 10px; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        input, select { box-sizing: border-box; background: rgba(0,0,0,0.3); border: 1px solid rgba(168, 85, 247, 0.2); color: var(--text-main); padding: 14px 16px; border-radius: 12px; outline: none; font-size: 15px; font-weight: 600; transition: all 0.2s; }
-        select option { background-color: #1a1c23; color: #ffffff; }
-        [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: rgba(139, 92, 246, 0.2); }
-        [data-theme="light"] select option { background-color: #ffffff; color: #0f172a; }
-        input:focus, select:focus { border-color: var(--secondary); box-shadow: 0 0 12px rgba(168, 85, 247, 0.3); }
+        input, select { background: var(--dashboard-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 14px 16px; border-radius: 8px; outline: none; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+        select option { background-color: var(--panel-bg); color: var(--text-main); }
+        input:focus, select:focus { border-color: var(--primary); }
         .btn-group { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
-        button { background: var(--grad-main); color: #fff; border: none; flex: 1; padding: 14px; border-radius: 12px; font-weight: 800; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 15px; box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3); }
-        button.btn-signup { background: transparent; border: 2px solid var(--secondary); color: var(--secondary); box-shadow: none; }
-        button:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 6px 16px rgba(168, 85, 247, 0.4); }
-        button:disabled { background: #334155; border-color: #334155; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; filter:none;}
+        button { background: var(--grad-main); color: #fff; border: none; flex: 1; padding: 14px; border-radius: 8px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; font-size: 15px; }
+        button.btn-signup { background: transparent; border: 1px solid var(--secondary); color: var(--secondary); }
+        button:hover:not(:disabled) { transform: translateY(-1px); filter: brightness(1.1); }
+        button:disabled { background: #3f3f46; border-color: #3f3f46; color: #a1a1aa; cursor: not-allowed; transform: none; filter:none;}
         
-        /* ✅ 구글 로그인 및 비밀번호 찾기 스타일 */
-        .btn-google { background: #ffffff; color: #0f172a; border: 1px solid #e2e8f0; width: 100%; box-shadow: 0 4px 12px rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; gap: 10px; }
-        [data-theme="light"] .btn-google { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .btn-google:hover:not(:disabled) { background: #f8fafc; color: #000; box-shadow: 0 6px 16px rgba(255,255,255,0.2); }
+        .btn-google { background: var(--panel-bg); color: var(--text-main); border: 1px solid var(--border-color); width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-google:hover:not(:disabled) { background: var(--dashboard-bg); }
         .forgot-pw-link { display: inline-block; margin-top: 15px; font-size: 13px; color: var(--text-muted); text-decoration: underline; cursor: pointer; transition: 0.2s; }
         .forgot-pw-link:hover { color: var(--primary); }
 
         .help-links { margin-top: 20px; display: flex; gap: 15px; justify-content: center; align-items: center; font-size: 13px; }
-        .help-links a { color: var(--text-muted); text-decoration: none; transition: 0.2s; font-weight: 600; }
+        .help-links a { color: var(--text-muted); text-decoration: none; transition: 0.2s; font-weight: 500; }
         .help-links a:hover { color: var(--primary); }
 
         #app-screen { display: none; }
         
         /* 헤더 디자인 */
-        header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--panel-border); }
-        header h1 { margin: 0; font-size: 26px; font-weight: 900; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: -0.5px; }
-        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 800; margin-left: 4px; }
+        header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
+        header h1 { margin: 0; font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        .version { font-size: 13px; color: var(--accent); vertical-align: top; font-weight: 700; margin-left: 4px; }
         
-        .user-info { display: flex; align-items: center; gap: 8px; font-size: 14px; flex-wrap: wrap; }
+        .user-info { display: flex; align-items: center; gap: 8px; font-size: 13px; flex-wrap: wrap; }
         
-        /* 버튼 텍스트 강제 한 줄 고정 (white-space: nowrap) 추가 */
-        .account-select { background: rgba(168, 85, 247, 0.1); border: 1px solid var(--secondary); color: var(--secondary); font-weight: 700; padding: 8px 12px; border-radius: 8px; cursor: pointer; white-space: nowrap; }
-        [data-theme="light"] .account-select { background: rgba(139, 92, 246, 0.05); }
+        .account-select { background: var(--dashboard-bg); border: 1px solid var(--secondary); color: var(--secondary); font-weight: 600; padding: 8px 12px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
         
-        .outline-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; white-space: nowrap; }
-        .outline-btn:hover { background: var(--text-muted); color: var(--bg-color); }
+        .outline-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; cursor: pointer; white-space: nowrap; }
+        .outline-btn:hover { background: var(--dashboard-bg); }
         
-        /* ✅ 헤더 버튼(구글연동, 회원탈퇴) 스타일 */
-        .link-google-btn { background: transparent; border: 1px solid var(--success); color: var(--success); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; transition: 0.2s; cursor: pointer; white-space: nowrap; }
+        .link-google-btn { background: transparent; border: 1px solid var(--success); color: var(--success); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 600; transition: 0.2s; cursor: pointer; white-space: nowrap; }
         .link-google-btn:hover { background: var(--success); color: #fff; }
-        .logout-btn { background: transparent; border: 1px solid var(--text-muted); color: var(--text-main); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; transition: 0.2s; cursor: pointer; white-space: nowrap; }
-        .logout-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-main); }
-        .delete-account-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 800; transition: 0.2s; cursor: pointer; white-space: nowrap; }
+        .logout-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; transition: 0.2s; cursor: pointer; white-space: nowrap; }
+        .logout-btn:hover { background: var(--dashboard-bg); color: var(--text-main); }
+        .delete-account-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; transition: 0.2s; cursor: pointer; white-space: nowrap; }
         .delete-account-btn:hover { background: var(--danger); color: #fff; }
         
-        [data-theme="light"] .outline-btn { color: var(--text-muted); border-color: var(--text-muted); }
-        [data-theme="light"] .outline-btn:hover { color: var(--bg-color); background: var(--text-muted); }
-        [data-theme="light"] .logout-btn { color: var(--text-muted); border-color: var(--text-muted); }
-        [data-theme="light"] .logout-btn:hover { background: rgba(0, 0, 0, 0.05); }
-
-        /* 탭 메뉴 */
-        .tabs { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 12px; border: var(--panel-border); }
-        [data-theme="light"] .tabs { background: rgba(255,255,255,0.5); }
-        .tab-btn { flex: 1; background: transparent; color: var(--text-muted); border: none; font-size: 15px; font-weight: 800; padding: 12px 20px; cursor: pointer; border-radius: 8px; white-space: nowrap; transition: 0.3s; text-align: center; }
-        .tab-btn.active { background: var(--grad-main); color: #fff; box-shadow: 0 2px 10px rgba(168, 85, 247, 0.3); }
+        /* 탭 메뉴 (이모티콘 제거) */
+        .tabs { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; background: var(--dashboard-bg); padding: 6px; border-radius: 10px; border: var(--panel-border); }
+        .tab-btn { flex: 1; background: transparent; color: var(--text-muted); border: none; font-size: 14px; font-weight: 700; padding: 12px 20px; cursor: pointer; border-radius: 6px; white-space: nowrap; transition: 0.2s; text-align: center; }
+        .tab-btn.active { background: var(--panel-bg); color: var(--text-main); box-shadow: var(--shadow); }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* 대시보드 상단 그리드 */
         .dashboard-top { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
 
         /* 스태미나 위젯 */
-        .stamina-widget { padding: 25px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
-        .stamina-widget::before { content: ''; position: absolute; top: 0; left: 0; width: 5px; height: 100%; background: var(--grad-stamina); }
+        .stamina-widget { padding: 25px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; border-left: 4px solid var(--primary); }
         .stamina-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .stamina-info h3 { margin: 0 0 5px 0; font-size: 16px; font-weight: 800; color: var(--secondary); }
-        .stamina-val { font-size: 40px; font-weight: 900; font-family: monospace; letter-spacing: -1px; background: var(--grad-stamina); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; }
-        .stamina-max-text { font-size: 20px; color: var(--text-muted); font-weight: 800; -webkit-text-fill-color: var(--text-muted); }
-        .stamina-timer { font-size: 14px; color: var(--text-muted); font-weight: 600; margin-top: 10px; line-height: 1.5; }
+        .stamina-info h3 { margin: 0 0 5px 0; font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .stamina-val { font-size: 36px; font-weight: 800; font-family: monospace; letter-spacing: -1px; color: var(--primary); line-height: 1; }
+        .stamina-max-text { font-size: 18px; color: var(--text-muted); font-weight: 600; }
+        .stamina-timer { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-top: 10px; line-height: 1.5; }
         .stamina-controls { display: flex; align-items: center; gap: 8px; margin-top: 15px; width: 100%; }
-        .stamina-input-wrapper { display: flex; align-items: center; justify-content: space-between; flex: 1; background: rgba(0,0,0,0.3); padding: 5px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        [data-theme="light"] .stamina-input-wrapper { background: #fff; border-color: rgba(0,0,0,0.1); }
-        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 45%; text-align: center; font-weight: 800; font-size: 16px; color: var(--primary); outline: none; }
-        .stamina-input-wrapper span { color: var(--text-muted); font-weight: 800; }
-        .stamina-controls button { padding: 12px 18px; font-size: 14px; border-radius: 10px; flex: none; background: var(--grad-stamina); white-space: nowrap; }
+        .stamina-input-wrapper { display: flex; align-items: center; justify-content: space-between; flex: 1; background: var(--dashboard-bg); padding: 5px 12px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .stamina-input-wrapper input { background: transparent; border: none; padding: 5px; width: 45%; text-align: center; font-weight: 700; font-size: 15px; color: var(--primary); outline: none; }
+        .stamina-input-wrapper span { color: var(--text-muted); font-weight: 600; }
+        .stamina-controls button { padding: 10px 16px; font-size: 13px; border-radius: 8px; flex: none; background: var(--primary); }
 
         /* 진행도 위젯 */
         .progress-widget { display: flex; flex-direction: column; justify-content: center; gap: 15px; padding: 25px; }
         .progress-item { width: 100%; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: 800; margin-bottom: 8px; }
-        .progress-bar-bg { width: 100%; height: 12px; background: rgba(0,0,0,0.4); border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3); }
-        [data-theme="light"] .progress-bar-bg { background: rgba(0,0,0,0.05); box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
-        .progress-bar-fill { height: 100%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); width: 0%; border-radius: 6px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+        .progress-bar-bg { width: 100%; height: 10px; background: var(--dashboard-bg); border-radius: 5px; overflow: hidden; border: 1px solid var(--border-color); }
+        .progress-bar-fill { height: 100%; transition: width 0.5s ease; width: 0%; border-radius: 5px; }
 
-        /* 타이머 바 */
+        /* 타이머 바 (막대기 색상과 연동) */
         .timers-bar { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 5px; }
-        .timer-badge { flex: 1; min-width: 130px; background: var(--panel-bg); border: var(--panel-border); padding: 12px 15px; border-radius: 12px; text-align: center; display: flex; flex-direction: column; gap: 5px; backdrop-filter: blur(10px); box-shadow: var(--shadow); }
-        .timer-badge h3 { margin: 0; font-size: 12px; color: var(--text-muted); font-weight: 800; }
-        .timer-badge .time { font-size: 16px; font-weight: 900; color: var(--text-main); font-family: monospace; }
+        .timer-badge { flex: 1; min-width: 130px; background: var(--panel-bg); border: var(--panel-border); padding: 12px 15px; border-radius: 10px; text-align: center; display: flex; flex-direction: column; gap: 5px; box-shadow: var(--shadow); }
+        .timer-badge h3 { margin: 0; font-size: 12px; color: var(--text-muted); font-weight: 700; }
+        .timer-badge .time { font-size: 15px; font-weight: 800; font-family: monospace; }
         
         /* 태스크 그리드 */
         .task-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start; }
-        .task-category { padding: 22px; }
-        .task-category h2 { margin-top: 0; font-size: 18px; font-weight: 900; color: var(--text-main); border-bottom: 2px solid rgba(168, 85, 247, 0.2); padding-bottom: 12px; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; }
-        .task-category h2::before { content: ''; display: inline-block; width: 4px; height: 18px; background: var(--cat-color, var(--grad-main)); margin-right: 10px; border-radius: 2px; }
+        .task-category { padding: 20px; }
+        .task-category h2 { margin-top: 0; font-size: 16px; font-weight: 800; color: var(--text-main); border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        .task-category h2::before { content: ''; display: inline-block; width: 4px; height: 16px; background: var(--cat-color, var(--primary)); margin-right: 8px; border-radius: 2px; }
 
         /* 체크박스 디자인 */
-        .task-item { display: flex; align-items: center; margin-bottom: 15px; cursor: pointer; position: relative; }
+        .task-item { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; position: relative; }
         .task-item input[type="checkbox"] { 
             -webkit-appearance: none; appearance: none; 
-            width: 20px !important; height: 20px !important; 
-            min-width: 20px !important; min-height: 20px !important; 
-            flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 6px; 
-            margin-right: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-            background: rgba(0,0,0,0.3); position: relative; display: flex; align-items: center; justify-content: center;
+            width: 18px !important; height: 18px !important; 
+            min-width: 18px !important; min-height: 18px !important; 
+            flex-shrink: 0; border: 2px solid var(--text-muted); border-radius: 4px; 
+            margin-right: 10px; cursor: pointer; transition: all 0.2s ease; 
+            background: var(--dashboard-bg); position: relative; display: flex; align-items: center; justify-content: center;
         }
-        [data-theme="light"] .task-item input[type="checkbox"] { background: #fff; border-color: rgba(0,0,0,0.2); }
-        .task-item input[type="checkbox"]:checked { background: var(--grad-main); border-color: transparent; box-shadow: 0 0 10px rgba(168, 85, 247, 0.4); }
+        .task-item input[type="checkbox"]:checked { background: var(--primary); border-color: transparent; }
         .task-item input[type="checkbox"]:checked::after { 
             content: ''; position: absolute; 
-            left: 50%; top: 40%; width: 4px; height: 9px; 
+            left: 50%; top: 40%; width: 4px; height: 8px; 
             border: solid #ffffff; border-width: 0 2px 2px 0; 
             transform: translate(-50%, -50%) rotate(45deg); 
         }
-        .task-item span { font-size: 15px; line-height: 1.4; transition: 0.2s; color: var(--text-main); font-weight: 700; word-break: keep-all; }
+        .task-item span { font-size: 14px; line-height: 1.4; transition: 0.2s; color: var(--text-main); font-weight: 600; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
-        /* 슬라이더 개선됨 */
+        /* 슬라이더 개선 */
         .range-wrapper { position: relative; width: 100%; height: 20px; display: flex; align-items: center; margin-top: 10px; margin-bottom: 5px; }
         input[type="range"] { 
-            -webkit-appearance: none; appearance: none; width: 100%; height: 8px; 
-            border-radius: 4px; outline: none; background-color: rgba(0,0,0,0.5); 
+            -webkit-appearance: none; appearance: none; width: 100%; height: 6px; 
+            border-radius: 3px; outline: none; background-color: var(--border-color); 
             background-image: var(--grad-main); 
             background-size: calc(10px + (100% - 20px) * (var(--val) / 100)) 100%; 
             background-repeat: no-repeat;
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); margin: 0; position: relative; z-index: 3;
+            margin: 0; position: relative; z-index: 3;
         }
-        [data-theme="light"] input[type="range"] { background-color: rgba(0,0,0,0.1); box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); }
         input[type="range"]::-webkit-slider-thumb { 
-            -webkit-appearance: none; appearance: none; width: 20px; height: 20px; 
-            border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 0 8px rgba(0,0,0,0.4); 
-            border: 3px solid var(--secondary); transition: transform 0.1s; 
+            -webkit-appearance: none; appearance: none; width: 18px; height: 18px; 
+            border-radius: 50%; background: #fff; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.3); 
+            border: 2px solid var(--primary); transition: transform 0.1s; 
         }
         input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 8px; background: transparent; border: none; }
+        input[type="range"]::-webkit-slider-runnable-track { width: 100%; height: 6px; background: transparent; border: none; }
         
-        .slider-container { margin-top: 15px; background: rgba(0,0,0,0.2); padding: 15px 18px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
-        [data-theme="light"] .slider-container { background: #fff; border-color: rgba(0,0,0,0.08); }
-        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 14px; font-weight: 800; }
-        .sp-input-box { background: rgba(0,0,0,0.4); border: 1px solid var(--secondary); color: #fff; padding: 4px 8px; border-radius: 6px; width: 50px; text-align: center; font-weight: 900; font-size: 14px; margin-left: 10px; outline: none; }
-        [data-theme="light"] .sp-input-box { background: #fff; color: #000; }
-        .sp-input-box:focus { box-shadow: 0 0 8px rgba(168, 85, 247, 0.4); }
+        .slider-container { margin-top: 15px; background: var(--dashboard-bg); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 10px; }
+        .slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 13px; font-weight: 700; color: var(--text-main); }
+        .sp-input-box { background: var(--panel-bg); border: 1px solid var(--primary); color: var(--text-main); padding: 4px 8px; border-radius: 4px; width: 50px; text-align: center; font-weight: 700; font-size: 13px; margin-left: 10px; outline: none; }
 
         /* 아코디언 */
-        details.sub-tasks { margin-top: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); }
-        [data-theme="light"] details.sub-tasks { background: #fff; border-color: rgba(0,0,0,0.08); }
-        details.sub-tasks summary { padding: 14px 18px; font-weight: 800; font-size: 15px; cursor: pointer; color: var(--secondary); list-style: none; display: flex; align-items: center; justify-content: space-between; border-radius: 12px; transition: 0.2s; }
-        details.sub-tasks summary:hover { background: rgba(255,255,255,0.05); }
+        details.sub-tasks { margin-top: 15px; background: var(--dashboard-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+        details.sub-tasks summary { padding: 12px 15px; font-weight: 700; font-size: 14px; cursor: pointer; color: var(--text-main); list-style: none; display: flex; align-items: center; justify-content: space-between; border-radius: 8px; transition: 0.2s; }
+        details.sub-tasks summary:hover { background: var(--border-color); }
         details.sub-tasks summary::-webkit-details-marker { display: none; }
-        details.sub-tasks summary::after { content: '▼'; font-size: 12px; transition: 0.3s; margin-left: auto; padding-left: 10px;}
+        details.sub-tasks summary::after { content: '▼'; font-size: 10px; transition: 0.3s; margin-left: auto; padding-left: 10px;}
         details[open] summary::after { transform: rotate(180deg); }
-        .sub-task-list { padding: 12px 18px 5px 18px; border-top: 1px solid rgba(255,255,255,0.05); }
-        [data-theme="light"] .sub-task-list { border-top-color: rgba(0,0,0,0.05); }
+        .sub-task-list { padding: 12px 15px 5px 15px; border-top: 1px solid var(--border-color); }
 
         .custom-controls { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .custom-controls select { padding: 10px; flex-shrink: 0; width: 85px; font-size: 14px; }
-        .custom-controls input { flex: 1; min-width: 120px; padding: 10px 12px; margin-bottom: 0; font-size: 14px; }
-        .custom-controls button { flex-shrink: 0; width: 70px; padding: 10px; font-size: 14px; white-space: nowrap; }
-        .delete-btn { background: rgba(244, 63, 94, 0.15); color: var(--danger); border: none; padding: 0; width: 28px; height: 28px; min-width: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 900; border-radius: 6px; margin-left: auto; cursor: pointer; transition: 0.2s; flex: none; }
-        .delete-btn:hover { background: var(--danger); color: #fff; }
+        .custom-controls select { padding: 8px; flex-shrink: 0; width: 85px; font-size: 13px; }
+        .custom-controls input { flex: 1; min-width: 120px; padding: 8px 12px; margin-bottom: 0; font-size: 13px; }
+        .custom-controls button { flex-shrink: 0; width: 60px; padding: 8px; font-size: 13px; white-space: nowrap; }
+        .delete-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 0; width: 24px; height: 24px; min-width: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border-radius: 4px; margin-left: auto; cursor: pointer; transition: 0.2s; flex: none; }
+        .delete-btn:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
 
         /* 호감도 계산기 */
-        .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; align-items: start; }
-        .char-add-box { padding: 22px; margin-bottom: 25px; border-left: 4px solid var(--secondary); }
-        .char-add-inputs { display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap; align-items: center; }
-        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 90px; padding: 12px; }
+        .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start; }
+        .char-add-box { padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--secondary); }
+        .char-add-inputs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
+        .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 90px; padding: 10px; }
         
-        .char-card { padding: 22px; display: flex; flex-direction: column; border-top: 3px solid transparent; transition: 0.3s; }
+        .char-card { padding: 20px; display: flex; flex-direction: column; border-top: 3px solid transparent; transition: 0.2s; }
         .char-card:hover { border-top-color: var(--secondary); }
         
-        .char-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .char-name { font-size: 22px; font-weight: 900; color: #ffffff; text-shadow: 0 0 10px var(--secondary); }
-        [data-theme="light"] .char-name { color: var(--text-main); text-shadow: none; }
+        .char-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .char-name { font-size: 18px; font-weight: 800; color: var(--text-main); }
         
-        .char-stat { font-size: 14px; margin-bottom: 6px; color: var(--text-muted); font-weight: 600; }
-        .char-stat strong { color: var(--primary); font-weight: 800; font-size: 15px; }
+        .char-stat { font-size: 13px; margin-bottom: 4px; color: var(--text-muted); font-weight: 500; }
+        .char-stat strong { color: var(--text-main); font-weight: 700; font-size: 14px; }
         
-        .char-exp-wrapper { margin: 15px 0; }
-        .char-exp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 6px; }
-        .char-exp-btn { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); color: var(--text-main); padding: 10px 4px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; transition: 0.1s; }
-        [data-theme="light"] .char-exp-btn { background: #fff; border-color: rgba(0,0,0,0.1); color: var(--text-main); }
+        .char-exp-wrapper { margin: 12px 0; }
+        .char-exp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 4px; }
+        .char-exp-btn { background: var(--dashboard-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 2px; font-size: 11px; font-weight: 600; border-radius: 4px; cursor: pointer; transition: 0.1s; }
         .char-exp-btn.minus { color: var(--danger); }
         .char-exp-btn:hover { background: var(--secondary); color: #fff; border-color: var(--secondary); }
         .char-exp-btn.minus:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
         .char-exp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-        .char-result { margin-top: auto; padding: 16px; background: rgba(0,0,0,0.25); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); }
-        [data-theme="light"] .char-result { background: #f8fafc; border-color: rgba(0,0,0,0.05); }
-        .char-result p { margin: 6px 0; font-size: 14px; font-weight: 600; color: var(--text-muted); }
-        .highlight { color: var(--text-main); font-size: 16px; font-weight: 800; }
+        .char-result { margin-top: auto; padding: 12px; background: var(--dashboard-bg); border-radius: 8px; border: 1px solid var(--border-color); }
+        .char-result p { margin: 4px 0; font-size: 13px; font-weight: 500; color: var(--text-muted); }
+        .highlight { color: var(--text-main); font-size: 14px; font-weight: 700; }
         
-        .char-progress-bar { width: 100%; height: 10px; background: rgba(0,0,0,0.4); border-radius: 5px; margin: 15px 0; overflow: hidden; }
-        [data-theme="light"] .char-progress-bar { background: rgba(0,0,0,0.08); }
-        .char-progress-fill { height: 100%; background: var(--grad-main); transition: width 0.4s ease; }
+        .char-progress-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; margin: 12px 0; overflow: hidden; }
+        .char-progress-fill { height: 100%; background: var(--primary); transition: width 0.4s ease; }
+
+        /* 카페 수익 계산기 종속 CSS */
+        .cafe-main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+        .cafe-dashboard { background: var(--panel-bg); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); border: var(--panel-border); display: flex; flex-direction: column; gap: 16px; height: fit-content; }
+        .cafe-dash-card { background: var(--dashboard-bg); border-radius: 8px; padding: 16px; border: 1px solid var(--border-color); position: relative; overflow: hidden; }
+        .cafe-dash-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-blue); z-index: 2; }
+        .cafe-input-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block; }
+        
+        .cafe-calc-input { width: 100%; padding: 10px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box; }
+        .cafe-calc-input:focus { border-color: var(--accent-blue); }
+        
+        .cafe-btn-calc { background: var(--accent-blue); color: white; border: none; padding: 16px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .cafe-btn-calc:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        
+        .cafe-timer-wrap { display: flex; gap: 8px; margin-top: auto; }
+        .cafe-timer-box { flex: 1; background: var(--panel-bg); border-radius: 6px; padding: 10px 6px; text-align: center; border: 1px solid var(--border-color); }
+        .cafe-timer-label { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
+        .cafe-timer-value { font-size: 14px; font-weight: 700; color: var(--text-main); font-family: monospace; }
+        
+        .cafe-content-area { display: flex; flex-direction: column; gap: 20px; }
+        .cafe-section-box { background: var(--panel-bg); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); border: var(--panel-border); }
+        .cafe-section-header { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .cafe-section-header::before { content: ''; width: 4px; height: 16px; background: var(--accent-blue); border-radius: 2px; }
+        
+        .cafe-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+        .cafe-box { background: var(--dashboard-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border-color); position: relative; }
+        .cafe-box.locked { opacity: 0.4; pointer-events: none; }
+        .cafe-box.locked::after { content: "🔒 해금 필요"; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); color: var(--text-main); display: flex; justify-content: center; align-items: center; font-weight: 700; font-size: 13px; border-radius: 8px; z-index: 10; }
+        .cafe-title-wrap { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .cafe-title { font-weight: 700; font-size: 13px; color: var(--text-main); }
+        .cafe-slots { display: flex; gap: 8px; align-items: flex-start; }
+        .cafe-slot { flex: 1; border-radius: 6px; background: var(--panel-bg); border: 1px solid var(--border-color); cursor: pointer; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .cafe-slot.empty { aspect-ratio: 1; flex-direction: row; justify-content: center; align-items: center; border: 1px dashed var(--text-muted); background: transparent; }
+        .cafe-slot.empty::after { content: '+'; font-size: 24px; color: var(--text-muted); font-weight: 300; }
+        .slot-img-box { width: 100%; aspect-ratio: 1; position: relative; }
+        .slot-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        
+        .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+        .cafe-char-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; cursor: pointer; position: relative; user-select: none; transition: 0.2s; }
+        .cafe-char-card:hover { border-color: var(--accent-blue); }
+        .cafe-char-img { width: 100%; aspect-ratio: 1; background-color: var(--dashboard-bg); object-fit: cover; display: block; }
+        .cafe-char-info { padding: 6px; text-align: center; }
+        .cafe-char-name { font-weight: 600; font-size: 11px; color: var(--text-main); }
+        
+        .lv-badge { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); color: #fff; padding: 4px 0; font-size: 10px; font-weight: 700; text-align: center; z-index: 5; transition: 0.2s; cursor: pointer; }
+        .lv-badge:active { background: var(--accent-blue); }
+        .lv-overlay { display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10; cursor: pointer; }
+        .lv-title { font-size:11px; font-weight:bold; color:#fff; margin-bottom:6px; pointer-events: none; }
+        .lv-btn-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; width: 100%; }
+        .lv-btn { width: 100%; padding: 6px 0; background: #3f3f46; color: white; border: none; border-radius: 2px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        .lv-btn:hover { background: #52525b; }
+        .lv-btn.active { background: var(--accent-blue); }
+        
+        @media (hover: hover) and (pointer: fine) {
+            .lv-badge { display: none; }
+            .lv-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); padding: 8px; }
+            .cafe-slot:not(.empty):hover .lv-overlay { display: flex !important; }
+        }
+        @media (hover: none), (pointer: coarse) {
+            .lv-badge { padding: 8px 0; font-size: 11px; }
+            .lv-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); padding: 8px; }
+            .lv-title { display: block; font-size: 12px; margin-bottom: 8px; text-align: center; }
+            .lv-btn-grid { gap: 4px; }
+            .lv-btn { padding: 10px 0; font-size: 14px; }
+        }
+        
+        .emp-summary-box { background: var(--dashboard-bg); border-radius: 8px; padding: 12px; margin-top: 16px; display: none; border: 1px solid var(--border-color); }
+        .emp-summary-box.show { display: block; animation: fadeIn 0.2s ease-out; }
+        .emp-summary-title { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
+        .emp-summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+        .emp-stat-item { background: var(--panel-bg); padding: 8px; border-radius: 6px; font-size: 11px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 8px; }
+        .emp-stat-icon { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); background: var(--dashboard-bg); }
+        .emp-stat-content { flex: 1; }
+        .emp-stat-name { font-weight: 700; color: var(--accent-blue); margin-bottom: 2px; }
+        
+        #resultContainer { display: none; }
+        .result-stats { background: var(--dashboard-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 16px; }
+        .total-rev { font-size: 28px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; margin: 8px 0; }
+        .total-rev span { font-size: 15px; color: var(--yellow-text); }
+        
+        .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .item-card { background: var(--panel-bg); border-radius: 6px; border: 1px solid var(--border-color); position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        .trend-badge { position: absolute; top: 6px; left: 6px; background: var(--trend-bg); color: white; border-radius: 3px; padding: 3px 6px; font-size: 10px; font-weight: bold; z-index: 10; }
+        .item-card-top { height: 22px; background: var(--primary); display:flex; justify-content:center; align-items:center; color:#fff; font-size:11px; font-weight:700; }
+        .item-card.is-red .item-card-top { background: var(--trend-bg); }
+        .item-img-wrap { aspect-ratio: 1; padding: 10px; position: relative; background: var(--dashboard-bg); display: flex; align-items: center; justify-content: center; }
+        .item-img-inner { width: 100%; height: 100%; background: #fff; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 5px; }
+        .item-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .item-name-bar { background: var(--panel-bg); height: 40px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--yellow-text); padding: 0 8px; }
+        .item-name-pill { background: var(--dashboard-bg); color: var(--text-main); border-radius: 12px; padding: 4px 10px; width: 100%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-color); }
+        .item-name-text { font-weight: 600; font-size: 12px; letter-spacing: -0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+        .item-price-bar { background: var(--dashboard-bg); color: var(--text-main); padding: 8px; text-align: center; font-weight: 700; font-size: 13px; }
+        .btn-detail { width: 100%; background: var(--panel-bg); color: var(--text-muted); border: none; padding: 6px; font-size: 11px; font-weight: 600; cursor: pointer; border-top: 1px solid var(--border-color); outline: none; transition: 0.2s; }
+        .btn-detail:hover { background: var(--dashboard-bg); color: var(--text-main); }
+        .detail-content { display: none; background: var(--panel-bg); color: var(--text-muted); padding: 10px; font-size: 11px; line-height: 1.5; text-align: left; border-top: 1px dashed var(--border-color); }
+        .detail-content.show { display: block; }
+        
+        .modal-overlay-sys { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); display: none; justify-content: center; align-items: center; z-index: 100; backdrop-filter: blur(4px); }
+        .modal-content { background: var(--panel-bg); width: 90%; max-width: 450px; border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; border: 1px solid var(--border-color); animation: fadeIn 0.2s ease; }
+        .modal-header { padding: 16px; background: var(--dashboard-bg); font-size: 16px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+        .modal-close { background: none; border: none; font-size: 18px; cursor: pointer; color: var(--text-muted); }
+        .modal-body { padding: 16px; font-size: 13px; line-height: 1.6; color: var(--text-main); }
+        .modal-body ul { margin: 8px 0; padding-left: 20px; }
+        .modal-body li { margin-bottom: 4px; }
+        .modal-formula { background: var(--dashboard-bg); padding: 10px; border-radius: 6px; margin-top: 8px; font-weight: 600; border: 1px solid var(--border-color); }
 
         @media (max-width: 768px) {
             body, html { font-size: 14px; }
-            .container { padding: 12px; }
+            .container { padding: 10px; }
             header h1 { font-size: 20px; }
             .dashboard-top { grid-template-columns: 1fr; gap: 15px; }
-            .stamina-widget, .progress-widget, .char-add-box, .task-category, .char-card { padding: 18px; }
+            .stamina-widget, .progress-widget, .char-add-box, .task-category, .char-card { padding: 15px; }
             .stamina-controls { flex-direction: column; align-items: stretch; }
             .stamina-input-wrapper { width: 100%; justify-content: center; }
-            .stamina-input-wrapper input { width: 100%; font-size: 16px; }
-            .account-select, .outline-btn, .logout-btn, .link-google-btn, .delete-account-btn { padding: 8px 12px; font-size: 13px; }
-            .tab-btn { font-size: 15px; padding: 12px 16px; }
-            .char-exp-btn { font-size: 11px; padding: 10px 2px; }
+            .account-select, .outline-btn, .logout-btn, .link-google-btn, .delete-account-btn { padding: 6px 10px; font-size: 12px; }
+            .tab-btn { font-size: 13px; padding: 10px 14px; }
             
-            /* 모바일 최적화 수정 */
-            .task-category h2 { font-size: 15px; }
+            .cafe-main-layout { grid-template-columns: 1fr; }
+            .cafe-dashboard { padding: 15px; }
+            .item-grid { grid-template-columns: repeat(2, 1fr); }
+            .cafe-grid-container { grid-template-columns: 1fr; } 
+            .cafe-timer-wrap { flex-direction: column; }
             .task-category h2 button { font-size: 11px; padding: 3px 6px; }
-            details.sub-tasks summary { font-size: 14px; }
-            details.sub-tasks summary button { font-size: 10px; padding: 3px 6px; }
         }
     </style>
 </head>
@@ -332,10 +433,48 @@
     <div class="bg-image"></div>
     <div class="bg-overlay"></div>
     
+    <div class="modal-overlay-sys" id="formulaModal" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                계산식 안내
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                본 계산기는 다음의 공식을 바탕으로 최고 효율의 수익을 산출합니다.
+                <ul>
+                    <li><strong>상품 단가:</strong> 기본가 + 직원 버프 + 트렌드 보너스</li>
+                    <li><strong>트래픽:</strong> 기본 트래픽(2400) + 직원 트래픽 버프</li>
+                    <li><strong>시간당 메뉴 수익:</strong> 상품 단가 × (트래픽 / 100)</li>
+                </ul>
+                <div class="modal-formula">
+                    1시간 총 수익 = 모든 메뉴의 '시간당 메뉴 수익'을 합산한 후 소수점 셋째 자리에서 반올림하여 계산됩니다.
+                </div>
+                <p style="margin-top:15px; font-size: 12px; color: var(--text-muted);">
+                    ※ 우미츠키의 트래픽 배율은 음료 2개 이상 시 총 2.5%(3렙 1%, 5렙 1.5% 추가)가 다른 직원 버프 합산 후 곱연산으로 적용됩니다.<br>
+                    ※ 라크리모사의 판매가 배율은 디저트 1개 이상 시 1%(5렙 2개 이상 시 1.5% 추가)가 다른 단가 합산 후 곱연산으로 적용됩니다.<br>
+                    ※ 사키리의 5레벨 추가 단가 버프는 '동일 카테고리 상품이 3개 이상'일 때 발동됩니다.<br>
+                    ※ 카테고리 트렌드(메인메뉴/음료/디저트) 적용 시 단가가 +1.00 증가합니다.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay-sys" id="charSelectModal" onclick="closeCharModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                직원 선택
+                <button class="modal-close" onclick="closeCharModal()">&times;</button>
+            </div>
+            <div class="modal-body" style="padding: 16px;">
+                <div class="char-grid" id="modalCharGrid"></div>
+            </div>
+        </div>
+    </div>
+
     <div id="login-screen">
         <div class="glass-panel login-box">
             <h1 style="margin-bottom: 8px;">NTE Tracker</h1>
-            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 14px; font-weight: 600;">한 번 로그인하시면 기기에 자동으로 기록됩니다.</p>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 13px; font-weight: 500;">한 번 로그인하시면 기기에 자동으로 기록됩니다.</p>
             
             <div class="input-group">
                 <input type="text" id="uid-input" placeholder="인게임 UID 입력 (또는 구글 로그인)">
@@ -353,12 +492,12 @@
             </button>
             <a class="forgot-pw-link" onclick="handlePasswordReset()">비밀번호를 잊으셨나요?</a>
 
-            <div id="loading-text" style="color:var(--secondary); margin-top:15px; display:none; font-weight:800; font-size:14px;">데이터를 처리하는 중입니다...</div>
-            <button id="btn-cancel-login" onclick="cancelLogin()" style="margin-top:15px; background:transparent; border:none; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; display:none;">돌아가기</button>
+            <div id="loading-text" style="color:var(--primary); margin-top:15px; display:none; font-weight:700; font-size:13px;">데이터를 처리하는 중입니다...</div>
+            <button id="btn-cancel-login" onclick="cancelLogin()" style="margin-top:15px; background:transparent; border:none; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer; display:none;">돌아가기</button>
             
             <div class="help-links">
                 <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20UID%20도용%20문의&body=도용당한%20UID:%20%0D%0A상세%20내용:%20">UID 도용 문의</a>
-                <span style="color:var(--text-muted); opacity:0.5;">|</span>
+                <span style="color:var(--border-color);">|</span>
                 <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20건의사항&body=건의%20내용:%20">건의하기</a>
             </div>
         </div>
@@ -366,11 +505,11 @@
 
     <div id="app-screen" class="container">
         <header>
-            <h1>이환 숙제 트래커 <span class="version">v1.1</span></h1>
+            <h1>이환 트래커 <span class="version">v1.1</span></h1>
             <div class="user-info">
                 <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
-                <button class="outline-btn" style="border-color:var(--secondary); color:var(--secondary);" onclick="showLoginScreen()">+ 새 계정</button>
-                <button id="theme-btn" class="outline-btn" onclick="toggleTheme()">화이트 모드</button>
+                <button class="outline-btn" style="border-color:var(--primary); color:var(--primary);" onclick="showLoginScreen()">+ 새 계정</button>
+                <button id="themeToggleBtn" class="outline-btn" onclick="toggleTheme()">라이트 모드 전환</button>
                 <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20건의/문의사항&body=내용:%20" class="outline-btn">건의/문의</a>
                 <button class="link-google-btn" onclick="linkGoogleAccount()">구글 연동</button>
                 <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
@@ -379,12 +518,12 @@
         </header>
 
         <div class="tabs">
-            <button class="tab-btn active" id="btn-tab-homework" onclick="switchTab('homework')">✅ 숙제 트래커</button>
-            <button class="tab-btn" id="btn-tab-affection" onclick="switchTab('affection')">💖 호감도 계산기</button>
+            <button class="tab-btn active" id="btn-tab-homework" onclick="switchTab('homework')">숙제 트래커</button>
+            <button class="tab-btn" id="btn-tab-affection" onclick="switchTab('affection')">호감도 계산기</button>
+            <button class="tab-btn" id="btn-tab-cafe" onclick="switchTab('cafe')">카페 수익 계산기</button>
         </div>
 
         <div id="tab-homework" class="tab-content active">
-            
             <div class="dashboard-top">
                 <div class="glass-panel stamina-widget">
                     <div class="stamina-header">
@@ -410,35 +549,34 @@
                 <div class="glass-panel progress-widget">
                     <div class="progress-item">
                         <div class="progress-header"><span style="color:var(--primary);">일일 숙제 진행도</span><span id="progress-daily-text" style="color:var(--text-main);">0%</span></div>
-                        <div class="progress-bar-bg"><div id="progress-daily-fill" class="progress-bar-fill" style="background:var(--grad-stamina); box-shadow:0 0 10px var(--primary);"></div></div>
+                        <div class="progress-bar-bg"><div id="progress-daily-fill" class="progress-bar-fill" style="background:var(--primary);"></div></div>
                     </div>
                     <div class="progress-item">
                         <div class="progress-header"><span style="color:var(--secondary);">주간 숙제 진행도</span><span id="progress-weekly-text" style="color:var(--text-main);">0%</span></div>
-                        <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill" style="background:var(--grad-sub); box-shadow:0 0 10px var(--secondary);"></div></div>
+                        <div class="progress-bar-bg"><div id="progress-weekly-fill" class="progress-bar-fill" style="background:var(--secondary);"></div></div>
                     </div>
                 </div>
             </div>
 
             <div class="timers-bar">
-                <div class="timer-badge"><h3>일일 초기화</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
-                <div class="timer-badge"><h3>주간 초기화</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
-                <div class="timer-badge"><h3>2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--text-main);">계산 중...</div></div>
-                <div class="timer-badge"><h3>월간 초기화</h3><div id="timer-monthly" class="time" style="color:var(--text-main);">계산 중...</div></div>
-                <div class="timer-badge"><h3>5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--text-main);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:var(--primary);">일일 초기화</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:var(--secondary);">주간 초기화</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:var(--accent);">2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--accent);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:var(--warning);">월간 초기화</h3><div id="timer-monthly" class="time" style="color:var(--warning);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:var(--danger);">5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--danger);">계산 중...</div></div>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; padding: 0 10px;">
-                <button class="outline-btn" style="color: var(--danger); border-color: var(--danger); font-weight: 800;" onclick="uncheckAllTasks()">전체 체크 해제</button>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; padding: 0 5px;">
+                <button class="outline-btn" style="color: var(--danger); border-color: var(--danger); font-weight: 700; padding: 6px 12px; font-size:12px;" onclick="uncheckAllTasks()">전체 체크 해제</button>
             </div>
 
-            <div class="task-grid" id="task-container">
-                </div>
+            <div class="task-grid" id="task-container"></div>
         </div>
 
         <div id="tab-affection" class="tab-content">
             <div class="glass-panel char-add-box">
-                <h2 style="margin:0 0 10px 0; font-size:18px; font-weight:800; color:var(--text-main);">캐릭터 호감도 추가</h2>
-                <p style="margin:0; font-size:14px; color:var(--text-muted); font-weight:500; line-height:1.6;">
+                <h2 style="margin:0 0 10px 0; font-size:16px; font-weight:700; color:var(--text-main);">캐릭터 호감도 추가</h2>
+                <p style="margin:0; font-size:13px; color:var(--text-muted); font-weight:500; line-height:1.5;">
                     * 하루 호감도 아이템 3개 선물 기준(1일 당 1200)으로 남은 일수가 계산됩니다.<br>
                     * 과금 아이템(2000) 사용 시 만렙 달성 기간이 단축될 수 있습니다.
                 </p>
@@ -457,6 +595,14 @@
                         <option value="치즈">치즈</option>
                         <option value="사키리">사키리</option>
                         <option value="우미츠키">우미츠키</option>
+                        <option value="라크리모사">라크리모사</option>
+                        <option value="호토리">호토리</option>
+                        <option value="카오스">카오스</option>
+                        <option value="신쿠">신쿠</option>
+                        <option value="아카네">아카네</option>
+                        <option value="레이븐">레이븐</option>
+                        <option value="니샤">니샤</option>
+                        <option value="일로이">일로이</option>
                         <option value="custom">직접 입력...</option>
                     </select>
                     <input type="text" id="char-name-custom" placeholder="캐릭터명" style="display:none; flex:1;">
@@ -466,14 +612,114 @@
                 </div>
             </div>
             
-            <div class="affection-grid" id="character-list">
-                </div>
+            <div class="affection-grid" id="character-list"></div>
         </div>
+
+        <div id="tab-cafe" class="tab-content">
+            <div style="display:flex; justify-content:flex-end; margin-bottom:15px;">
+                <button class="outline-btn" style="border-color:var(--primary); color:var(--primary);" onclick="openModal()">계산식 안내</button>
+            </div>
+            <div class="cafe-main-layout">
+                <div class="cafe-dashboard">
+                    <div class="cafe-dash-card">
+                        <span class="cafe-input-label">관리 레벨</span>
+                        <select class="cafe-calc-input" id="userLevel" onchange="handleLevelChange(this.value)">
+                            <option value="">레벨 선택</option>
+                        </select>
+                    </div>
+                    <div class="cafe-dash-card">
+                        <span class="cafe-input-label">오늘의 트렌드</span>
+                        <select class="cafe-calc-input" id="trendSelect" disabled onchange="saveCafeData()">
+                            <option value="">트렌드 없음 (Lv.20 이상 해금)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="cafe-timer-wrap">
+                        <div class="cafe-timer-box">
+                            <div class="cafe-timer-label">일일 초기화</div>
+                            <div class="cafe-timer-value" id="resetTimer">00:00:00</div>
+                        </div>
+                        <div class="cafe-timer-box">
+                            <div class="cafe-timer-label">레벨업 예상</div>
+                            <div class="cafe-timer-value" id="levelUpTimer" style="color:var(--text-muted);">--:--:--</div>
+                        </div>
+                    </div>
+
+                    <button class="cafe-btn-calc" onclick="runCalculator()">최고 매출 계산</button>
+                    <div id="errorMsg" style="color: var(--trend-bg); text-align: center; font-weight: 700; display: none; font-size: 13px;"></div>
+                </div>
+
+                <div class="cafe-content-area">
+                    <div class="cafe-section-box">
+                        <div class="cafe-section-header">직원 배치</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5;">
+                            * 해금된 카페 수에 따라 블록이 열립니다.<br>
+                            * 빈 슬롯을 눌러 직원을 배치하고, <strong>직원의 사진을 누르면 해제</strong>됩니다. (PC는 마우스 오버, 모바일은 하단 버튼을 터치하여 레벨을 설정하세요.)
+                        </div>
+                        
+                        <div class="cafe-grid-container" id="cafeGrid"></div>
+                        
+                        <div class="emp-summary-box" id="empSummaryBox">
+                            <div class="emp-summary-title">현재 적용된 직원 버프 상세</div>
+                            <div class="emp-summary-grid" id="empSummaryGrid"></div>
+                        </div>
+                    </div>
+
+                    <div class="cafe-section-box" id="resultContainer"></div>
+
+                    <div class="cafe-section-box" id="levelUpCalcSection">
+                        <div class="cafe-section-header">레벨업 예상 시간 계산기</div>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; align-items: flex-end;">
+                            <div style="display:flex; gap:8px;">
+                                <div style="flex:1;">
+                                    <span class="cafe-input-label">전체 경험치</span>
+                                    <input type="number" id="calcExpTotal" class="cafe-calc-input" placeholder="예: 20000" oninput="saveCafeData()">
+                                </div>
+                                <div style="flex:1;">
+                                    <span class="cafe-input-label">현재 경험치</span>
+                                    <input type="number" id="calcExpCur" class="cafe-calc-input" placeholder="예: 12081" oninput="saveCafeData()">
+                                </div>
+                            </div>
+                            <div>
+                                <span class="cafe-input-label">인기도 보정치</span>
+                                <div style="display:flex; gap:6px;">
+                                    <select id="calcPopPreset" class="cafe-calc-input" style="flex:1; cursor:pointer;" onchange="document.getElementById('calcPop').value = this.value; saveCafeData();">
+                                        <option value="0">직접 입력 (0)</option>
+                                        <option value="0.01">카페 1개 (0.01)</option>
+                                        <option value="0.025">카페 2개 (0.025)</option>
+                                        <option value="0.04">카페 3개 (0.04)</option>
+                                        <option value="0.065">카페 4개 (0.065)</option>
+                                        <option value="0.09">카페 5개 (0.09)</option>
+                                    </select>
+                                    <input type="number" id="calcPop" class="cafe-calc-input" placeholder="0.09" step="0.001" style="flex:1;" oninput="saveCafeData()">
+                                </div>
+                            </div>
+                            <div>
+                                <span class="cafe-input-label" style="display:flex; justify-content:space-between; align-items:center;">
+                                    시간당 폰즈
+                                    <button onclick="syncPonz()" style="background:var(--accent-blue); color:white; border:none; border-radius:4px; padding:3px 6px; font-size:10px; font-weight:700; cursor:pointer;">최고 매출 연동</button>
+                                </span>
+                                <input type="number" id="calcPonz" class="cafe-calc-input" placeholder="예: 1181.43" step="0.01" oninput="saveCafeData()">
+                            </div>
+                        </div>
+                        <button onclick="calcLevelUpTime()" style="width:100%; padding:12px; border-radius:6px; background:var(--accent-blue); color:#fff; border:none; font-weight:700; cursor:pointer; font-size:14px; transition:0.2s;">
+                            타이머에 적용 및 예상 시간 확인
+                        </button>
+                        <div id="levelUpResult" style="margin-top:12px; font-size:13px; color:var(--text-muted); text-align:center; display:none; background:var(--dashboard-bg); padding:12px; border-radius:6px; border:1px solid var(--border-color);"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="max-width: 1200px; margin: 30px auto 0 auto; text-align: center; font-size: 11px; color: var(--text-muted); padding: 15px; border-top: 1px solid var(--border-color); line-height: 1.6;">
+                UI & Base Logic Modified by <a href="https://arca.live/u/@%EC%98%A4%EA%B3%A1%EA%B3%A1" target="_blank" style="color:var(--accent-blue); text-decoration:none; font-weight:bold;">오고곡</a> <br>
+                Data Reference: <a href="https://bbs.nga.cn/read.php?tid=46697373&rand=74" target="_blank" style="color:var(--accent-blue); text-decoration:none; font-weight:bold;">NGA (Original Math)</a> | <a href="https://arca.live/b/nevernesstoeverness/169873800" target="_blank" style="color:var(--accent-blue); text-decoration:none; font-weight:bold;">arca.live</a>
+            </div>
+        </div>
+
     </div>
 
 <script>
     // ==========================================
-    // 🚨 본인 파이어베이스 설정으로 무조건 변경 🚨
+    // 파이어베이스 트래커 로직
     // ==========================================
     const firebaseConfig = {
       apiKey: "AIzaSyDmHL4vrYAwSzw-59TeNE5eGQatCkT8_Aw",
@@ -490,12 +736,10 @@
     const database = firebase.database();
 
     function updateThemeBtnText() {
-        const btn = document.getElementById('theme-btn');
-        if(document.documentElement.getAttribute('data-theme') === 'light') btn.innerText = "다크 모드";
-        else btn.innerText = "화이트 모드";
+        const btn = document.getElementById('themeToggleBtn');
+        if(document.documentElement.getAttribute('data-theme') === 'light') btn.innerText = "다크 모드 전환";
+        else btn.innerText = "라이트 모드 전환";
     }
-    if(localStorage.getItem('theme') === 'light') document.documentElement.setAttribute('data-theme', 'light');
-    updateThemeBtnText();
 
     function toggleTheme() {
         if(document.documentElement.getAttribute('data-theme') === 'light') {
@@ -519,7 +763,6 @@
         const el = document.getElementById(elId);
         if(!el) return;
         const percentage = ((val - min) / (max - min)) * 100;
-        // Thumb 폭 20px 기준 완벽 매칭 수식 적용
         el.style.setProperty('--val', percentage);
     }
 
@@ -562,7 +805,6 @@
         let pw = accounts[uid];
         if(!pw) return;
 
-        // 구글 로그인 계정이면 팝업 띄움
         if (pw === 'google-oauth') {
             handleGoogleLogin();
             return;
@@ -582,7 +824,6 @@
         });
     }
 
-    // ✅ 구글 로그인 로직 추가
     function handleGoogleLogin() {
         document.getElementById('loading-text').style.display = 'block';
         document.getElementById('loading-text').innerText = "구글 로그인 진행 중...";
@@ -596,22 +837,17 @@
         });
     }
 
-    // ✅ 구글 계정 연동 로직 추가
     function linkGoogleAccount() {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.currentUser.linkWithPopup(provider).then((result) => {
             alert("✅ 구글 계정 연동이 완료되었습니다! 이제 구글 이메일로도 로그인과 비밀번호 재설정이 가능합니다.");
             saveAccountLocal(result.user.email.split('@')[0], 'google-oauth');
         }).catch((error) => {
-            if(error.code === 'auth/credential-already-in-use') {
-                alert("이미 다른 계정에 연동된 구글 계정입니다.");
-            } else {
-                alert("연동 실패: " + error.message);
-            }
+            if(error.code === 'auth/credential-already-in-use') alert("이미 다른 계정에 연동된 구글 계정입니다.");
+            else alert("연동 실패: " + error.message);
         });
     }
 
-    // ✅ 비밀번호 재설정 로직 추가
     function handlePasswordReset() {
         const email = prompt("가입 또는 연동하신 실제 이메일 주소를 입력해 주세요.\n(UID 전용 가입자는 연동된 이메일이 없으면 불가능합니다.)");
         if(!email) return;
@@ -622,7 +858,6 @@
         });
     }
 
-    // ✅ 회원탈퇴 로직 추가
     function handleDeleteAccount() {
         if(!confirm("⚠️ 경고 ⚠️\n정말로 계정을 삭제하시겠습니까?\n모든 숙제 기록과 데이터가 완전히 삭제되며 복구할 수 없습니다.")) return;
         const user = auth.currentUser;
@@ -633,47 +868,40 @@
         document.getElementById('loading-text').style.display = 'block';
         document.getElementById('loading-text').innerText = "계정을 삭제하는 중입니다...";
 
-        // 1. DB 데이터 삭제 -> 2. Auth 계정 삭제
         database.ref('users/' + user.uid).remove().then(() => {
             return user.delete();
         }).then(() => {
             alert("회원탈퇴가 정상적으로 완료되었습니다. 그동안 이용해 주셔서 감사합니다.");
-            
-            // 로컬 스토리지에서 삭제
             let accounts = JSON.parse(localStorage.getItem('nte_accounts') || '{}');
             let displayId = user.email ? user.email.split('@')[0] : '';
             if (accounts[displayId]) {
                 delete accounts[displayId];
                 localStorage.setItem('nte_accounts', JSON.stringify(accounts));
             }
-            
             document.getElementById('loading-text').style.display = 'none';
             document.getElementById('uid-input').value = '';
             document.getElementById('pw-input').value = '';
         }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
             document.getElementById('app-screen').style.display = 'block';
-            if(error.code === 'auth/requires-recent-login') {
-                alert("보안을 위해 방금 로그인한 직후에만 탈퇴가 가능합니다. 로그아웃 후 다시 로그인해 주세요.");
-            } else {
-                alert("오류 발생: " + error.message);
-            }
+            if(error.code === 'auth/requires-recent-login') alert("보안을 위해 방금 로그인한 직후에만 탈퇴가 가능합니다. 로그아웃 후 다시 로그인해 주세요.");
+            else alert("오류 발생: " + error.message);
         });
     }
 
-    // ✅ 숙제 데이터 업데이트
+    // 일퀘에서 (400 호감도) 문구 삭제됨
     const taskConfig = {
         dailyImportant: { 
             title: "중요 일일 숙제", type: "daily", color: "var(--primary)",
-            items: [ "본성 픽셀 사용", "탐색 안내서(일퀘), 시즌패스 일일 미션", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번 (400호감도 아이템 사용)", "캐릭터 데이트", "베이글 관리" ] 
+            items: [ "본성 픽셀 사용", "탐색 안내서(일퀘), 시즌패스 일일 미션", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번", "캐릭터 데이트", "베이글 관리" ] 
         },
         dailyOther: { 
-            title: "그 외 일일 숙제", type: "daily", color: "var(--success)",
+            title: "그 외 일일 숙제", type: "daily", color: "var(--primary)",
             items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠펜다의 연못 기도하기", "소원나무 선물 납품", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술", "npc 지갑, 핸드백 뺏기" ] 
         },
         weekly: { 
             title: "주간 숙제", type: "weekly", color: "var(--secondary)",
-            items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행", "15000폰즈 금고 털기", '떨어진 지갑 줍기(<a href="https://arca.live/b/nevernesstoeverness/173300296" target="_blank" style="color:var(--primary); text-decoration:underline;" onclick="event.stopPropagation()">고정 스폰</a>)' ],
+            items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행", "15000폰즈 금고 털기", '떨어진 지갑 줍기(<a href="https://arca.live/b/nevernesstoeverness/173300296" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">고정 스폰</a>)' ],
             sub: { title: "시즌패스 주간 미션 상세", id: "sp_weekly", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
         },
         biweekly: { title: "2주 간격 숙제", type: "biweekly", color: "var(--accent)", items: ["핑크퍼스 은행털기"] },
@@ -702,7 +930,6 @@
 
     auth.onAuthStateChanged((user) => {
         if (user && !currentUserAuthUid) {
-            // 구글 로그인 유저는 메일 앞부분을 표시용 아이디로 사용
             let displayId = user.email ? user.email.split('@')[0] : '유저';
             initUserSpace(user.uid, displayId);
         }
@@ -769,8 +996,8 @@
             renderTasks();
             renderCharacters();
             if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => { updateTimers(); calcStamina(); }, 1000);
-            updateTimers(); calcStamina();
+            timerInterval = setInterval(() => { updateTimers(); calcStamina(); updateCafeCountdown(); }, 1000);
+            updateTimers(); calcStamina(); updateCafeCountdown();
         });
     }
 
@@ -822,7 +1049,7 @@
             let fullH = Math.floor(totalMinsLeft / 60);
             let fullM = totalMinsLeft % 60;
             
-            document.getElementById('stamina-timer').innerHTML = `1 회복까지 ${min}분 ${sec}초 <br> <span style="font-size:13px; font-weight:700;">(완충까지 약 ${fullH}시간 ${fullM}분)</span>`;
+            document.getElementById('stamina-timer').innerHTML = `1 회복까지 ${min}분 ${sec}초 <br> <span style="font-size:12px; font-weight:600;">(완충까지 약 ${fullH}시간 ${fullM}분)</span>`;
         }
         document.getElementById('curr-stamina').innerText = current;
     }
@@ -872,7 +1099,6 @@
             if(el) el.innerText = formatTimeLeft(getNextReset(type, now));
         });
         
-        // 커스텀 타이머 업데이트
         document.querySelectorAll('.custom-timer-span').forEach(el => {
             const type = el.getAttribute('data-type');
             el.innerText = formatTimeLeft(getNextReset(type, now));
@@ -882,7 +1108,6 @@
     function checkAndResetTasks() {
         const now = new Date().getTime();
         let needsSave = false;
-        
         let resetFlags = { daily: false, weekly: false, biweekly: false, monthly: false, '5weekly': false };
 
         ['daily', 'weekly', 'biweekly', 'monthly', '5weekly'].forEach(type => {
@@ -905,29 +1130,17 @@
         if (userData.customTasks) {
             userData.customTasks.forEach(ct => { if (resetFlags[ct.type]) ct.checked = false; });
         }
-        
         if (resetFlags.monthly) userData.itemCounters = {};
-
         if (needsSave) saveData();
     }
 
-    // ✅ 원클릭 전체 해제
     function uncheckAllTasks() {
         if (!confirm("모든 숙제 체크를 해제하시겠습니까?")) return;
-        
-        for (let key in userData.tasks) {
-            userData.tasks[key] = false;
-        }
-        
-        if (userData.customTasks) {
-            userData.customTasks.forEach(task => task.checked = false);
-        }
-        
-        saveData();
-        renderTasks();
+        for (let key in userData.tasks) userData.tasks[key] = false;
+        if (userData.customTasks) userData.customTasks.forEach(task => task.checked = false);
+        saveData(); renderTasks();
     }
 
-    // ✅ 카테고리 전체 선택/해제 로직 추가
     function toggleCategoryTasks(categoryKey) {
         const cat = taskConfig[categoryKey];
         let allChecked = true;
@@ -965,8 +1178,7 @@
 
     function toggleTask(taskId) { 
         userData.tasks[taskId] = !userData.tasks[taskId]; 
-        saveData(); 
-        renderTasks(); 
+        saveData(); renderTasks(); 
     }
 
     function updateItemSlider(id, val, max) {
@@ -974,7 +1186,6 @@
         userData.itemCounters[id] = parseInt(val) || 0;
         document.getElementById(`slider-val-${id}`).innerText = userData.itemCounters[id];
         saveData();
-        
         updateSliderVisuals(`slider-${id}`, 0, max, val);
     }
 
@@ -983,7 +1194,6 @@
         document.getElementById('sp-slider').value = userData.spLevel;
         document.getElementById('sp-number').value = userData.spLevel;
         saveData();
-        
         updateSliderVisuals('sp-slider', 1, 50, userData.spLevel);
     }
 
@@ -1009,14 +1219,10 @@
 
     function renderTasks() {
         const container = document.getElementById('task-container');
-        
         const openStates = {};
-        document.querySelectorAll('details.sub-tasks').forEach(d => {
-            if(d.id) openStates[d.id] = d.open;
-        });
+        document.querySelectorAll('details.sub-tasks').forEach(d => { if(d.id) openStates[d.id] = d.open; });
 
         container.innerHTML = '';
-
         let dailyTotal = 0, dailyDone = 0;
         let weeklyTotal = 0, weeklyDone = 0;
 
@@ -1025,10 +1231,9 @@
             const div = document.createElement('div');
             div.className = 'glass-panel task-category';
             
-            // ✅ 헤더 및 버튼 렌더링
             let html = `<h2 style="--cat-color: ${cat.color};">
                 <span style="display: flex; align-items: center;">${cat.title}</span>
-                <button class="outline-btn" style="font-size: 11px; padding: 4px 8px; border-color: var(--text-muted); font-weight:700; margin-left:10px;" onclick="toggleCategoryTasks('${categoryKey}')">전체선택/해제</button>
+                <button class="outline-btn" style="font-size: 11px; padding: 4px 8px; border-color: var(--border-color); color:var(--text-muted); font-weight:600; margin-left:10px;" onclick="toggleCategoryTasks('${categoryKey}')">전체선택/해제</button>
             </h2>`;
             
             cat.items.forEach((item, idx) => {
@@ -1037,7 +1242,6 @@
                 const checkedAttr = isChecked ? 'checked' : '';
                 html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${checkedAttr}><span>${item}</span></label>`;
                 
-                // ✅ 가중치 시스템 적용
                 let weight = 1;
                 if(categoryKey === 'dailyImportant') weight = 2;
 
@@ -1051,7 +1255,7 @@
                 
                 let subBtnHtml = '';
                 if(cat.sub.items) {
-                    subBtnHtml = `<button class="outline-btn" style="font-size: 11px; padding: 4px 8px; border-color: var(--secondary); color:var(--secondary);" onclick="event.preventDefault(); toggleSubTasks('${categoryKey}')">전체선택/해제</button>`;
+                    subBtnHtml = `<button class="outline-btn" style="font-size: 11px; padding: 4px 8px; border-color: var(--border-color); color:var(--text-muted); margin-left:auto;" onclick="event.preventDefault(); toggleSubTasks('${categoryKey}')">전체선택/해제</button>`;
                 }
                 
                 html += `<details id="${detailsId}" class="sub-tasks" ${openAttr}>
@@ -1068,7 +1272,7 @@
                         <div class="slider-container">
                             <div class="slider-header">
                                 <span>${slider.name}</span>
-                                <span class="sp-input"><span id="slider-val-${slider.id}">${val}</span> / ${slider.max}</span>
+                                <span class="sp-input-box"><span id="slider-val-${slider.id}">${val}</span> / ${slider.max}</span>
                             </div>
                             <div class="range-wrapper">
                                 <input type="range" id="slider-${slider.id}" min="0" max="${slider.max}" value="${val}" oninput="updateItemSlider('${slider.id}', this.value, ${slider.max})">
@@ -1103,10 +1307,10 @@
             container.appendChild(div);
         });
 
-        // ✅ 커스텀 숙제
+        // 커스텀 숙제 (왼쪽 정렬 완료)
         const customDiv = document.createElement('div');
         customDiv.className = 'glass-panel task-category';
-        let customHtml = `<h2 style="--cat-color: #94a3b8;">커스텀 숙제 (개인용)</h2>
+        let customHtml = `<h2 style="--cat-color: var(--text-muted);">커스텀 숙제 (개인용)</h2>
             <div class="custom-controls">
                 <select id="custom-task-type">
                     <option value="daily">일일</option>
@@ -1122,18 +1326,19 @@
                 const isChecked = task.checked;
                 const checkedAttr = isChecked ? 'checked' : '';
                 const typeLabel = task.type === 'daily' ? '일일' : (task.type === 'weekly' ? '주간' : '월간');
+                const typeColor = task.type === 'daily' ? 'var(--primary)' : (task.type === 'weekly' ? 'var(--secondary)' : 'var(--warning)');
                 
                 if(task.type === 'daily') { dailyTotal++; if(isChecked) dailyDone++; }
                 if(task.type === 'weekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
 
                 customHtml += `
                 <div class="task-item" style="flex-wrap: wrap;">
-                    <label style="display:flex; align-items:center; flex:1; cursor:pointer; min-width: 0;">
+                    <label style="display:flex; align-items:flex-start; justify-content:flex-start; flex:1; cursor:pointer; min-width: 0; text-align:left;">
                         <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${checkedAttr}>
-                        <span style="display: flex; align-items: center; flex-wrap: wrap; gap: 6px; width: 100%;">
-                            <b style="color:var(--primary); font-size:12px; border:1px solid var(--primary); padding:2px 6px; border-radius:4px; white-space: nowrap;">${typeLabel}</b> 
-                            <span style="word-break: break-word;">${task.text}</span>
-                            <span class="custom-timer-span" data-type="${task.type}" style="font-size: 11px; color: var(--text-muted); font-family: monospace; white-space: nowrap; margin-left: auto;">계산 중...</span>
+                        <span style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 6px; width: 100%; text-align:left;">
+                            <b style="color:${typeColor}; border:1px solid ${typeColor}; padding:2px 6px; border-radius:4px; font-size:11px; white-space: nowrap;">${typeLabel}</b> 
+                            <span style="word-break: break-word; text-align:left;">${task.text}</span>
+                            <span class="custom-timer-span" data-type="${task.type}" style="font-size: 11px; color: ${typeColor}; font-family: monospace; white-space: nowrap; margin-left: auto;">계산 중...</span>
                         </span>
                     </label>
                     <button class="delete-btn" onclick="deleteCustomTask('${task.id}')">✕</button>
@@ -1157,12 +1362,12 @@
                 });
             }
             updateSliderVisuals('sp-slider', 1, 50, userData.spLevel);
-            updateTimers(); // 커스텀 타이머 바로 렌더링
+            updateTimers(); 
         }, 10);
     }
 
     // ==========================================
-    // 호감도 계산기 로직
+    // 호감도 계산기
     // ==========================================
     function toggleCustomChar() {
         const select = document.getElementById('char-name-select');
@@ -1222,22 +1427,15 @@
             char.exp += affectionExpReq[char.level];
         }
         
-        if (char.exp < 0) {
-            char.exp = 0;
-            char.level = 1;
-        }
+        if (char.exp < 0) { char.exp = 0; char.level = 1; }
 
         while (char.level < 10 && char.exp >= affectionExpReq[char.level]) {
             if (char.level === 9) {
-                char.level = 10;
-                char.exp = 0;
-                break;
+                char.level = 10; char.exp = 0; break;
             } else {
-                char.exp -= affectionExpReq[char.level];
-                char.level++;
+                char.exp -= affectionExpReq[char.level]; char.level++;
             }
         }
-
         saveData(); renderCharacters();
     }
 
@@ -1245,7 +1443,7 @@
         const list = document.getElementById('character-list');
         list.innerHTML = '';
         if(!userData.characters || userData.characters.length === 0) {
-            list.innerHTML = '<p style="color:var(--text-muted); padding:10px; font-weight:700;">추가된 캐릭터가 없습니다.</p>';
+            list.innerHTML = '<p style="color:var(--text-muted); padding:10px; font-weight:600;">추가된 캐릭터가 없습니다.</p>';
             return;
         }
 
@@ -1259,7 +1457,6 @@
                 remainingExpTo10 += (affectionExpReq[char.level] - char.exp);
                 for(let i = char.level + 1; i < 10; i++) remainingExpTo10 += affectionExpReq[i];
                 daysLeft = Math.ceil(remainingExpTo10 / 1200);
-                
                 const currentTotalExp = totalExpReq - remainingExpTo10;
                 progressPercent = Math.min(100, (currentTotalExp / totalExpReq) * 100);
             }
@@ -1290,7 +1487,7 @@
                         <button class="char-exp-btn minus" onclick="addAffectionExp('${char.id}', -1200)">-1200</button>
                         <button class="char-exp-btn minus" onclick="addAffectionExp('${char.id}', -2000)">-2000</button>
                     </div>
-                    ${!isMaxLevel ? `<div style="margin-top:6px;"><button class="char-exp-btn custom" style="width:100%; padding:10px;" onclick="promptCustomExp('${char.id}')">직접입력</button></div>` : ''}
+                    ${!isMaxLevel ? `<div style="margin-top:6px;"><button class="char-exp-btn" style="width:100%; padding:8px;" onclick="promptCustomExp('${char.id}')">직접입력</button></div>` : ''}
                 </div>
 
                 <div class="char-progress-bar">
@@ -1300,12 +1497,684 @@
                 <div class="char-result">
                     ${isMaxLevel ? `<p class="highlight" style="color:var(--primary); text-align:center;">✨ 호감도 마스터 완료! ✨</p>` : `
                     <p>만렙까지 남은 경험치: <span class="highlight" style="color:var(--primary);">${remainingExpTo10.toLocaleString()}</span></p>
-                    <p>만렙까지 걸리는 시간: <span class="highlight" style="color:var(--text-main);">약 ${daysLeft}일</span></p>
+                    <p>만렙까지 걸리는 시간: <span class="highlight">약 ${daysLeft}일</span></p>
                     `}
                 </div>
             </div>`;
         });
     }
+
+    // ==========================================
+    // 카페 수익 계산기 로직
+    // ==========================================
+    const CAFE_NAMES = ["(푸른 수염길점)", "(바로크 거리점)", "(스위트 피어 거리점)", "(무민 거리점)", "(반각 거리점)"];
+
+    let cafeDataState = [
+        [null, null], [null, null], [null, null], [null, null], [null, null]
+    ];
+    let charLvHistory = {}; 
+    let lastCalculatedPonz = 0; 
+    let targetLevelUpDate = null; 
+    let selectingSlot = null;
+
+    const RAW_ITEMS = [
+        [1, "구운 코코넛 라떼", "음료", 2.4, 1, 10.2, 22, "코코넛", "「9℃」 커피 원두", "", "", ""],
+        [2, "아이스 모카", "음료", 3.0, 2, 10.6, 23, "「9℃」 커피 원두", "「베이킹 파트너」 코코아 가루", "", "", ""],
+        [3, "애플 파이", "디저트", 3.4, 3, 11.0, 24, "사과", "밀가루", "", "", ""],
+        [4, "토마토 에그 크루아상", "메인메뉴", 4.0, 4, 11.4, 26, "밀가루", "날달걀", "토마토", "", ""],
+        [5, "참치 샌드위치", "메인메뉴", 4.6, 6, 11.8, 27, "해수어", "상추", "밀가루", "", ""],
+        [6, "골든 앰버", "음료", 5.1, 7, 12.2, 28, "「9℃」 커피 원두", "우유", "별사탕", "오렌지", ""],
+        [7, "말차 용암 무스", "디저트", 5.5, 8, 12.6, 29, "「베이킹 파트너」 말차 가루", "우유", "밀가루", ""],
+        [8, "생초콜릿 라떼", "음료", 6.0, 9, 13.0, 30, "「9℃」 커피 원두", "「베이킹 파트너」 휘핑크림", "우유", "「베이킹 파트너」 코코아 가루", ""],
+        [9, "두툼한 소고기 샌드위치", "메인메뉴", 6.4, 11, 13.5, 31, "신선한 소고기", "밀가루", "상추", "단단한 버터", ""],
+        [10, "앙버터 크루아상", "메인메뉴", 7.0, 12, 14.0, 32, "팥", "단단한 버터", "밀가루", "", ""],
+        [11, "딸기 스윗박스", "디저트", 7.4, 13, 14.5, 33, "밀가루", "딸기", "「베이킹 파트너」 휘핑크림", "", ""],
+        [12, "뜨거운 오렌지 커피", "음료", 7.8, 14, 15.0, 34, "오렌지", "사과", "「9℃」 커피 원두", "", ""],
+        [13, "돈카츠 샌드위치", "메인메뉴", 8.1, 15, 15.5, 35, "신선한 돼지고기", "「설탕 또는 소금」 바다 소금", "양파", "밀가루", ""],
+        [14, "바삭한 코코넛 쿠키 마키아토", "음료", 8.6, 16, 16.0, 36, "코코넛", "푸카 쿠키", "「베이킹 파트너」 휘핑크림", "「9℃」 커피 원두", ""],
+        [15, "눈 덮인 말차 라테", "음료", 9.0, 18, 16.5, 37, "「베이킹 파트너」 말차 가루", "우유", "크림", "「9℃」 커피 원두", ""],
+        [16, "티라미수", "디저트", 9.3, 19, 17.0, 38, "「9℃」 커피 원두", "밀가루", "「T&J」 치즈 덩이", "푸카 쿠키", ""],
+        [17, "햄치즈 크루아상", "메인메뉴", 9.7, 20, 17.5, 39, "햄", "「T&J」 치즈 덩이", "밀가루", "상추", ""],
+        [18, "캐러멜 초코 크레이프", "디저트", 10.0, 21, 18.0, 40, "「설탕 또는 소금」 백설탕", "「베이킹 파트너」 코코아 가루", "밀가루", "「베이킹 파트너」 휘핑크림", ""]
+    ];
+
+    const FRUITS = ["코코넛", "사과", "토마토", "오렌지", "딸기"];
+    const TREND_LIST = [
+        "메인 메뉴 (+1.00)", "음료 (+1.00)", "디저트 (+1.00)",
+        "과일 (코코넛/사과/토마토/오렌지/딸기)", "「9℃」 커피 원두", "「T&J」 치즈 덩이", "「베이킹 파트너」 말차 가루", 
+        "「베이킹 파트너」 코코아 가루", "「베이킹 파트너」 휘핑크림", "「설탕 또는 소금」 바다 소금", "「설탕 또는 소금」 백설탕", 
+        "날달걀", "단단한 버터", "딸기", "밀가루", "별사탕", "사과", "상추", "신선한 돼지고기", "신선한 소고기", 
+        "양파", "오렌지", "우유", "코코넛", "크림", "토마토", "팥", "푸카 쿠키", "해수어", "햄"
+    ];
+
+    const EMP_LIST = ["민트", "하니엘", "아들러", "나나리", "스키아", "에드가", "우미츠키", "사키리", "치즈", "백장", "다포딜", "라크리모사"];
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.lv-overlay') && !e.target.closest('.lv-badge')) {
+            document.querySelectorAll('.lv-overlay').forEach(el => el.style.display = 'none');
+        }
+    });
+
+    function openModal() { document.getElementById('formulaModal').style.display = 'flex'; }
+    function closeModal(e) { 
+        if(!e || e.target === document.getElementById('formulaModal') || e.target.className === 'modal-close') {
+            document.getElementById('formulaModal').style.display = 'none'; 
+        }
+    }
+
+    function toggleItemDetail(idx) {
+        const detailEl = document.getElementById(`detail_${idx}`);
+        detailEl.classList.toggle('show');
+    }
+
+    function updateCafeCountdown() {
+        const now = new Date();
+        const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const kstNow = new Date(utc + (3600000 * 9));
+
+        const nextReset = new Date(kstNow);
+        nextReset.setHours(12, 0, 0, 0);
+        if (kstNow.getHours() >= 12) nextReset.setDate(nextReset.getDate() + 1);
+
+        const diff = nextReset - kstNow;
+        const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        
+        const resetEl = document.getElementById('resetTimer');
+        if(resetEl) resetEl.innerText = `${h}:${m}:${s}`;
+
+        const lvlTimerEl = document.getElementById('levelUpTimer');
+        if(!lvlTimerEl) return;
+
+        if (targetLevelUpDate) {
+            const nowMs = Date.now();
+            const targetMs = targetLevelUpDate.getTime();
+            if (nowMs >= targetMs) {
+                lvlTimerEl.innerText = "LEVEL UP!";
+                lvlTimerEl.style.color = "var(--yellow-text)";
+            } else {
+                const lDiff = targetMs - nowMs;
+                const lD = Math.floor(lDiff / (1000 * 60 * 60 * 24));
+                const lH = Math.floor((lDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+                const lM = Math.floor((lDiff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+                const lS = Math.floor((lDiff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+                
+                if(lD > 0) lvlTimerEl.innerText = `${lD}일 ${lH}:${lM}:${lS}`;
+                else lvlTimerEl.innerText = `${lH}:${lM}:${lS}`;
+                lvlTimerEl.style.color = "var(--text-main)";
+            }
+        } else {
+            lvlTimerEl.innerText = "--:--:--";
+            lvlTimerEl.style.color = "var(--text-muted)";
+        }
+    }
+
+    function initCafeUI() {
+        const lvSelect = document.getElementById("userLevel");
+        if(lvSelect.options.length <= 1) {
+            for (let i = 1; i <= 40; i++) lvSelect.add(new Option(`Lv. ${i}`, i));
+        }
+        const trSelect = document.getElementById("trendSelect");
+        if(trSelect.options.length <= 1) {
+            TREND_LIST.forEach(t => trSelect.add(new Option(t, t)));
+        }
+
+        loadCafeData();
+        renderCafes();
+        
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'cafeData') {
+                loadCafeData();
+                renderCafes();
+            }
+        });
+    }
+
+    function handleLevelChange(lv, skipSave = false) {
+        const trendSel = document.getElementById("trendSelect");
+        if(lv >= 20) {
+            trendSel.disabled = false;
+            if(trendSel.options[0].text.includes("해금")) trendSel.options[0].text = "트렌드 없음";
+        } else {
+            trendSel.value = "";
+            trendSel.disabled = true;
+            trendSel.options[0].text = "트렌드 없음 (Lv.20 이상 해금)";
+        }
+        renderCafes();
+        if (!skipSave) saveCafeData();
+    }
+
+    function getUnlockedSlots(lv) {
+        if (lv >= 25) return 5;
+        if (lv >= 17) return 4;
+        if (lv >= 10) return 3;
+        if (lv >= 5)  return 2;
+        if (lv >= 1)  return 1;
+        return 0;
+    }
+
+    function renderCafes() {
+        const level = parseInt(document.getElementById("userLevel").value) || 0;
+        const unlocked = getUnlockedSlots(level);
+        const grid = document.getElementById("cafeGrid");
+        let html = '';
+
+        for (let i = 0; i < 5; i++) {
+            const isLocked = i >= unlocked;
+            html += `
+            <div class="cafe-box ${isLocked ? 'locked' : ''}">
+                <div class="cafe-title-wrap">
+                    <div class="cafe-title">${CAFE_NAMES[i]}</div>
+                </div>
+                <div class="cafe-slots">
+                    ${renderSlot(i, 0)}
+                    ${renderSlot(i, 1)}
+                </div>
+            </div>`;
+        }
+        grid.innerHTML = html;
+    }
+
+    function renderSlot(cafeIdx, slotIdx) {
+        const emp = cafeDataState[cafeIdx][slotIdx];
+        if (!emp) return `<div class="cafe-slot empty" onclick="handleSlotClick(${cafeIdx}, ${slotIdx}, event)"></div>`;
+        
+        const lv = charLvHistory[emp] || 5;
+        return `
+        <div class="cafe-slot" onclick="handleSlotClick(${cafeIdx}, ${slotIdx}, event)">
+            <div class="slot-img-box">
+                <img src="./images/${emp}.png" alt="${emp}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
+                <div class="lv-badge" onclick="toggleOverlay(event, ${cafeIdx}, ${slotIdx})">Lv.${lv} 설정 ▼</div>
+            </div>
+            
+            <div class="lv-overlay" id="overlay_${cafeIdx}_${slotIdx}" onclick="handleOverlayClick(event, ${cafeIdx}, ${slotIdx})">
+                <div class="lv-title">레벨 설정</div>
+                <div class="lv-btn-grid">
+                    ${[1,2,3,4,5].map(v => `<button class="lv-btn ${lv === v ? 'active' : ''}" onclick="setLevel(event, '${emp}', ${v})">${v}</button>`).join('')}
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function handleOverlayClick(event, cafeIdx, slotIdx) {
+        if (event.target.closest('.lv-btn')) return;
+        event.stopPropagation();
+        
+        const isTouch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+        if (isTouch) {
+            document.getElementById(`overlay_${cafeIdx}_${slotIdx}`).style.display = 'none';
+        } else {
+            handleSlotClick(cafeIdx, slotIdx, event);
+        }
+    }
+
+    function toggleOverlay(event, cafeIdx, slotIdx) {
+        event.stopPropagation();
+        const overlay = document.getElementById(`overlay_${cafeIdx}_${slotIdx}`);
+        const isShowing = overlay.style.display === 'flex';
+        
+        document.querySelectorAll('.lv-overlay').forEach(el => el.style.display = 'none');
+        if (!isShowing) overlay.style.display = 'flex';
+    }
+
+    function handleSlotClick(cafeIdx, slotIdx, event) {
+        const level = parseInt(document.getElementById("userLevel").value);
+        if (isNaN(level)) { 
+            alert("관리 레벨을 먼저 선택해 주시기 바랍니다."); 
+            return; 
+        }
+
+        if (event && event.target && (event.target.closest('.lv-btn') || event.target.closest('.lv-badge'))) return;
+
+        if (cafeDataState[cafeIdx][slotIdx]) {
+            cafeDataState[cafeIdx][slotIdx] = null;
+            saveCafeData(); renderCafes(); renderEmpSummary();
+        } else {
+            selectingSlot = { cafeIdx, slotIdx };
+            renderCharModal();
+            document.getElementById('charSelectModal').style.display = 'flex';
+        }
+    }
+
+    function renderCharModal() {
+        const grid = document.getElementById("modalCharGrid");
+        const placedChars = cafeDataState.flat().filter(Boolean);
+        let html = '';
+
+        EMP_LIST.forEach(emp => {
+            if(placedChars.includes(emp)) return;
+            html += `
+            <div class="cafe-char-card" onclick="selectCharForSlot('${emp}')">
+                <img src="./images/${emp}.png" class="cafe-char-img" alt="${emp}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
+                <div class="cafe-char-info"><div class="cafe-char-name">${emp}</div></div>
+            </div>`;
+        });
+        
+        if (html === '') html = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: var(--text-muted);">배치할 직원이 없습니다.</div>';
+        grid.innerHTML = html;
+    }
+
+    function selectCharForSlot(emp) {
+        if(selectingSlot) {
+            cafeDataState[selectingSlot.cafeIdx][selectingSlot.slotIdx] = emp;
+            if(!charLvHistory[emp]) charLvHistory[emp] = 5;
+            saveCafeData(); renderCafes(); renderEmpSummary(); closeCharModal();
+        }
+    }
+
+    function closeCharModal(e) {
+        if(!e || e.target === document.getElementById('charSelectModal') || e.target.className === 'modal-close') {
+            document.getElementById('charSelectModal').style.display = 'none';
+            selectingSlot = null;
+        }
+    }
+
+    function setLevel(e, emp, lv) {
+        e.preventDefault(); e.stopPropagation();
+        charLvHistory[emp] = lv; 
+        saveCafeData(); renderCafes(); renderEmpSummary();
+    }
+
+    function getActiveCharsMap() {
+        const level = parseInt(document.getElementById("userLevel").value) || 0;
+        const unlocked = getUnlockedSlots(level);
+        const active = {};
+        for(let i = 0; i < unlocked; i++) {
+            cafeDataState[i].forEach(emp => {
+                if(emp) active[emp] = charLvHistory[emp] || 5;
+            });
+        }
+        return active;
+    }
+
+    function renderEmpSummary() {
+        const box = document.getElementById("empSummaryBox");
+        const grid = document.getElementById("empSummaryGrid");
+        const activeMap = getActiveCharsMap();
+        
+        if (Object.keys(activeMap).length === 0) {
+            box.classList.remove("show"); return;
+        }
+
+        let html = '';
+        for (const [n, l] of Object.entries(activeMap)) {
+            let pBuff = 0; let tBuff = 0;
+            let condStr = "";
+            let isUmiTraffic = false; let umiCondStr = "";
+            let isLacriPrice = false; let lacriCondStr = "";
+            
+            if (n === "민트" || n === "아들러") {
+                if (l >= 1) pBuff += 0.12; if (l >= 5) pBuff += 0.18;
+            }
+            if (n === "하니엘") {
+                if (l >= 1) pBuff += 0.12; if (l >= 3) pBuff += 0.12; if (l >= 5) pBuff += 0.18;
+            }
+            if (n === "나나리") {
+                if (l >= 1) pBuff += 0.2; if (l >= 5) pBuff += 0.3;
+                condStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(메인메뉴 개수에 따라 변동)</span>";
+            }
+            if (n === "스키아" || n === "치즈" || n === "백장" || n === "다포딜") {
+                if (l >= 1) tBuff += 18; if (l >= 5) tBuff += 27;
+            }
+            if (n === "에드가") {
+                if (l >= 1) tBuff += 18; if (l >= 3) tBuff += 18; if (l >= 5) tBuff += 27;
+            }
+            if (n === "우미츠키") {
+                if (l >= 1) pBuff += 0.12; 
+                if (l >= 3) { isUmiTraffic = true; umiCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(음료 2개 이상 시 +1%)</span>"; }
+                if (l >= 5) { isUmiTraffic = true; umiCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(음료 2개 이상 시 +2.5%)</span>"; }
+            }
+            if (n === "사키리") {
+                if (l >= 1) pBuff += 0.12; 
+                if (l >= 5) { pBuff += 0.3; condStr += "<br><span style='font-size:10px; color:var(--text-muted);'>(동일 카테고리 3개 시 적용)</span>"; }
+            }
+            if (n === "라크리모사") {
+                if (l >= 1) { isLacriPrice = true; lacriCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(디저트 1개 이상 시 1%)</span>"; }
+                if (l >= 5) { isLacriPrice = true; lacriCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(디저트 2개 이상 시 총 2.5%)</span>"; }
+            }
+
+            let statHtml = "";
+            if(pBuff > 0) statHtml += `단가 +${pBuff.toFixed(2)}${condStr}<br>`;
+            if(tBuff > 0) statHtml += `트래픽 +${tBuff}<br>`;
+            if(isUmiTraffic) statHtml += `트래픽 증가 ${umiCondStr}<br>`;
+            if(isLacriPrice) statHtml += `판매가 곱연산 증가 ${lacriCondStr}<br>`;
+
+            html += `
+                <div class="emp-stat-item">
+                    <img src="./images/${n}.png" class="emp-stat-icon" alt="${n}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
+                    <div class="emp-stat-content">
+                        <div class="emp-stat-name">${n} <span style="font-size:10px; color:var(--text-muted);">(Lv.${l})</span></div>
+                        <div style="color:var(--text-main); line-height: 1.4;">${statHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+        grid.innerHTML = html;
+        box.classList.add("show");
+    }
+
+    function saveCafeData() {
+        const data = {
+            level: document.getElementById("userLevel").value,
+            trend: document.getElementById("trendSelect").value,
+            cafeState: cafeDataState,
+            history: charLvHistory,
+            lvlUpTime: targetLevelUpDate ? targetLevelUpDate.getTime() : null,
+            calcExpTotal: document.getElementById('calcExpTotal').value,
+            calcExpCur: document.getElementById('calcExpCur').value,
+            calcPop: document.getElementById('calcPop').value,
+            calcPopPreset: document.getElementById('calcPopPreset').value,
+            calcPonz: document.getElementById('calcPonz').value
+        };
+        localStorage.setItem('cafeData', JSON.stringify(data));
+    }
+
+    function loadCafeData() {
+        const saved = localStorage.getItem('cafeData');
+        if(saved) {
+            try {
+                const data = JSON.parse(saved);
+                if(data.level) {
+                    document.getElementById("userLevel").value = data.level;
+                    handleLevelChange(data.level, true);
+                }
+                if(data.trend && data.level >= 20) document.getElementById("trendSelect").value = data.trend;
+                if(data.history) charLvHistory = data.history;
+                if(data.lvlUpTime) targetLevelUpDate = new Date(data.lvlUpTime);
+
+                if(data.calcExpTotal) document.getElementById('calcExpTotal').value = data.calcExpTotal;
+                if(data.calcExpCur) document.getElementById('calcExpCur').value = data.calcExpCur;
+                if(data.calcPop) document.getElementById('calcPop').value = data.calcPop;
+                if(data.calcPopPreset) document.getElementById('calcPopPreset').value = data.calcPopPreset;
+                if(data.calcPonz) document.getElementById('calcPonz').value = data.calcPonz;
+                
+                if(data.cafeState) {
+                    cafeDataState = data.cafeState;
+                }
+            } catch(e) {}
+        }
+        renderEmpSummary();
+    }
+
+    function syncPonz() {
+        if (lastCalculatedPonz > 0) {
+            document.getElementById('calcPonz').value = lastCalculatedPonz.toFixed(2);
+            saveCafeData();
+        } else {
+            alert("먼저 최고 매출을 계산해 주시기 바랍니다.");
+        }
+    }
+
+    function calcLevelUpTime() {
+        const level = parseInt(document.getElementById("userLevel").value);
+        if (isNaN(level)) { 
+            alert("관리 레벨을 먼저 선택해 주시기 바랍니다."); 
+            return; 
+        }
+
+        const ponz = parseFloat(document.getElementById('calcPonz').value);
+        const pop = parseFloat(document.getElementById('calcPop').value) || 0;
+        const resBox = document.getElementById('levelUpResult');
+
+        if (isNaN(ponz) || ponz <= 0) {
+            resBox.innerHTML = "<span style='color:var(--danger);'>시간당 폰즈를 올바르게 입력해주세요.</span>";
+            resBox.style.display = "block";
+            return;
+        }
+
+        const hourlyExp = ponz * (1 + pop);
+
+        if (level >= 40) {
+            resBox.innerHTML = `현재 최대 레벨(Lv.40)입니다.<br><span style='font-size:12px; color:var(--text-muted);'>더 이상 레벨업을 할 수 없습니다.</span><br>시간당 획득 경험치(수익): <span style='color:var(--accent-blue); font-size:16px; font-weight:700;'>${hourlyExp.toFixed(2)}</span>`;
+            resBox.style.display = "block";
+            targetLevelUpDate = null;
+            saveCafeData();
+            return;
+        }
+
+        const expTotal = parseFloat(document.getElementById('calcExpTotal').value);
+        const expCur = parseFloat(document.getElementById('calcExpCur').value);
+        
+        if (isNaN(expTotal) || isNaN(expCur) || expTotal <= 0 || expCur < 0 || expTotal <= expCur) {
+            resBox.innerHTML = "<span style='color:var(--danger);'>전체 경험치와 현재 경험치를 올바르게 입력해주세요. (전체 > 현재)</span>";
+            resBox.style.display = "block";
+            return;
+        }
+
+        const expLeft = expTotal - expCur;
+        const hoursRequired = expLeft / hourlyExp;
+        
+        targetLevelUpDate = new Date(Date.now() + hoursRequired * 3600 * 1000);
+        saveCafeData();
+
+        resBox.innerHTML = `대시보드 상단 타이머에 적용되었습니다.<br><span style='font-size:12px; color:var(--text-muted); display:inline-block; margin-top:6px;'>(약 ${hoursRequired.toFixed(2)}시간 소요 / 시간당 ${hourlyExp.toFixed(2)} 획득)</span>`;
+        resBox.style.display = "block";
+    }
+
+    function getCombinations(arr, k) {
+        const res = [];
+        function backtrack(start, combo) {
+            if (combo.length === k) { res.push([...combo]); return; }
+            for (let i = start; i <= arr.length - (k - combo.length); i++) {
+                combo.push(arr[i]); backtrack(i + 1, combo); combo.pop();
+            }
+        }
+        backtrack(0, []);
+        return res;
+    }
+
+    function runCalculator() {
+        const err = document.getElementById("errorMsg");
+        const resWrap = document.getElementById("resultContainer");
+        err.style.display = "none"; resWrap.style.display = "none";
+
+        const level = parseInt(document.getElementById("userLevel").value);
+        if (isNaN(level)) { 
+            alert("관리 레벨을 먼저 선택해 주시기 바랍니다."); 
+            return; 
+        }
+
+        const slots = getUnlockedSlots(level);
+        const trend = document.getElementById("trendSelect").value;
+
+        const availableItems = RAW_ITEMS.filter(it => level >= it[4]).map(it => {
+            return {
+                name: it[1], category: it[2],
+                basePrice: (level >= it[6]) ? it[5] : it[3],
+                priceUpLevel: it[6], 
+                ingredients: [it[7], it[8], it[9], it[10], it[11]].filter(Boolean)
+            };
+        });
+
+        if (availableItems.length < slots) {
+            err.innerText = `해금된 메뉴가 부족합니다. (필요 메뉴: ${slots}종)`; 
+            err.style.display = "block";
+            return;
+        }
+
+        const allCombos = getCombinations(availableItems, slots);
+        let comboList = []; 
+        const currentActiveMap = getActiveCharsMap();
+
+        allCombos.forEach(combo => {
+            let mainCount = combo.filter(item => item.category === "메인메뉴").length;
+            let drinkCount = combo.filter(item => item.category === "음료").length;
+            let dessertCount = combo.filter(item => item.category === "디저트").length;
+            
+            let globalPriceBuff = 0, globalTrafficBuff = 0;
+            let umiMult = 1, lacriMult = 1;
+
+            for (const [n, l] of Object.entries(currentActiveMap)) {
+                if (n === "민트" || n === "아들러") {
+                    if (l >= 1) globalPriceBuff += 0.12;
+                    if (l >= 5) globalPriceBuff += 0.18;
+                }
+                if (n === "하니엘") {
+                    if (l >= 1) globalPriceBuff += 0.12;
+                    if (l >= 3) globalPriceBuff += 0.12;
+                    if (l >= 5) globalPriceBuff += 0.18;
+                }
+                if (n === "나나리") {
+                    if (l >= 1 && mainCount >= 1) globalPriceBuff += 0.2;
+                    if (l >= 5 && mainCount >= 2) globalPriceBuff += 0.3;
+                }
+                if (n === "스키아" || n === "치즈" || n === "백장" || n === "다포딜") {
+                    if (l >= 1) globalTrafficBuff += 18;
+                    if (l >= 5) globalTrafficBuff += 27;
+                }
+                if (n === "에드가") {
+                    if (l >= 1) globalTrafficBuff += 18;
+                    if (l >= 3) globalTrafficBuff += 18;
+                    if (l >= 5) globalTrafficBuff += 27;
+                }
+                if (n === "우미츠키") {
+                    if (l >= 1) globalPriceBuff += 0.12;
+                    if (l >= 3 && drinkCount >= 2) umiMult += 0.01; 
+                    if (l >= 5 && drinkCount >= 2) umiMult += 0.015; 
+                }
+                if (n === "사키리") {
+                    if (l >= 1) globalPriceBuff += 0.12;
+                    if (l >= 5 && (mainCount >= 3 || drinkCount >= 3 || dessertCount >= 3)) globalPriceBuff += 0.3;
+                }
+                if (n === "라크리모사") {
+                    if (l >= 1 && dessertCount >= 1) lacriMult += 0.01;
+                    if (l >= 5 && dessertCount >= 2) lacriMult += 0.015;
+                }
+            }
+
+            let comboRev = 0;
+            const details = [];
+
+            combo.forEach((item, cafeIdx) => {
+                let localPriceBuff = globalPriceBuff; 
+                let localTrafficBuff = globalTrafficBuff;
+
+                let isTrend = false;
+                let trendBonus = 0;
+                
+                if (trend) {
+                    if (trend.startsWith("메인 메뉴")) {
+                        if (item.category === "메인메뉴") { isTrend = true; trendBonus = 1.0; }
+                    } else if (trend.startsWith("음료")) {
+                        if (item.category === "음료") { isTrend = true; trendBonus = 1.0; }
+                    } else if (trend.startsWith("디저트")) {
+                        if (item.category === "디저트") { isTrend = true; trendBonus = 1.0; }
+                    } else {
+                        isTrend = trend.startsWith("과일") ? 
+                            item.ingredients.some(ing => FRUITS.includes(ing)) : 
+                            item.ingredients.includes(trend);
+                        if (isTrend) trendBonus = 0.75;
+                    }
+                }
+                
+                const finalPrice = (item.basePrice + localPriceBuff + trendBonus) * lacriMult;
+                const totalTraffic = (2400 + localTrafficBuff) * umiMult;
+                const hourlyRev = finalPrice * (totalTraffic / 100);
+                
+                comboRev += hourlyRev;
+                details.push({
+                    cafeName: CAFE_NAMES[cafeIdx],
+                    name: item.name, category: item.category, base: item.basePrice, final: finalPrice, isTrend, trendBonus, rev: hourlyRev, priceUpLevel: item.priceUpLevel,
+                    appliedPriceBuff: localPriceBuff, lacriMult: lacriMult
+                });
+            });
+
+            const finalRev = Math.round((comboRev + Number.EPSILON) * 100) / 100;
+            comboList.push({ rev: finalRev, details, globalPriceBuff, totalTraffic: (2400 + globalTrafficBuff) * umiMult });
+        });
+
+        comboList.sort((a, b) => b.rev - a.rev);
+        const absoluteBest = comboList[0];
+        
+        let verifySum = 0;
+        absoluteBest.details.forEach(d => verifySum += d.rev);
+        verifySum = Math.round((verifySum + Number.EPSILON) * 100) / 100;
+        
+        if(verifySum === absoluteBest.rev) {
+            lastCalculatedPonz = absoluteBest.rev; 
+            renderData(absoluteBest.rev, absoluteBest);
+        } else {
+            err.innerText = "수익 계산 오류 발생. 새로고침 해주세요.";
+            err.style.display = "block";
+        }
+    }
+
+    function renderData(total, data) {
+        const wrap = document.getElementById("resultContainer");
+        
+        let html = `
+            <div class="cafe-section-header">상품</div>
+            <div class="result-stats">
+                <div style="font-weight:700; color:var(--text-muted); font-size:13px;">최고 예상 수익</div>
+                <div class="total-rev">${total.toFixed(2)} <span>폰즈</span></div>
+                <div style="font-size:12px; font-weight:700; color:var(--text-muted);">전체 트래픽: ${Number(data.totalTraffic.toFixed(1))}p | 글로벌 버프: +${data.globalPriceBuff.toFixed(2)}</div>
+            </div>
+            <div class="item-grid">
+        `;
+
+        const level = parseInt(document.getElementById("userLevel").value);
+
+        data.details.forEach((it, idx) => {
+            const trendTag = it.isTrend ? `<div class="trend-badge">트렌드 적용</div>` : '';
+            const trendClass = it.isTrend ? 'is-trend' : '';
+            const headerColorClass = level >= it.priceUpLevel ? 'is-red' : '';
+            
+            html += `
+                <div class="item-card ${trendClass} ${headerColorClass}">
+                    <div class="item-card-top">${it.cafeName}</div>
+                    <div class="item-img-wrap">
+                        ${trendTag}
+                        <div class="item-img-inner">
+                            <img src="./images/${it.name}.png" class="item-img" alt="${it.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiNlNWU2ZTgiLz48L3N2Zz4='">
+                        </div>
+                    </div>
+                    
+                    <div class="item-name-bar">
+                        <div class="item-name-pill">
+                            <span class="item-name-text">${it.name}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="item-price-bar">+${it.rev.toFixed(3)} 폰즈</div>
+                    
+                    <button class="btn-detail" onclick="toggleItemDetail(${idx})">상세 내역 확인 ▼</button>
+                    <div class="detail-content" id="detail_${idx}">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                            <span>기본가</span>
+                            <span>${it.base.toFixed(2)}</span>
+                        </div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--yellow-text);">
+                            <span>적용 버프</span>
+                            <span>+${it.appliedPriceBuff.toFixed(2)}</span>
+                        </div>
+                        ${it.isTrend ? `<div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--trend-bg);">
+                            <span>트렌드 보너스</span>
+                            <span>+${it.trendBonus.toFixed(2)}</span>
+                        </div>` : ''}
+                        ${it.lacriMult > 1 ? `<div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--secondary);">
+                            <span>라크리모사 버프</span>
+                            <span>x${it.lacriMult}</span>
+                        </div>` : ''}
+                        <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border-color); font-weight:bold; font-size:12px; color:var(--text-main);">
+                            <span>최종 단가</span>
+                            <span>${it.final.toFixed(3)}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+        wrap.innerHTML = html;
+        wrap.style.display = "block";
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    window.onload = () => {
+        updateThemeBtnText();
+        initCafeUI(); // 카페 로컬데이터 불러오기
+    };
 </script>
 </body>
 </html>
