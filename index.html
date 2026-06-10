@@ -561,7 +561,8 @@
             <div class="timers-bar">
                 <div class="timer-badge"><h3 style="color:var(--primary);">일일 초기화</h3><div id="timer-daily" class="time" style="color:var(--primary);">계산 중...</div></div>
                 <div class="timer-badge"><h3 style="color:var(--secondary);">주간 초기화</h3><div id="timer-weekly" class="time" style="color:var(--secondary);">계산 중...</div></div>
-                <div class="timer-badge"><h3 style="color:var(--accent);">2주 초기화</h3><div id="timer-biweekly" class="time" style="color:var(--accent);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:var(--accent);">핑크퍼스 (2주)</h3><div id="timer-biweeklyPinkpus" class="time" style="color:var(--accent);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:#d946ef;">궤도 너머 (2주)</h3><div id="timer-biweeklyOrbit" class="time" style="color:#d946ef;">계산 중...</div></div>
                 <div class="timer-badge"><h3 style="color:var(--warning);">월간 초기화</h3><div id="timer-monthly" class="time" style="color:var(--warning);">계산 중...</div></div>
                 <div class="timer-badge"><h3 style="color:var(--danger);">5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--danger);">계산 중...</div></div>
             </div>
@@ -904,7 +905,8 @@
             items: [ "도시 활력제 사용", "경매 참가", "몽몽솜 수령", "주간 보스 처치", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행", "15000폰즈 금고 털기", '떨어진 지갑 줍기(<a href="https://arca.live/b/nevernesstoeverness/173300296" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">고정 스폰</a>)' ],
             sub: { title: "시즌패스 주간 미션 상세", id: "sp_weekly", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
         },
-        biweekly: { title: "2주 간격 숙제", type: "biweekly", color: "var(--accent)", items: ["핑크퍼스 은행털기", "궤도 너머 특별 노선 클리어"] },
+        biweeklyPinkpus: { title: "핑크퍼스 은행털기 (2주)", type: "biweeklyPinkpus", color: "var(--accent)", items: ["핑크퍼스 은행털기"] },
+        biweeklyOrbit: { title: "궤도 너머 특별 노선 (2주)", type: "biweeklyOrbit", color: "#d946ef", items: ["궤도 너머 특별 노선 클리어"] },
         monthly: { 
             title: "월간 숙제", type: "monthly", color: "var(--warning)", items: [],
             sub: { 
@@ -1064,15 +1066,23 @@
         if (type === 'weekly') { let wd = new Date(nextDaily); while(wd.getDay() !== 1) wd.setDate(wd.getDate() + 1); return wd; }
         if (type === 'monthly') { let md = new Date(nextDaily); md.setMonth(md.getMonth() + 1); md.setDate(1); return md; }
         
-        let baseDateBiweekly = new Date(2024, 0, 8, 5, 0, 0).getTime();
+        // 2주 간격 기준일 세팅 (핑크퍼스: 2026년 6월 7일, 궤도 너머: 2026년 5월 31일 기준)
+        let baseDatePinkpus = new Date(2026, 5, 7, 5, 0, 0).getTime();
+        let baseDateOrbit = new Date(2026, 4, 31, 5, 0, 0).getTime(); 
         let baseDate5w = new Date(2026, 3, 29, 5, 0, 0).getTime(); 
         let currentTs = now.getTime();
         
-        if (type === 'biweekly') { 
+        if (type === 'biweeklyPinkpus') { 
             let period = 14 * 24 * 60 * 60 * 1000; 
-            let passed = Math.floor((currentTs - baseDateBiweekly) / period);
-            if(currentTs < baseDateBiweekly) passed = -1;
-            return new Date(baseDateBiweekly + (passed + 1) * period); 
+            let passed = Math.floor((currentTs - baseDatePinkpus) / period);
+            if(currentTs < baseDatePinkpus) passed = -1;
+            return new Date(baseDatePinkpus + (passed + 1) * period); 
+        }
+        if (type === 'biweeklyOrbit') { 
+            let period = 14 * 24 * 60 * 60 * 1000; 
+            let passed = Math.floor((currentTs - baseDateOrbit) / period);
+            if(currentTs < baseDateOrbit) passed = -1;
+            return new Date(baseDateOrbit + (passed + 1) * period); 
         }
         if (type === '5weekly') { 
             let period = 35 * 24 * 60 * 60 * 1000; 
@@ -1094,7 +1104,7 @@
 
     function updateTimers() {
         const now = new Date();
-        ['daily', 'weekly', 'biweekly', 'monthly', '5weekly'].forEach(type => {
+        ['daily', 'weekly', 'biweeklyPinkpus', 'biweeklyOrbit', 'monthly', '5weekly'].forEach(type => {
             const el = document.getElementById(`timer-${type}`);
             if(el) el.innerText = formatTimeLeft(getNextReset(type, now));
         });
@@ -1108,9 +1118,9 @@
     function checkAndResetTasks() {
         const now = new Date().getTime();
         let needsSave = false;
-        let resetFlags = { daily: false, weekly: false, biweekly: false, monthly: false, '5weekly': false };
+        let resetFlags = { daily: false, weekly: false, biweeklyPinkpus: false, biweeklyOrbit: false, monthly: false, '5weekly': false };
 
-        ['daily', 'weekly', 'biweekly', 'monthly', '5weekly'].forEach(type => {
+        ['daily', 'weekly', 'biweeklyPinkpus', 'biweeklyOrbit', 'monthly', '5weekly'].forEach(type => {
             let nextReset = getNextReset(type).getTime();
             if (!userData.resetTargets[type] || now > userData.resetTargets[type]) {
                 resetFlags[type] = true;
@@ -1119,7 +1129,7 @@
             }
         });
 
-        if (resetFlags.biweekly) { resetFlags.weekly = true; resetFlags.daily = true; }
+        if (resetFlags.biweeklyPinkpus || resetFlags.biweeklyOrbit) { resetFlags.weekly = true; resetFlags.daily = true; }
         if (resetFlags.weekly) { resetFlags.daily = true; }
 
         for (let key in userData.tasks) {
@@ -1246,7 +1256,7 @@
                 if(categoryKey === 'dailyImportant') weight = 2;
 
                 if(cat.type === 'daily') { dailyTotal += weight; if(isChecked) dailyDone += weight; }
-                if(cat.type === 'weekly' || cat.type === 'biweekly') { weeklyTotal += weight; if(isChecked) weeklyDone += weight; }
+                if(cat.type === 'weekly' || cat.type === 'biweeklyPinkpus' || cat.type === 'biweeklyOrbit') { weeklyTotal += weight; if(isChecked) weeklyDone += weight; }
             });
 
             if (cat.sub) {
