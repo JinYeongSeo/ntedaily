@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" sizes="192x192" href="img/favicon.png">
+    <link rel="apple-touch-icon" sizes="512x512" href="img/favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="img/favicon.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="img/favicon.png">
+
     <script defer src="/_vercel/insights/script.js"></script>
     
     <link rel="icon" href="img/favicon.ico" type="image/x-icon">
@@ -119,7 +127,7 @@
         
         [data-theme="light"] .bg-image { opacity: 0.05; } 
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px 20px 80px 20px; }
 
         .glass-panel {
             background: var(--panel-bg);
@@ -411,7 +419,7 @@
 
         @media (max-width: 768px) {
             body, html { font-size: 14px; }
-            .container { padding: 10px; }
+            .container { padding: 10px 10px 60px 10px; }
             header h1 { font-size: 20px; }
             .dashboard-top { grid-template-columns: 1fr; gap: 15px; }
             .stamina-widget, .progress-widget, .char-add-box, .task-category, .char-card { padding: 15px; }
@@ -1147,9 +1155,35 @@
 
     function updateTimers() {
         const now = new Date();
+        const timersBar = document.querySelector('.timers-bar');
+        const timerElements = [];
+        const priorityMap = { 'daily': 1, 'weekly': 2, 'biweeklyPinkpus': 3, 'biweeklyOrbit': 3, 'monthly': 4, '5weekly': 5 };
+
         ['daily', 'weekly', 'biweeklyPinkpus', 'biweeklyOrbit', 'monthly', '5weekly'].forEach(type => {
+            const targetDate = getNextReset(type, now);
             const el = document.getElementById(`timer-${type}`);
-            if(el) el.innerText = formatTimeLeft(getNextReset(type, now));
+            if(el) {
+                el.innerText = formatTimeLeft(targetDate);
+                const badgeEl = el.closest('.timer-badge');
+                if(badgeEl) {
+                    timerElements.push({
+                        el: badgeEl,
+                        time: targetDate.getTime(),
+                        priority: priorityMap[type]
+                    });
+                }
+            }
+        });
+        
+        // 정렬: 남은 시간이 적은 순서대로 오름차순, 동일 시간이면 priority 순서로
+        timerElements.sort((a, b) => {
+            if (a.time === b.time) return a.priority - b.priority;
+            return a.time - b.time;
+        });
+
+        // 정렬된 요소들을 순서대로 다시 append 해주면 노드 순서가 업데이트 됨
+        timerElements.forEach(item => {
+            if (timersBar) timersBar.appendChild(item.el);
         });
         
         document.querySelectorAll('.custom-timer-span').forEach(el => {
