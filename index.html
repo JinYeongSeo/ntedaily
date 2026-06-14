@@ -839,29 +839,34 @@
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.signInWithPopup(provider).then((result) => {
             const user = result.user;
-            saveAccountLocal(user.email.split('@')[0], 'google-oauth');
+            const googleProvider = user.providerData.find(p => p.providerId === 'google.com');
+            const emailToSave = googleProvider ? googleProvider.email : user.email;
+            saveAccountLocal(emailToSave.split('@')[0], 'google-oauth');
         }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
-            alert("구글 로그인에 실패했습니다: " + error.message);
+            alert("구글 로그인 실패: " + error.message);
         });
     }
 
     function linkGoogleAccount() {
         const provider = new firebase.auth.GoogleAuthProvider();
         auth.currentUser.linkWithPopup(provider).then((result) => {
-            alert("✅ 구글 계정 연동이 완료되었습니다! 이제 구글 이메일로도 로그인과 비밀번호 재설정이 가능합니다.");
-            saveAccountLocal(result.user.email.split('@')[0], 'google-oauth');
+            alert("✅ 구글 계정 연동 완료! 이제 '구글로 계속하기' 버튼으로도 접속 가능해.");
+            const googleProvider = result.user.providerData.find(p => p.providerId === 'google.com');
+            if (googleProvider && googleProvider.email) {
+                saveAccountLocal(googleProvider.email.split('@')[0], 'google-oauth');
+            }
         }).catch((error) => {
-            if(error.code === 'auth/credential-already-in-use') alert("이미 다른 계정에 연동된 구글 계정입니다.");
+            if(error.code === 'auth/credential-already-in-use') alert("이미 다른 계정에 연동된 구글 계정임.");
             else alert("연동 실패: " + error.message);
         });
     }
 
     function handlePasswordReset() {
-        const email = prompt("가입 또는 연동하신 실제 이메일 주소를 입력해 주세요.\n(UID 전용 가입자는 연동된 이메일이 없으면 불가능합니다.)");
+        const email = prompt("비밀번호 재설정을 위한 이메일 주소를 입력해.\n(※ 구글 연동만 한 기존 UID 계정은 시스템상 이메일이 없어서 재설정 불가. 그냥 '구글로 계속하기' 버튼 눌러서 접속하면 됨)");
         if(!email) return;
         auth.sendPasswordResetEmail(email).then(() => {
-            alert("✅ 비밀번호 재설정 메일을 발송했습니다. 스팸함도 확인해 주세요.");
+            alert("✅ 비밀번호 재설정 메일 발송 완료. 스팸함도 꼭 확인해봐.");
         }).catch((error) => {
             alert("오류 발생: " + error.message);
         });
@@ -935,7 +940,9 @@
     let userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 360, staminaUpdated: 0 };
     let timerInterval = null;
 
-    function getFakeEmail(uid) { return uid + "@nte-tracker.com"; }
+    function getFakeEmail(uid) { 
+        return uid.includes('@') ? uid : uid + "@nte-tracker.com"; 
+    }
 
     auth.onAuthStateChanged((user) => {
         if (user && !currentUserAuthUid) {
