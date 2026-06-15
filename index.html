@@ -504,9 +504,9 @@
             <button id="btn-cancel-login" onclick="cancelLogin()" style="margin-top:15px; background:transparent; border:none; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer; display:none;">돌아가기</button>
             
             <div class="help-links">
-                <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20UID%20도용%20문의&body=도용당한%20UID:%20%0D%0A상세%20내용:%20">UID 도용 문의</a>
+                <a onclick="copyEmail('UID 도용 문의')" style="cursor:pointer;">UID 도용 문의</a>
                 <span style="color:var(--border-color);">|</span>
-                <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20건의사항&body=건의%20내용:%20">건의하기</a>
+                <a onclick="copyEmail('건의')" style="cursor:pointer;">건의하기</a>
             </div>
         </div>
     </div>
@@ -518,7 +518,7 @@
                 <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
                 <button class="outline-btn" style="border-color:var(--primary); color:var(--primary);" onclick="showLoginScreen()">+ 새 계정</button>
                 <button id="themeToggleBtn" class="outline-btn" onclick="toggleTheme()">라이트 모드 전환</button>
-                <a href="mailto:pridecha5@gmail.com?subject=[NTE%20트래커]%20건의/문의사항&body=내용:%20" class="outline-btn">건의/문의</a>
+                <button class="outline-btn" onclick="copyEmail('건의/문의')">건의/문의</button>
                 <button class="link-google-btn" onclick="linkGoogleAccount()">구글 연동</button>
                 <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
                 <button class="delete-account-btn" onclick="handleDeleteAccount()">회원탈퇴</button>
@@ -826,11 +826,22 @@
         document.getElementById('btn-cancel-login').style.display = 'none';
 
         auth.signOut().then(() => {
+            currentUserAuthUid = null; // 여기서 확실하게 초기화해줘야 다음 로그인 시 정상 트리거됨
             return auth.signInWithEmailAndPassword(getFakeEmail(uid), pw);
         }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
             alert("계정 전환 중 오류가 발생했습니다: " + error.message);
         });
+    }
+
+    function copyEmail(type) {
+        prompt(type + " 사항은 아래 이메일로 보내주세요!\n(확인 후 복사하세요)", "pridecha5@gmail.com");
+    }
+
+    function returnToAppScreen() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'block';
+        document.getElementById('loading-text').style.display = 'none';
     }
 
     function handleGoogleLogin() {
@@ -842,6 +853,7 @@
             const googleProvider = user.providerData.find(p => p.providerId === 'google.com');
             const emailToSave = googleProvider ? googleProvider.email : user.email;
             saveAccountLocal(emailToSave.split('@')[0], 'google-oauth');
+            if (currentUserAuthUid === result.user.uid) returnToAppScreen();
         }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
             alert("구글 로그인 실패: " + error.message);
@@ -945,9 +957,19 @@
     }
 
     auth.onAuthStateChanged((user) => {
-        if (user && !currentUserAuthUid) {
-            let displayId = user.email ? user.email.split('@')[0] : '유저';
-            initUserSpace(user.uid, displayId);
+        if (user) {
+            // 이전에 로그인된 UID와 현재 접속된 UID가 다를 때만 데이터 초기화 트리거
+            if (currentUserAuthUid !== user.uid) {
+                let displayId = user.email ? user.email.split('@')[0] : '유저';
+                initUserSpace(user.uid, displayId);
+            } else {
+                // 동일 유저로 다시 로그인 시도했을 땐 무한 로딩 풀고 화면 복귀
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-screen').style.display = 'block';
+                document.getElementById('loading-text').style.display = 'none';
+            }
+        } else {
+            currentUserAuthUid = null; // 로그아웃 시 찌꺼기 완벽하게 날려버리기
         }
     });
 
@@ -959,8 +981,9 @@
 
         document.getElementById('loading-text').style.display = 'block';
         document.getElementById('loading-text').innerText = "가입하는 중...";
-        auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw).then(() => {
+        auth.createUserWithEmailAndPassword(getFakeEmail(uid), pw).then((result) => {
             saveAccountLocal(uid, pw);
+            if (currentUserAuthUid === result.user.uid) returnToAppScreen();
         }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
             if (error.code === 'auth/email-already-in-use') alert("이미 가입된 UID입니다. 비밀번호를 입력하고 로그인해 주세요.");
@@ -975,8 +998,9 @@
 
         document.getElementById('loading-text').style.display = 'block';
         document.getElementById('loading-text').innerText = "데이터를 불러오는 중입니다...";
-        auth.signInWithEmailAndPassword(getFakeEmail(uid), pw).then(() => {
+        auth.signInWithEmailAndPassword(getFakeEmail(uid), pw).then((result) => {
             saveAccountLocal(uid, pw);
+            if (currentUserAuthUid === result.user.uid) returnToAppScreen();
         }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
             if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입되지 않은 UID이거나 비밀번호가 틀렸습니다.");
