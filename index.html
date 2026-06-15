@@ -977,15 +977,19 @@
         }
     });
 
-    function initGuestSpace() {
-        let localData = localStorage.getItem('guest_userData');
-        if (localData) {
-            try {
-                let parsed = JSON.parse(localData);
-                userData = Object.assign(userData, parsed);
-            } catch(e) {}
+    // ==========================================
+    // DB 만료 방어 및 예외 처리 로직 추가
+    // ==========================================
+    function loadLocalFallback(dbData = null) {
+        if (dbData) {
+            userData = dbData;
         } else {
-            userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 360, staminaUpdated: Date.now() };
+            let localData = localStorage.getItem('guest_userData');
+            if (localData) {
+                try { userData = Object.assign(userData, JSON.parse(localData)); } catch(e) {}
+            } else {
+                userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 360, staminaUpdated: Date.now() };
+            }
         }
         
         if(!userData.tasks) userData.tasks = {};
@@ -995,17 +999,24 @@
         if(!userData.resetTargets) userData.resetTargets = {};
         if(userData.stamina === undefined) userData.stamina = 0;
         if(!userData.staminaMax) userData.staminaMax = 360;
+    }
 
+    function finalizeSetup(displayUid) {
         let localCafeData = localStorage.getItem('cafeData');
         let parsedLocal = null;
         try { if(localCafeData) parsedLocal = JSON.parse(localCafeData); } catch(e){}
 
-        if (parsedLocal) {
+        if (userData.cafeData) {
+            applyCafeDataToUI(userData.cafeData);
+            localStorage.setItem('cafeData', JSON.stringify(userData.cafeData));
+        } else if (parsedLocal) {
             userData.cafeData = parsedLocal;
             applyCafeDataToUI(parsedLocal);
+            saveData(); 
         } else {
             userData.cafeData = { cafeState: [[null, null], [null, null], [null, null], [null, null], [null, null]], history: {} };
             cafeDataState = userData.cafeData.cafeState;
+            if(!cafeDataState[0]) cafeDataState = [[null, null], [null, null], [null, null], [null, null], [null, null]];
             renderCafes();
         }
 
@@ -1015,17 +1026,47 @@
         document.getElementById('stamina-input').value = '';
         document.getElementById('stamina-max-input').value = userData.staminaMax;
         
-        renderAccountSwitcher('게스트');
+        renderAccountSwitcher(displayUid);
         renderTasks();
         renderCharacters();
         if(timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => { updateTimers(); calcStamina(); updateCafeCountdown(); }, 1000);
         updateTimers(); calcStamina(); updateCafeCountdown();
 
-        document.getElementById('header-login-btn').style.display = 'inline-flex';
-        document.getElementById('header-logout-btn').style.display = 'none';
-        document.getElementById('header-link-btn').style.display = 'none';
-        document.getElementById('header-delete-btn').style.display = 'none';
+        if(currentUserAuthUid) {
+            document.getElementById('header-login-btn').style.display = 'none';
+            document.getElementById('header-logout-btn').style.display = 'inline-flex';
+            document.getElementById('header-link-btn').style.display = 'inline-flex';
+            document.getElementById('header-delete-btn').style.display = 'inline-flex';
+        } else {
+            document.getElementById('header-login-btn').style.display = 'inline-flex';
+            document.getElementById('header-logout-btn').style.display = 'none';
+            document.getElementById('header-link-btn').style.display = 'none';
+            document.getElementById('header-delete-btn').style.display = 'none';
+        }
+    }
+
+    function initGuestSpace() {
+        loadLocalFallback();
+        finalizeSetup('게스트');
+    }
+
+    function initUserSpace(authUid, displayUid) {
+        currentUserAuthUid = authUid;
+        database.ref('users/' + authUid).once('value').then((snapshot) => {
+            if (snapshot.exists()) {
+                loadLocalFallback(snapshot.val());
+            } else {
+                loadLocalFallback();
+                saveData(); 
+            }
+            finalizeSetup(displayUid);
+        }).catch((error) => {
+            // 여기가 핵심: 파이어베이스 DB 권한 30일 만료 시 발생하는 에러를 캐치해서 프리징 방지
+            console.warn("DB 로드 실패 (권한 만료 등):", error);
+            loadLocalFallback();
+            finalizeSetup(displayUid);
+        });
     }
 
     function handleSignup() {
@@ -1060,67 +1101,6 @@
             document.getElementById('loading-text').style.display = 'none';
             if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') alert("가입되지 않은 UID이거나 비밀번호가 틀렸습니다.");
             else alert("로그인 실패: " + error.message);
-        });
-    }
-
-    function initUserSpace(authUid, displayUid) {
-        currentUserAuthUid = authUid;
-        database.ref('users/' + authUid).once('value').then((snapshot) => {
-            if (snapshot.exists()) {
-                userData = snapshot.val();
-                if(!userData.tasks) userData.tasks = {};
-                if(!userData.customTasks) userData.customTasks = [];
-                if(!userData.itemCounters) userData.itemCounters = {};
-                if(!userData.characters) userData.characters = [];
-                if(!userData.resetTargets) userData.resetTargets = {};
-                if(userData.stamina === undefined) userData.stamina = 0;
-                if(!userData.staminaMax) userData.staminaMax = 360;
-            } else {
-                let localData = localStorage.getItem('guest_userData');
-                if (localData) {
-                    try {
-                        userData = Object.assign(userData, JSON.parse(localData));
-                    } catch(e) {}
-                } else {
-                    userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 360, staminaUpdated: Date.now() };
-                }
-                saveData(); 
-            }
-            
-            let localCafeData = localStorage.getItem('cafeData');
-            let parsedLocal = null;
-            try { if(localCafeData) parsedLocal = JSON.parse(localCafeData); } catch(e){}
-
-            if (userData.cafeData) {
-                applyCafeDataToUI(userData.cafeData);
-                localStorage.setItem('cafeData', JSON.stringify(userData.cafeData));
-            } else if (parsedLocal) {
-                userData.cafeData = parsedLocal;
-                applyCafeDataToUI(parsedLocal);
-                saveData(); 
-            } else {
-                userData.cafeData = { cafeState: [[null, null], [null, null], [null, null], [null, null], [null, null]], history: {} };
-                cafeDataState = userData.cafeData.cafeState;
-                renderCafes();
-            }
-
-            checkAndResetTasks();
-            
-            returnToAppScreen();
-            document.getElementById('stamina-input').value = '';
-            document.getElementById('stamina-max-input').value = userData.staminaMax;
-            
-            renderAccountSwitcher(displayUid);
-            renderTasks();
-            renderCharacters();
-            if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => { updateTimers(); calcStamina(); updateCafeCountdown(); }, 1000);
-            updateTimers(); calcStamina(); updateCafeCountdown();
-
-            document.getElementById('header-login-btn').style.display = 'none';
-            document.getElementById('header-logout-btn').style.display = 'inline-flex';
-            document.getElementById('header-link-btn').style.display = 'inline-flex';
-            document.getElementById('header-delete-btn').style.display = 'inline-flex';
         });
     }
 
@@ -1177,7 +1157,7 @@
         const generated = Math.floor(diff / (6 * 60 * 1000));
         let current = (userData.stamina || 0) + generated;
         
-        if (current >= maxStamina) {
+        if (current >= maxStamina || isNaN(current)) {
             current = maxStamina;
             document.getElementById('stamina-timer').innerText = "최대치 도달 (MAX)";
         } else {
@@ -1204,7 +1184,6 @@
         if (type === 'weekly') { let wd = new Date(nextDaily); while(wd.getDay() !== 1) wd.setDate(wd.getDate() + 1); return wd; }
         if (type === 'monthly') { let md = new Date(nextDaily); md.setMonth(md.getMonth() + 1); md.setDate(1); return md; }
         
-        // 2주 간격 기준일 세팅 (핑크퍼스: 2026년 6월 8일 월요일, 궤도 너머: 2026년 6월 4일 목요일 기준)
         let baseDatePinkpus = new Date(2026, 5, 8, 5, 0, 0).getTime();
         let baseDateOrbit = new Date(2026, 5, 4, 7, 0, 0).getTime(); 
         let baseDate5w = new Date(2026, 3, 29, 5, 0, 0).getTime(); 
@@ -1262,13 +1241,11 @@
             }
         });
         
-        // 정렬: 남은 시간이 적은 순서대로 오름차순, 동일 시간이면 priority 순서로
         timerElements.sort((a, b) => {
             if (a.time === b.time) return a.priority - b.priority;
             return a.time - b.time;
         });
 
-        // 정렬된 요소들을 순서대로 다시 append 해주면 노드 순서가 업데이트 됨
         timerElements.forEach(item => {
             if (timersBar) timersBar.appendChild(item.el);
         });
@@ -1301,7 +1278,7 @@
             if (resetFlags[type]) userData.tasks[key] = false;
         }
 
-        if (userData.customTasks) {
+        if (userData.customTasks && Array.isArray(userData.customTasks)) {
             userData.customTasks.forEach(ct => { if (resetFlags[ct.type]) ct.checked = false; });
         }
         if (resetFlags.monthly) userData.itemCounters = {};
@@ -1311,7 +1288,7 @@
     function uncheckAllTasks() {
         if (!confirm("모든 숙제 체크를 해제하시겠습니까?")) return;
         for (let key in userData.tasks) userData.tasks[key] = false;
-        if (userData.customTasks) userData.customTasks.forEach(task => task.checked = false);
+        if (userData.customTasks && Array.isArray(userData.customTasks)) userData.customTasks.forEach(task => task.checked = false);
         saveData(); renderTasks();
     }
 
@@ -1349,10 +1326,13 @@
     }
 
     function saveData() { 
+        // 무조건 로컬에 먼저 저장 (서버 터져도 복구 가능하게)
+        localStorage.setItem('guest_userData', JSON.stringify(userData));
+        
         if (currentUserAuthUid) {
-            database.ref('users/' + currentUserAuthUid).set(userData); 
-        } else {
-            localStorage.setItem('guest_userData', JSON.stringify(userData));
+            database.ref('users/' + currentUserAuthUid).set(userData).catch(e => {
+                console.warn("DB 저장 실패 (권한 막혔거나 오프라인일 수 있음):", e);
+            }); 
         }
     }
 
@@ -1382,7 +1362,7 @@
         const text = input.value.trim();
         const type = document.getElementById('custom-task-type').value;
         if (!text) return;
-        if (!userData.customTasks) userData.customTasks = [];
+        if (!userData.customTasks || !Array.isArray(userData.customTasks)) userData.customTasks = [];
         userData.customTasks.push({ id: 'c_' + Date.now(), type: type, text: text, checked: false });
         input.value = '';
         saveData(); renderTasks();
@@ -1487,7 +1467,6 @@
             container.appendChild(div);
         });
 
-        // 커스텀 숙제
         const customDiv = document.createElement('div');
         customDiv.className = 'glass-panel task-category';
         let customHtml = `<h2 style="--cat-color: var(--text-muted); justify-content: flex-start; gap: 8px;"><span style="display: flex; align-items: center;">커스텀 숙제 (개인용)</span></h2>
@@ -1501,7 +1480,7 @@
                 <button onclick="addCustomTask()">추가</button>
             </div>`;
 
-        if (userData.customTasks && userData.customTasks.length > 0) {
+        if (userData.customTasks && Array.isArray(userData.customTasks) && userData.customTasks.length > 0) {
             userData.customTasks.forEach(task => {
                 const isChecked = task.checked;
                 const checkedAttr = isChecked ? 'checked' : '';
@@ -1855,7 +1834,7 @@
     }
 
     function renderSlot(cafeIdx, slotIdx) {
-        const emp = cafeDataState[cafeIdx][slotIdx];
+        const emp = cafeDataState[cafeIdx] ? cafeDataState[cafeIdx][slotIdx] : null;
         if (!emp) return `<div class="cafe-slot empty" onclick="handleSlotClick(${cafeIdx}, ${slotIdx}, event)"></div>`;
         
         const lv = charLvHistory[emp] || 5;
@@ -1959,9 +1938,11 @@
         const unlocked = getUnlockedSlots(level);
         const active = {};
         for(let i = 0; i < unlocked; i++) {
-            cafeDataState[i].forEach(emp => {
-                if(emp) active[emp] = charLvHistory[emp] || 5;
-            });
+            if(cafeDataState[i]) {
+                cafeDataState[i].forEach(emp => {
+                    if(emp) active[emp] = charLvHistory[emp] || 5;
+                });
+            }
         }
         return active;
     }
@@ -2329,7 +2310,7 @@
 
     window.onload = () => {
         updateThemeBtnText();
-        initCafeUI(); // select 옵션 등 UI 초기화
+        initCafeUI();
     };
 </script>
 </body>
