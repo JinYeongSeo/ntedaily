@@ -138,7 +138,7 @@
         }
 
         /* 로그인 스크린 */
-        #login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        #login-screen { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
         .login-box { padding: 45px 35px; border-radius: 16px; text-align: center; width: 100%; max-width: 400px; }
         .login-box h1 { font-weight: 800; font-size: 32px; margin-bottom: 10px; background: var(--grad-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .input-group { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
@@ -160,7 +160,7 @@
         .help-links a { color: var(--text-muted); text-decoration: none; transition: 0.2s; font-weight: 500; }
         .help-links a:hover { color: var(--primary); }
 
-        #app-screen { display: none; }
+        #app-screen { display: block; }
         
         /* 헤더 디자인 */
         header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; padding-bottom: 20px; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); }
@@ -516,12 +516,12 @@
             <h1>이환 트래커 <span class="version">v1.1</span></h1>
             <div class="user-info">
                 <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
-                <button class="outline-btn" style="border-color:var(--primary); color:var(--primary);" onclick="showLoginScreen()">+ 새 계정</button>
+                <button class="outline-btn" id="header-login-btn" style="border-color:var(--success); color:var(--success);" onclick="showLoginScreen()">로그인 / 가입</button>
                 <button id="themeToggleBtn" class="outline-btn" onclick="toggleTheme()">라이트 모드 전환</button>
                 <button class="outline-btn" onclick="copyEmail('건의/문의')">건의/문의</button>
-                <button class="link-google-btn" onclick="linkGoogleAccount()">구글 연동</button>
-                <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
-                <button class="delete-account-btn" onclick="handleDeleteAccount()">회원탈퇴</button>
+                <button class="link-google-btn" id="header-link-btn" onclick="linkGoogleAccount()" style="display:none;">구글 연동</button>
+                <button class="logout-btn" id="header-logout-btn" onclick="handleLogout()" style="display:none;">로그아웃</button>
+                <button class="delete-account-btn" id="header-delete-btn" onclick="handleDeleteAccount()" style="display:none;">회원탈퇴</button>
             </div>
         </header>
 
@@ -780,14 +780,12 @@
         document.getElementById('login-screen').style.display = 'flex';
         document.getElementById('uid-input').value = '';
         document.getElementById('pw-input').value = '';
-        document.getElementById('btn-cancel-login').style.display = currentUserAuthUid ? 'block' : 'none';
+        document.getElementById('btn-cancel-login').style.display = 'block';
     }
 
     function cancelLogin() {
-        if(currentUserAuthUid) {
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'block';
-        }
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-screen').style.display = 'block';
     }
 
     function saveAccountLocal(uid, pw) {
@@ -801,13 +799,21 @@
         let accounts = JSON.parse(localStorage.getItem('nte_accounts') || '{}');
         let switcher = document.getElementById('account-switcher');
         switcher.innerHTML = '';
+        
+        switcher.innerHTML += `<option value="guest" ${currentUid === '게스트' ? 'selected' : ''}>[게스트 모드]</option>`;
+        
         for(let uid in accounts) {
             switcher.innerHTML += `<option value="${uid}" ${uid === currentUid ? 'selected' : ''}>[UID] ${uid}</option>`;
         }
     }
 
     function switchAccount(uid) {
-        let displayUid = currentUserAuthUid ? (auth.currentUser.email ? auth.currentUser.email.split('@')[0] : '') : '';
+        if (uid === 'guest') {
+            if (currentUserAuthUid) handleLogout();
+            return;
+        }
+
+        let displayUid = currentUserAuthUid ? (auth.currentUser.email ? auth.currentUser.email.split('@')[0] : '') : '게스트';
         if(uid === displayUid) return;
         
         let accounts = JSON.parse(localStorage.getItem('nte_accounts') || '{}');
@@ -826,10 +832,11 @@
         document.getElementById('btn-cancel-login').style.display = 'none';
 
         auth.signOut().then(() => {
-            currentUserAuthUid = null; // 여기서 확실하게 초기화해줘야 다음 로그인 시 정상 트리거됨
+            currentUserAuthUid = null;
             return auth.signInWithEmailAndPassword(getFakeEmail(uid), pw);
         }).catch((error) => {
             document.getElementById('loading-text').style.display = 'none';
+            document.getElementById('btn-cancel-login').style.display = 'block';
             alert("계정 전환 중 오류가 발생했습니다: " + error.message);
         });
     }
@@ -958,20 +965,68 @@
 
     auth.onAuthStateChanged((user) => {
         if (user) {
-            // 이전에 로그인된 UID와 현재 접속된 UID가 다를 때만 데이터 초기화 트리거
             if (currentUserAuthUid !== user.uid) {
                 let displayId = user.email ? user.email.split('@')[0] : '유저';
                 initUserSpace(user.uid, displayId);
             } else {
-                // 동일 유저로 다시 로그인 시도했을 땐 무한 로딩 풀고 화면 복귀
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('app-screen').style.display = 'block';
-                document.getElementById('loading-text').style.display = 'none';
+                returnToAppScreen();
             }
         } else {
-            currentUserAuthUid = null; // 로그아웃 시 찌꺼기 완벽하게 날려버리기
+            currentUserAuthUid = null;
+            initGuestSpace();
         }
     });
+
+    function initGuestSpace() {
+        let localData = localStorage.getItem('guest_userData');
+        if (localData) {
+            try {
+                let parsed = JSON.parse(localData);
+                userData = Object.assign(userData, parsed);
+            } catch(e) {}
+        } else {
+            userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 360, staminaUpdated: Date.now() };
+        }
+        
+        if(!userData.tasks) userData.tasks = {};
+        if(!userData.customTasks) userData.customTasks = [];
+        if(!userData.itemCounters) userData.itemCounters = {};
+        if(!userData.characters) userData.characters = [];
+        if(!userData.resetTargets) userData.resetTargets = {};
+        if(userData.stamina === undefined) userData.stamina = 0;
+        if(!userData.staminaMax) userData.staminaMax = 360;
+
+        let localCafeData = localStorage.getItem('cafeData');
+        let parsedLocal = null;
+        try { if(localCafeData) parsedLocal = JSON.parse(localCafeData); } catch(e){}
+
+        if (parsedLocal) {
+            userData.cafeData = parsedLocal;
+            applyCafeDataToUI(parsedLocal);
+        } else {
+            userData.cafeData = { cafeState: [[null, null], [null, null], [null, null], [null, null], [null, null]], history: {} };
+            cafeDataState = userData.cafeData.cafeState;
+            renderCafes();
+        }
+
+        checkAndResetTasks();
+        
+        returnToAppScreen();
+        document.getElementById('stamina-input').value = '';
+        document.getElementById('stamina-max-input').value = userData.staminaMax;
+        
+        renderAccountSwitcher('게스트');
+        renderTasks();
+        renderCharacters();
+        if(timerInterval) clearInterval(timerInterval);
+        timerInterval = setInterval(() => { updateTimers(); calcStamina(); updateCafeCountdown(); }, 1000);
+        updateTimers(); calcStamina(); updateCafeCountdown();
+
+        document.getElementById('header-login-btn').style.display = 'inline-flex';
+        document.getElementById('header-logout-btn').style.display = 'none';
+        document.getElementById('header-link-btn').style.display = 'none';
+        document.getElementById('header-delete-btn').style.display = 'none';
+    }
 
     function handleSignup() {
         const uid = document.getElementById('uid-input').value.trim();
@@ -1021,36 +1076,37 @@
                 if(userData.stamina === undefined) userData.stamina = 0;
                 if(!userData.staminaMax) userData.staminaMax = 360;
             } else {
-                userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 360, staminaUpdated: Date.now() };
+                let localData = localStorage.getItem('guest_userData');
+                if (localData) {
+                    try {
+                        userData = Object.assign(userData, JSON.parse(localData));
+                    } catch(e) {}
+                } else {
+                    userData = { tasks: {}, customTasks: [], itemCounters: {}, characters: [], spLevel: 1, resetTargets: {}, stamina: 0, staminaMax: 360, staminaUpdated: Date.now() };
+                }
+                saveData(); 
             }
             
-            // --- 카페 데이터 연동 및 마이그레이션 로직 ---
             let localCafeData = localStorage.getItem('cafeData');
             let parsedLocal = null;
             try { if(localCafeData) parsedLocal = JSON.parse(localCafeData); } catch(e){}
 
             if (userData.cafeData) {
-                // DB에 카페 데이터가 있으면 DB 우선 (다른 기기에서 덮어쓰기)
                 applyCafeDataToUI(userData.cafeData);
                 localStorage.setItem('cafeData', JSON.stringify(userData.cafeData));
             } else if (parsedLocal) {
-                // DB엔 없는데 기존 로컬 데이터가 있으면 마이그레이션 후 DB 업로드
                 userData.cafeData = parsedLocal;
                 applyCafeDataToUI(parsedLocal);
                 saveData(); 
             } else {
-                // 둘 다 없으면 기본값 세팅
                 userData.cafeData = { cafeState: [[null, null], [null, null], [null, null], [null, null], [null, null]], history: {} };
                 cafeDataState = userData.cafeData.cafeState;
                 renderCafes();
             }
-            // ------------------------------------------
 
             checkAndResetTasks();
             
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('app-screen').style.display = 'block';
-            document.getElementById('loading-text').style.display = 'none';
+            returnToAppScreen();
             document.getElementById('stamina-input').value = '';
             document.getElementById('stamina-max-input').value = userData.staminaMax;
             
@@ -1060,6 +1116,11 @@
             if(timerInterval) clearInterval(timerInterval);
             timerInterval = setInterval(() => { updateTimers(); calcStamina(); updateCafeCountdown(); }, 1000);
             updateTimers(); calcStamina(); updateCafeCountdown();
+
+            document.getElementById('header-login-btn').style.display = 'none';
+            document.getElementById('header-logout-btn').style.display = 'inline-flex';
+            document.getElementById('header-link-btn').style.display = 'inline-flex';
+            document.getElementById('header-delete-btn').style.display = 'inline-flex';
         });
     }
 
@@ -1088,12 +1149,7 @@
     function handleLogout() {
         auth.signOut().then(() => {
             currentUserAuthUid = null;
-            document.getElementById('login-screen').style.display = 'flex';
-            document.getElementById('app-screen').style.display = 'none';
-            document.getElementById('uid-input').value = '';
-            document.getElementById('pw-input').value = '';
-            document.getElementById('btn-cancel-login').style.display = 'none';
-            if(timerInterval) clearInterval(timerInterval);
+            initGuestSpace();
         });
     }
 
@@ -1292,7 +1348,13 @@
         saveData(); renderTasks();
     }
 
-    function saveData() { if (currentUserAuthUid) database.ref('users/' + currentUserAuthUid).set(userData); }
+    function saveData() { 
+        if (currentUserAuthUid) {
+            database.ref('users/' + currentUserAuthUid).set(userData); 
+        } else {
+            localStorage.setItem('guest_userData', JSON.stringify(userData));
+        }
+    }
 
     function toggleTask(taskId) { 
         userData.tasks[taskId] = !userData.tasks[taskId]; 
