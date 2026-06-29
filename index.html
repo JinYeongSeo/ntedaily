@@ -572,7 +572,7 @@
                 <div class="timer-badge"><h3 style="color:var(--accent);">핑크퍼스 (2주)</h3><div id="timer-biweeklyPinkpus" class="time" style="color:var(--accent);">계산 중...</div></div>
                 <div class="timer-badge"><h3 style="color:#d946ef;">궤도 너머 (2주)</h3><div id="timer-biweeklyOrbit" class="time" style="color:#d946ef;">계산 중...</div></div>
                 <div class="timer-badge"><h3 style="color:var(--warning);">월간 초기화</h3><div id="timer-monthly" class="time" style="color:var(--warning);">계산 중...</div></div>
-                <div class="timer-badge"><h3 style="color:var(--danger);">5주 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--danger);">계산 중...</div></div>
+                <div class="timer-badge"><h3 style="color:var(--danger);">시즌 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--danger);">계산 중...</div></div>
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; padding: 0 5px;">
@@ -949,7 +949,7 @@
                 ] 
             }
         },
-        fiveWeekly: { title: "5주 간격 숙제", type: "5weekly", color: "var(--danger)", items: ["헌터 거래소 교환"] }
+        fiveWeekly: { title: "시즌 숙제", type: "5weekly", color: "var(--danger)", items: ["헌터 거래소 교환"] }
     };
 
     const affectionExpReq = { 1: 500, 2: 1000, 3: 2000, 4: 3500, 5: 5000, 6: 8000, 7: 11000, 8: 15000, 9: 16000 };
@@ -1186,7 +1186,6 @@
         
         let baseDatePinkpus = new Date(2026, 5, 8, 5, 0, 0).getTime();
         let baseDateOrbit = new Date(2026, 5, 4, 7, 0, 0).getTime(); 
-        let baseDate5w = new Date(2026, 3, 29, 5, 0, 0).getTime(); 
         let currentTs = now.getTime();
         
         if (type === 'biweeklyPinkpus') { 
@@ -1202,10 +1201,14 @@
             return new Date(baseDateOrbit + (passed + 1) * period); 
         }
         if (type === '5weekly') { 
-            let period = 35 * 24 * 60 * 60 * 1000; 
-            let passed = Math.floor((currentTs - baseDate5w) / period);
-            if(currentTs < baseDate5w) passed = -1;
-            return new Date(baseDate5w + (passed + 1) * period); 
+            let pivotDate = new Date(2026, 6, 8, 7, 0, 0).getTime(); // 2026년 7월 8일 오전 7시
+            if (currentTs < pivotDate) {
+                return new Date(pivotDate);
+            } else {
+                let period = 42 * 24 * 60 * 60 * 1000; // 6주
+                let passed = Math.floor((currentTs - pivotDate) / period);
+                return new Date(pivotDate + (passed + 1) * period); 
+            }
         }
     }
 
@@ -1350,11 +1353,11 @@
     }
 
     function updateSpLevel(val) {
-        userData.spLevel = Math.max(1, Math.min(50, parseInt(val) || 1));
+        userData.spLevel = Math.max(1, Math.min(70, parseInt(val) || 1));
         document.getElementById('sp-slider').value = userData.spLevel;
         document.getElementById('sp-number').value = userData.spLevel;
         saveData();
-        updateSliderVisuals('sp-slider', 1, 50, userData.spLevel);
+        updateSliderVisuals('sp-slider', 1, 70, userData.spLevel);
     }
 
     function addCustomTask() {
@@ -1456,10 +1459,10 @@
                 <div class="slider-container">
                     <div class="slider-header">
                         <span>시즌 패스 보상 수령 (Lv)</span>
-                        <input type="number" id="sp-number" class="sp-input-box" value="${userData.spLevel}" min="1" max="50" onchange="updateSpLevel(this.value)">
+                        <input type="number" id="sp-number" class="sp-input-box" value="${userData.spLevel}" min="1" max="70" onchange="updateSpLevel(this.value)">
                     </div>
                     <div class="range-wrapper">
-                        <input type="range" id="sp-slider" min="1" max="50" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
+                        <input type="range" id="sp-slider" min="1" max="70" value="${userData.spLevel}" oninput="updateSpLevel(this.value)">
                     </div>
                 </div>`;
             }
@@ -1520,7 +1523,7 @@
                     updateSliderVisuals(`slider-${slider.id}`, 0, slider.max, userData.itemCounters[slider.id] || 0);
                 });
             }
-            updateSliderVisuals('sp-slider', 1, 50, userData.spLevel);
+            updateSliderVisuals('sp-slider', 1, 70, userData.spLevel);
             updateTimers(); 
         }, 10);
     }
