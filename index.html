@@ -1892,55 +1892,84 @@
     }
 
     // ==========================================
-    // 공지사항 연동 모듈 (allorigins CORS Proxy)
+    // 공지사항 연동 모듈 (멀티 프록시 및 WAF 우회 폴백 적용)
     // ==========================================
     function fetchNotices(tab) {
         const listContainer = document.getElementById('notice-list-container');
         document.getElementById('btn-notice-kr').classList.remove('active');
         document.getElementById('btn-notice-gl').classList.remove('active');
         
-        let targetUrl = '';
+        let rawUrl = '';
         if (tab === 'kr') {
             document.getElementById('btn-notice-kr').classList.add('active');
-            targetUrl = encodeURIComponent('https://arca.live/b/nevernesstoeverness?category=%EA%B3%B5%EC%8B%9D');
+            rawUrl = 'https://arca.live/b/nevernesstoeverness?category=%EA%B3%B5%EC%8B%9D';
         } else {
             document.getElementById('btn-notice-gl').classList.add('active');
-            targetUrl = encodeURIComponent('https://arca.live/b/nevernesstoeverness?category=chinasv');
+            rawUrl = 'https://arca.live/b/nevernesstoeverness?category=chinasv';
         }
 
         listContainer.innerHTML = '<li style="color:var(--text-muted); font-size:12px;">아카라이브에서 공지사항을 불러오는 중...</li>';
 
-        fetch(`https://api.allorigins.win/get?url=${targetUrl}`)
-            .then(res => res.json())
-            .then(data => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(data.contents, "text/html");
-                const items = doc.querySelectorAll('.vrow:not(.notice)'); // 상단 고정 공지는 제외하거나 포함 가능. 여기선 전부 가져옴
+        // HTML 텍스트 주입 및 데이터 검증 헬퍼 함수
+        function parseAndRender(htmlText) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlText, "text/html");
+            const items = doc.querySelectorAll('.vrow:not(.notice)');
+            
+            if (!items || items.length === 0) return false; // 클옵 챌린지 페이지 걸려서 파싱 실패한 경우
+            
+            let html = '';
+            let count = 0;
+            items.forEach(item => {
+                if (count >= 7) return; 
+                const titleEl = item.querySelector('.title');
+                if (!titleEl) return;
                 
-                let html = '';
-                let count = 0;
-                items.forEach(item => {
-                    if (count >= 7) return; // 7개만 표시
-                    const titleEl = item.querySelector('.title');
-                    if (!titleEl) return;
-                    
-                    let titleText = titleEl.innerText.replace(/[\n\t]/g, '').trim();
-                    let link = "https://arca.live" + (item.getAttribute('href') || item.querySelector('a')?.getAttribute('href') || '');
-                    
-                    html += `
-                        <li>
-                            <span class="notice-badge">공지</span>
-                            <a href="${link}" target="_blank">${titleText}</a>
-                        </li>
-                    `;
-                    count++;
-                });
+                let titleText = titleEl.innerText.replace(/[\n\t]/g, '').trim();
+                let link = "https://arca.live" + (item.getAttribute('href') || item.querySelector('a')?.getAttribute('href') || '');
                 
-                if (html === '') html = '<li style="color:var(--text-muted); font-size:12px;">공지사항을 찾을 수 없습니다.</li>';
-                listContainer.innerHTML = html;
+                html += `
+                    <li>
+                        <span class="notice-badge">공지</span>
+                        <a href="${link}" target="_blank">${titleText}</a>
+                    </li>
+                `;
+                count++;
+            });
+            
+            listContainer.innerHTML = html;
+            return true;
+        }
+
+        // [1선] corsproxy.io 시도 (Direct Text Stream)
+        fetch(`https://corsproxy.io/?${encodeURIComponent(rawUrl)}`)
+            .then(res => { if(!res.ok) throw new Error(); return res.text(); })
+            .then(htmlText => {
+                if (!parseAndRender(htmlText)) throw new Error("WAF_BLOCKED");
             })
-            .catch(err => {
-                listContainer.innerHTML = '<li style="color:var(--danger); font-size:12px;">공지사항을 불러오는 데 실패했습니다. (CORS 또는 네트워크 오류)</li>';
+            .catch(() => {
+                // [2선] Failover - AllOrigins 시도 (JSON Wrapper)
+                fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`)
+                    .then(res => { if(!res.ok) throw new Error(); return res.json(); })
+                    .then(data => {
+                        if (!data.contents || !parseAndRender(data.contents)) throw new Error("WAF_BLOCKED");
+                    })
+                    .catch(() => {
+                        // [3선] Failover - ThingProxy 시도
+                        fetch(`https://thingproxy.freeboard.io/fetch/${rawUrl}`)
+                            .then(res => { if(!res.ok) throw new Error(); return res.text(); })
+                            .then(htmlText => {
+                                if (!parseAndRender(htmlText)) throw new Error("WAF_BLOCKED");
+                            })
+                            .catch(() => {
+                                // [최종 폴백] 프록시 전멸 시 수동 링크 제공
+                                listContainer.innerHTML = `
+                                    <li style="color:var(--text-muted); font-size:12px; line-height:1.5;">
+                                        ⚠️ 클라우드플레어 보안망 차단으로 실시간 공지 로드 실패. <br>
+                                        <a href="${rawUrl}" target="_blank" style="color:var(--warning); text-decoration:underline; font-weight:bold; display:inline;">[여기]</a>를 눌러 아카라이브 채널에서 직접 확인하셈.
+                                    </li>`;
+                            });
+                    });
             });
     }
 
