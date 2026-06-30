@@ -1182,7 +1182,15 @@
 
         if (type === 'daily') return nextDaily;
         if (type === 'weekly') { let wd = new Date(nextDaily); while(wd.getDay() !== 1) wd.setDate(wd.getDate() + 1); return wd; }
-        if (type === 'monthly') { let md = new Date(nextDaily); md.setMonth(md.getMonth() + 1); md.setDate(1); return md; }
+        
+        // 월간 초기화 로직 수정: 현재 날짜 기준으로 이번달 1일 5시 고정 후 지났으면 달만 1 올려줌.
+        if (type === 'monthly') { 
+            let md = new Date(now.getFullYear(), now.getMonth(), 1, 5, 0, 0);
+            if (now >= md) {
+                md.setMonth(md.getMonth() + 1);
+            }
+            return md; 
+        }
         
         let baseDatePinkpus = new Date(2026, 5, 8, 5, 0, 0).getTime();
         let baseDateOrbit = new Date(2026, 5, 4, 7, 0, 0).getTime(); 
