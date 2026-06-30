@@ -18,15 +18,15 @@
     <link rel="apple-touch-icon" href="img/favicon.png"> 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://your-vercel-url.vercel.app"> 
-    <meta property="og:title" content="이환(NTE) 1.1 숙제 트래커 & 카페 관리">
+    <meta property="og:title" content="이환(NTE) 1.2 숙제 트래커 & 카페 관리">
     <meta property="og:description" content="일일/주간 숙제부터 호감도, 카페 최고 예상 수익 산출까지">
     <meta property="og:image" content="img/thumbnail.png"> 
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="이환(NTE) 1.1 숙제 트래커 & 카페 관리">
+    <meta name="twitter:title" content="이환(NTE) 1.2 숙제 트래커 & 카페 관리">
     <meta name="twitter:description" content="이환 숙제와 카페 수익을 한눈에 관리하세요.">
     <meta name="twitter:image" content="img/thumbnail.png">
 
-    <title>이환(NTE) 1.1 숙제 트래커 & 카페 관리</title>
+    <title>이환(NTE) 1.2 숙제 트래커 & 카페 관리</title>
     
     <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
     
@@ -36,13 +36,11 @@
     
     <style>
         :root {
-            /* 눈이 편안한 차분한 다크 모드 (Discord/Notion 스타일) */
             --bg-color: #121216;
             --panel-bg: #1e1e24;
             --panel-border: 1px solid #2e2e36;
             --dashboard-bg: #25252c;
             
-            /* 파스텔톤 컬러 (눈 피로 최소화) */
             --primary: #74a1e6;   
             --secondary: #a37ee3;  
             --accent: #e074a7;     
@@ -61,7 +59,6 @@
             --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             --inner-glow: none;
             
-            /* 카페 계산기 전용 변수 호환 */
             --yellow-text: #db9e56;
             --trend-bg: #e36877;
             --modal-bg: rgba(0, 0, 0, 0.6);
@@ -70,7 +67,6 @@
         }
 
         [data-theme="light"] {
-            /* 눈이 편안한 라이트 모드 */
             --bg-color: #f4f4f5;
             --panel-bg: #ffffff;
             --panel-border: 1px solid #e4e4e7;
@@ -180,6 +176,35 @@
         .logout-btn:hover { background: var(--dashboard-bg); color: var(--text-main); }
         .delete-account-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); padding: 8px 12px; border-radius: 6px; font-size: 13px; font-weight: 700; transition: 0.2s; cursor: pointer; white-space: nowrap; }
         .delete-account-btn:hover { background: var(--danger); color: #fff; }
+
+        /* 이벤트 캘린더 모달 */
+        #calendar-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-overlay); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(5px); }
+        .calendar-container { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow); position: relative; }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .calendar-header h2 { margin: 0; font-size: 18px; color: var(--text-main); font-weight: 800; }
+        .calendar-close { background: none; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; }
+        .calendar-img-wrapper { width: 100%; text-align: center; background: var(--dashboard-bg); border-radius: 8px; padding: 10px; border: 1px dashed var(--text-muted); margin-bottom: 15px; position: relative; }
+        .calendar-img-wrapper img { max-width: 100%; border-radius: 8px; display: none; }
+        #calendar-upload-btn { display: inline-block; background: var(--primary); color: #fff; padding: 10px 15px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 13px; }
+        .calendar-default-lists { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left; margin-top: 15px; }
+        .calendar-list-box { background: var(--dashboard-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; }
+        .calendar-list-box h3 { margin: 0 0 10px 0; font-size: 14px; color: var(--accent-blue); border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
+        .calendar-list-box ul { padding-left: 20px; margin: 0; color: var(--text-muted); line-height: 1.6; }
+        .calendar-list-box ul li { margin-bottom: 4px; }
+
+        /* 공지사항 위젯 */
+        .notice-widget { background: var(--panel-bg); border: var(--panel-border); border-radius: 12px; padding: 15px; margin-bottom: 20px; }
+        .notice-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px; }
+        .notice-header h2 { margin: 0; font-size: 15px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .notice-header h2::before { content: ''; width: 4px; height: 14px; background: var(--warning); border-radius: 2px; }
+        .notice-tabs { display: flex; gap: 8px; }
+        .notice-tab-btn { background: var(--dashboard-bg); border: 1px solid var(--border-color); color: var(--text-muted); font-size: 11px; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 700; }
+        .notice-tab-btn.active { background: var(--warning); color: #fff; border-color: var(--warning); }
+        .notice-list { list-style: none; padding: 0; margin: 0; font-size: 13px; display: flex; flex-direction: column; gap: 8px; max-height: 150px; overflow-y: auto; }
+        .notice-list li { display: flex; align-items: center; gap: 8px; }
+        .notice-list a { color: var(--text-muted); text-decoration: none; transition: 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; width: 100%; }
+        .notice-list a:hover { color: var(--warning); text-decoration: underline; }
+        .notice-badge { background: var(--danger); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; flex-shrink: 0; }
         
         /* 탭 메뉴 */
         .tabs { display: flex; gap: 8px; margin-bottom: 25px; overflow-x: auto; background: var(--dashboard-bg); padding: 6px; border-radius: 10px; border: var(--panel-border); }
@@ -276,27 +301,35 @@
         .sub-task-list { padding: 12px 15px 5px 15px; border-top: 1px solid var(--border-color); }
 
         .custom-controls { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-        .custom-controls select { padding: 8px; flex-shrink: 0; width: 85px; font-size: 13px; }
-        .custom-controls input { flex: 1; min-width: 120px; padding: 8px 12px; margin-bottom: 0; font-size: 13px; }
+        .custom-controls select { padding: 8px; flex-shrink: 0; width: 95px; font-size: 13px; }
+        .custom-controls input[type="text"] { flex: 1; min-width: 120px; padding: 8px 12px; margin-bottom: 0; font-size: 13px; }
+        .custom-controls input[type="datetime-local"] { width: 100%; padding: 8px 12px; font-size: 13px; margin-top: 8px; }
         .custom-controls button { flex-shrink: 0; width: 60px; padding: 8px; font-size: 13px; white-space: nowrap; }
         .delete-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 0; width: 24px; height: 24px; min-width: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border-radius: 4px; margin-left: auto; cursor: pointer; transition: 0.2s; flex: none; }
         .delete-btn:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
 
-        /* 호감도 계산기 */
+        /* 폰즈 계산기 레이아웃 */
+        .ponz-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
+        .ponz-sidebar { background: var(--panel-bg); padding: 20px; border-radius: 12px; border: var(--panel-border); }
+        .ponz-main { background: var(--panel-bg); padding: 20px; border-radius: 12px; border: var(--panel-border); }
+        .ponz-input-group { margin-bottom: 15px; }
+        .ponz-input-group label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+        .ponz-checkbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 15px; }
+        .ponz-result-box { background: var(--dashboard-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; margin-top: 20px; }
+        .ponz-result-val { font-size: 28px; font-weight: 800; color: var(--success); margin: 10px 0; }
+        .hunter-exchange-select { width: 100%; padding: 10px; border-radius: 6px; background: var(--dashboard-bg); border: 1px solid var(--border-color); color: var(--text-main); font-size: 13px; margin-bottom: 10px; }
+
+        /* 호감도 계산기, 카페 계산기 기존 CSS (유지) */
         .affection-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; align-items: start; }
         .char-add-box { padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--secondary); }
         .char-add-inputs { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
         .char-add-inputs select, .char-add-inputs input { flex: 1; min-width: 90px; padding: 10px; }
-        
         .char-card { padding: 20px; display: flex; flex-direction: column; border-top: 3px solid transparent; transition: 0.2s; }
         .char-card:hover { border-top-color: var(--secondary); }
-        
         .char-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .char-name { font-size: 18px; font-weight: 800; color: var(--text-main); }
-        
         .char-stat { font-size: 13px; margin-bottom: 4px; color: var(--text-muted); font-weight: 500; }
         .char-stat strong { color: var(--text-main); font-weight: 700; font-size: 14px; }
-        
         .char-exp-wrapper { margin: 12px 0; }
         .char-exp-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 4px; }
         .char-exp-btn { background: var(--dashboard-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 8px 2px; font-size: 11px; font-weight: 600; border-radius: 4px; cursor: pointer; transition: 0.1s; }
@@ -304,37 +337,29 @@
         .char-exp-btn:hover { background: var(--secondary); color: #fff; border-color: var(--secondary); }
         .char-exp-btn.minus:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
         .char-exp-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
         .char-result { margin-top: auto; padding: 12px; background: var(--dashboard-bg); border-radius: 8px; border: 1px solid var(--border-color); }
         .char-result p { margin: 4px 0; font-size: 13px; font-weight: 500; color: var(--text-muted); }
         .highlight { color: var(--text-main); font-size: 14px; font-weight: 700; }
-        
         .char-progress-bar { width: 100%; height: 8px; background: var(--border-color); border-radius: 4px; margin: 12px 0; overflow: hidden; }
         .char-progress-fill { height: 100%; background: var(--primary); transition: width 0.4s ease; }
 
-        /* 카페 수익 계산기 종속 CSS */
         .cafe-main-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; }
         .cafe-dashboard { background: var(--panel-bg); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); border: var(--panel-border); display: flex; flex-direction: column; gap: 16px; height: fit-content; }
         .cafe-dash-card { background: var(--dashboard-bg); border-radius: 8px; padding: 16px; border: 1px solid var(--border-color); position: relative; overflow: hidden; }
         .cafe-dash-card::before { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--accent-blue); z-index: 2; }
         .cafe-input-label { font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; display: block; }
-        
         .cafe-calc-input { width: 100%; padding: 10px; background-color: var(--panel-bg); border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; font-size: 13px; font-weight: 600; outline: none; box-sizing: border-box; }
         .cafe-calc-input:focus { border-color: var(--accent-blue); }
-        
         .cafe-btn-calc { background: var(--accent-blue); color: white; border: none; padding: 16px; border-radius: 8px; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .cafe-btn-calc:hover { transform: translateY(-1px); filter: brightness(1.1); }
-        
         .cafe-timer-wrap { display: flex; gap: 8px; margin-top: auto; }
         .cafe-timer-box { flex: 1; background: var(--panel-bg); border-radius: 6px; padding: 10px 6px; text-align: center; border: 1px solid var(--border-color); }
         .cafe-timer-label { font-size: 11px; color: var(--text-muted); font-weight: 600; margin-bottom: 4px; }
         .cafe-timer-value { font-size: 14px; font-weight: 700; color: var(--text-main); font-family: monospace; }
-        
         .cafe-content-area { display: flex; flex-direction: column; gap: 20px; }
         .cafe-section-box { background: var(--panel-bg); border-radius: 12px; padding: 20px; box-shadow: var(--shadow); border: var(--panel-border); }
         .cafe-section-header { font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         .cafe-section-header::before { content: ''; width: 4px; height: 16px; background: var(--accent-blue); border-radius: 2px; }
-        
         .cafe-grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
         .cafe-box { background: var(--dashboard-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border-color); position: relative; }
         .cafe-box.locked { opacity: 0.4; pointer-events: none; }
@@ -347,14 +372,12 @@
         .cafe-slot.empty::after { content: '+'; font-size: 24px; color: var(--text-muted); font-weight: 300; }
         .slot-img-box { width: 100%; aspect-ratio: 1; position: relative; }
         .slot-img-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        
         .char-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
         .cafe-char-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; cursor: pointer; position: relative; user-select: none; transition: 0.2s; }
         .cafe-char-card:hover { border-color: var(--accent-blue); }
         .cafe-char-img { width: 100%; aspect-ratio: 1; background-color: var(--dashboard-bg); object-fit: cover; display: block; }
         .cafe-char-info { padding: 6px; text-align: center; }
         .cafe-char-name { font-weight: 600; font-size: 11px; color: var(--text-main); }
-        
         .lv-badge { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(0,0,0,0.7); color: #fff; padding: 4px 0; font-size: 10px; font-weight: 700; text-align: center; z-index: 5; transition: 0.2s; cursor: pointer; }
         .lv-badge:active { background: var(--accent-blue); }
         .lv-overlay { display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 10; cursor: pointer; }
@@ -363,7 +386,6 @@
         .lv-btn { width: 100%; padding: 6px 0; background: #3f3f46; color: white; border: none; border-radius: 2px; font-size: 11px; cursor: pointer; font-weight: bold; }
         .lv-btn:hover { background: #52525b; }
         .lv-btn.active { background: var(--accent-blue); }
-        
         @media (hover: hover) and (pointer: fine) {
             .lv-badge { display: none; }
             .lv-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); padding: 8px; }
@@ -376,7 +398,6 @@
             .lv-btn-grid { gap: 4px; }
             .lv-btn { padding: 10px 0; font-size: 14px; }
         }
-        
         .emp-summary-box { background: var(--dashboard-bg); border-radius: 8px; padding: 12px; margin-top: 16px; display: none; border: 1px solid var(--border-color); }
         .emp-summary-box.show { display: block; animation: fadeIn 0.2s ease-out; }
         .emp-summary-title { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 10px; }
@@ -385,12 +406,10 @@
         .emp-stat-icon { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); background: var(--dashboard-bg); }
         .emp-stat-content { flex: 1; }
         .emp-stat-name { font-weight: 700; color: var(--accent-blue); margin-bottom: 2px; }
-        
         #resultContainer { display: none; }
         .result-stats { background: var(--dashboard-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; text-align: center; margin-bottom: 16px; }
         .total-rev { font-size: 28px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; margin: 8px 0; }
         .total-rev span { font-size: 15px; color: var(--yellow-text); }
-        
         .item-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
         .item-card { background: var(--panel-bg); border-radius: 6px; border: 1px solid var(--border-color); position: relative; overflow: hidden; display: flex; flex-direction: column; }
         .trend-badge { position: absolute; top: 6px; left: 6px; background: var(--trend-bg); color: white; border-radius: 3px; padding: 3px 6px; font-size: 10px; font-weight: bold; z-index: 10; }
@@ -428,7 +447,7 @@
             .account-select, .outline-btn, .logout-btn, .link-google-btn, .delete-account-btn { padding: 6px 10px; font-size: 12px; }
             .tab-btn { font-size: 13px; padding: 10px 14px; }
             
-            .cafe-main-layout { grid-template-columns: 1fr; }
+            .cafe-main-layout, .ponz-layout { grid-template-columns: 1fr; }
             .cafe-dashboard { padding: 15px; }
             .item-grid { grid-template-columns: repeat(2, 1fr); }
             .cafe-grid-container { grid-template-columns: 1fr; } 
@@ -479,6 +498,58 @@
         </div>
     </div>
 
+    <div id="calendar-modal" onclick="closeCalendarModal(event)">
+        <div class="calendar-container" onclick="event.stopPropagation()">
+            <div class="calendar-header">
+                <h2>시즌 이벤트 캘린더</h2>
+                <button class="calendar-close" onclick="closeCalendarModal()">&times;</button>
+            </div>
+            
+            <div class="calendar-img-wrapper" id="calendar-img-wrapper">
+                <label for="calendar-upload" id="calendar-upload-btn">이미지 직접 업로드</label>
+                <input type="file" id="calendar-upload" accept="image/*" style="display:none;" onchange="handleCalendarUpload(event)">
+                <img id="calendar-img" src="" alt="캘린더 이미지">
+            </div>
+
+            <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-bottom: 15px;">
+                * 캘린더 이미지를 직접 업로드하면 로컬 기기에 저장됩니다. <br>
+                * 이미지가 없으면 아래 시스템에 내장된 1.1 / 1.2 일정표를 확인하세요.
+            </div>
+
+            <div class="calendar-default-lists">
+                <div class="calendar-list-box">
+                    <h3>버전 1.1 주요 이벤트 (단꿈에서 깨어날 때)</h3>
+                    <ul>
+                        <li>라크리모사 픽업: 6/3 ~ 6/24</li>
+                        <li>카오스 픽업: 6/24 ~ 7/8</li>
+                        <li>광란의 질주 / 인기글 굽는 중 등: 6/3 ~ 7/8</li>
+                        <li>폰즈 러시: 6/8 ~ 6/15</li>
+                        <li>시련의 연회: 6/18 ~ 7/8</li>
+                        <li>파이트 토너먼트: 6/24 ~ 7/8</li>
+                        <li>픽셀 대방출: 6/26 ~ 7/3</li>
+                    </ul>
+                </div>
+                <div class="calendar-list-box">
+                    <h3>버전 1.2 주요 이벤트 (999번째 야화)</h3>
+                    <ul>
+                        <li>동틀 녘 (신쿠 픽업): 07.08 ~ 07.29</li>
+                        <li>생명선 (일로이 픽업): 07.29 ~ 08.19</li>
+                        <li>결의 특간 (신쿠 전용 아크): 07.08 ~ 07.29</li>
+                        <li>꿈의 문 특간 (일로이 전용 아크): 07.29 ~ 08.19</li>
+                        <li>999번째 야화: 07.08 ~ 08.19</li>
+                        <li>활력제 충전: 07.12 ~ 07.19</li>
+                        <li>칠석 궤도: 07.16 ~ 07.30</li>
+                        <li>골드러시 대작전: 07.19 ~ 08.02</li>
+                        <li>파도 궤도: 07.30 ~ 08.13</li>
+                        <li>아슬아슬 숨바꼭질 / 땅땅땅: 08.02 ~ 08.19</li>
+                        <li>어획 대작전: 08.09 ~ 08.16</li>
+                        <li>달빛 궤도: 08.13 ~ 08.27</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="login-screen">
         <div class="glass-panel login-box">
             <h1 style="margin-bottom: 8px;">NTE Tracker</h1>
@@ -513,8 +584,9 @@
 
     <div id="app-screen" class="container">
         <header>
-            <h1>이환 트래커 <span class="version">v1.1</span></h1>
+            <h1>이환 트래커 <span class="version">v1.2</span></h1>
             <div class="user-info">
+                <button class="outline-btn" style="border-color:var(--secondary); color:var(--secondary);" onclick="openCalendarModal()">📅 이벤트 캘린더</button>
                 <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
                 <button class="outline-btn" id="header-login-btn" style="border-color:var(--success); color:var(--success);" onclick="showLoginScreen()">로그인 / 가입</button>
                 <button id="themeToggleBtn" class="outline-btn" onclick="toggleTheme()">라이트 모드 전환</button>
@@ -529,9 +601,80 @@
             <button class="tab-btn active" id="btn-tab-homework" onclick="switchTab('homework')">숙제 트래커</button>
             <button class="tab-btn" id="btn-tab-affection" onclick="switchTab('affection')">호감도 계산기</button>
             <button class="tab-btn" id="btn-tab-cafe" onclick="switchTab('cafe')">카페 수익 계산기</button>
+            <button class="tab-btn" id="btn-tab-ponz" onclick="switchTab('ponz')">폰즈 계산기</button>
+            <button class="tab-btn" id="btn-tab-sheet" onclick="switchTab('sheet')">이잘키 시트</button>
+        </div>
+
+        <div id="tab-ponz" class="tab-content">
+            <div class="ponz-layout">
+                <div class="ponz-sidebar">
+                    <h2 style="font-size: 16px; color: var(--text-main); margin-top: 0;">폰즈 자산 입력</h2>
+                    
+                    <div class="ponz-input-group">
+                        <label>보유 폰즈 입력</label>
+                        <input type="number" id="basePonzInput" style="width:100%; font-size:16px; font-weight:700;" placeholder="현재 폰즈 입력" oninput="calculateTotalPonz()">
+                    </div>
+
+                    <div class="ponz-input-group">
+                        <label>목표 날짜</label>
+                        <input type="date" id="targetDateInput" style="width:100%; font-size:14px;" onchange="calculateTotalPonz()">
+                    </div>
+
+                    <div class="ponz-input-group" style="margin-top: 30px;">
+                        <label style="color: var(--danger);">헌터 거래소 구매 진행도 (차감)</label>
+                        <div style="font-size:11px; color:var(--text-muted); margin-bottom:8px;">현재 산 항목과 살 항목의 차액만큼만 차감됨. (누적 가격 기준)</div>
+                        
+                        <label style="font-size:11px;">현재 구매한 마지막 항목</label>
+                        <select id="hunterCurrentSel" class="hunter-exchange-select" onchange="calculateTotalPonz()">
+                            <option value="0">구매 안 함 (0 폰즈)</option>
+                        </select>
+
+                        <label style="font-size:11px; margin-top:10px;">앞으로 목표로 살 항목</label>
+                        <select id="hunterTargetSel" class="hunter-exchange-select" onchange="calculateTotalPonz()">
+                            <option value="0">구매 목표 없음 (0 폰즈)</option>
+                        </select>
+                    </div>
+
+                    <div class="ponz-result-box">
+                        <div style="font-size:13px; font-weight:700; color:var(--text-muted);">목표 날짜 예상 폰즈</div>
+                        <div class="ponz-result-val" id="ponzTotalResult">0</div>
+                        <div style="font-size:11px; color:var(--text-muted);">이벤트/알파 수익은 제외된 고정 수익 기준임.</div>
+                    </div>
+                </div>
+
+                <div class="ponz-main">
+                    <h2 style="font-size: 16px; color: var(--text-main); margin-top: 0; display:flex; align-items:center; gap:8px;">
+                        고정 폰즈 수급처 선택
+                        <span style="font-size:11px; font-weight:normal; color:var(--text-muted);">(체크한 항목만 합산됨)</span>
+                    </h2>
+                    
+                    <div class="ponz-checkbox-grid" id="ponzCheckboxes">
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-sheet" class="tab-content">
+            <div class="glass-panel" style="padding: 10px; height: 80vh;">
+                <iframe src="https://docs.google.com/spreadsheets/d/1zdtT4Qj5TkNs_Hga9unXHWKlUKSkoZ_mgM2XCM-BZ7o/edit?usp=sharing&widget=true&headers=false" style="width:100%; height:100%; border:none; border-radius:8px;"></iframe>
+            </div>
         </div>
 
         <div id="tab-homework" class="tab-content active">
+            
+            <div class="notice-widget">
+                <div class="notice-header">
+                    <h2>📢 이환 실시간 공지 (아카라이브 연동)</h2>
+                    <div class="notice-tabs">
+                        <button class="notice-tab-btn active" id="btn-notice-kr" onclick="fetchNotices('kr')">한국 서버</button>
+                        <button class="notice-tab-btn" id="btn-notice-gl" onclick="fetchNotices('gl')">글로벌/중국</button>
+                    </div>
+                </div>
+                <ul class="notice-list" id="notice-list-container">
+                    <li style="color:var(--text-muted); font-size:12px;">공지사항을 불러오는 중입니다...</li>
+                </ul>
+            </div>
+
             <div class="dashboard-top">
                 <div class="glass-panel stamina-widget">
                     <div class="stamina-header">
@@ -764,8 +907,12 @@
     function switchTab(tabId) {
         document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
         document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        document.getElementById('tab-' + tabId).classList.add('active');
-        document.getElementById('btn-tab-' + tabId).classList.add('active');
+        
+        const targetTab = document.getElementById('tab-' + tabId);
+        if(targetTab) targetTab.classList.add('active');
+        
+        const targetBtn = document.getElementById('btn-tab-' + tabId);
+        if(targetBtn) targetBtn.classList.add('active');
     }
 
     function updateSliderVisuals(elId, min, max, val) {
@@ -922,24 +1069,47 @@
         });
     }
 
+    // 시간 조건부(start) 객체도 처리할 수 있게 배열 업데이트
     const taskConfig = {
         dailyImportant: { 
             title: "중요 일일 숙제", type: "daily", color: "var(--primary)",
-            items: [ "본성 픽셀 사용", "탐색 안내서(일퀘), 시즌패스 일일 미션", "카페 수익 인출, 재고 보충", "캐릭터 호감도 선물 10번", "캐릭터 데이트 (영화관 등)" ] 
+            items: [ 
+                "본성 픽셀 사용", 
+                "탐색 안내서(일퀘), 시즌패스 일일 미션", 
+                "카페 수익 인출, 재고 보충", 
+                "캐릭터 호감도 선물 10번", 
+                "캐릭터 데이트 (영화관 등)",
+                { text: "야옹 속보 복권 뽑기", start: "2026-07-08T05:00:00+09:00" }
+            ] 
         },
         dailyOther: { 
             title: "그 외 일일 숙제", type: "daily", color: "var(--primary)",
-            items: [ "햄스터 볼(드라이브 모듈) 수령", "비틀코인 상자 수령", "나쿠펜다의 연못 기도하기", "소원나무 선물 납품", "오늘의 추천 낚시터 고가매입", "마녀의 집 점술", "npc 지갑, 핸드백, 밀키트 뺏기(각각 일일 4개 제한)", '베이글 관리(<a href="https://arca.live/b/nevernesstoeverness/172825172" target="_blank" style="color:var(--primary); text-decoration:underline;" onclick="event.stopPropagation()">조회 5번, 좋아요 3번, 댓글 3번</a>)' ] 
+            items: [ 
+                "햄스터 볼(드라이브 모듈) 수령", 
+                "비틀코인 상자 수령", 
+                "나쿠펜다의 연못 기도하기", 
+                "소원나무 선물 납품", 
+                "오늘의 추천 낚시터 고가매입", 
+                "마녀의 집 점술", 
+                "npc 지갑, 핸드백, 밀키트 뺏기(각각 일일 4개 제한)", 
+                '베이글 관리(<a href="https://arca.live/b/nevernesstoeverness/172825172" target="_blank" style="color:var(--primary); text-decoration:underline;" onclick="event.stopPropagation()">조회 5번, 좋아요 3번, 댓글 3번</a>)',
+                { text: "동물 쓰다듬기 2회(최대 999회)", start: "2026-07-29T05:00:00+09:00" }
+            ] 
         },
         weekly: { 
             title: "주간 숙제", type: "weekly", color: "var(--secondary)",
-            items: [ "도시 활력제 사용", "경매 참가", "이상가구 몽몽솜 수령", "이상 순례 3번 돌기", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행", '15000폰즈 금고 털기(<a href="https://arca.live/b/nevernesstoeverness/170277488" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">금고위치</a>)', '떨어진 지갑 줍기(<a href="https://arca.live/b/nevernesstoeverness/173615928" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">고정 스폰</a>)' ],
+            items: [ 
+                "도시 활력제 사용", "경매 참가", "이상가구 몽몽솜 수령", 
+                "이상 순례 3번 돌기", "마몬 잡고 폰즈 수령", "이상 가구 우편함에서 이상 의뢰 수행", 
+                '15000폰즈 금고 털기(<a href="https://arca.live/b/nevernesstoeverness/170277488" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">금고위치</a>)', 
+                '떨어진 지갑 줍기(<a href="https://arca.live/b/nevernesstoeverness/173615928" target="_blank" style="color:var(--secondary); text-decoration:underline;" onclick="event.stopPropagation()">고정 스폰</a>)' 
+            ],
             sub: { title: "시즌패스 주간 미션 상세", id: "sp_weekly", items: [ "본성 픽셀 720P 소모", "도시 활력제 200P 소모", "300,000 폰즈 획득", "콘솔 되감기 10회 진행", "토끼굴 3회 클리어", "이상 순례 2회 클리어", "비틀 코인 100,000개 소모", "선물 10회 증정" ] }
         },
         biweeklyPinkpus: { title: "핑크퍼스 은행털기 (2주)", type: "biweeklyPinkpus", color: "var(--accent)", items: ["핑크퍼스 은행털기"] },
         biweeklyOrbit: { title: "궤도 너머 특별 노선 (2주)", type: "biweeklyOrbit", color: "#d946ef", items: ["궤도 너머 특별 노선 클리어"] },
         monthly: { 
-            title: "월간 숙제", type: "monthly", color: "var(--warning)", items: [],
+            title: "월간 숙제", type: "monthly", color: "var(--warning)", items: ["이세계 재활용 센터 교환"],
             sub: { 
                 title: "상점 교환 품목", id: "shop_monthly",
                 sliders: [
@@ -977,9 +1147,6 @@
         }
     });
 
-    // ==========================================
-    // DB 만료 방어 및 예외 처리 로직 추가
-    // ==========================================
     function loadLocalFallback(dbData = null) {
         if (dbData) {
             userData = dbData;
@@ -1029,6 +1196,7 @@
         renderAccountSwitcher(displayUid);
         renderTasks();
         renderCharacters();
+        initHunterExchangeOpts();
         if(timerInterval) clearInterval(timerInterval);
         timerInterval = setInterval(() => { updateTimers(); calcStamina(); updateCafeCountdown(); }, 1000);
         updateTimers(); calcStamina(); updateCafeCountdown();
@@ -1044,6 +1212,15 @@
             document.getElementById('header-link-btn').style.display = 'none';
             document.getElementById('header-delete-btn').style.display = 'none';
         }
+        
+        // 커스텀 캘린더 업로드 이미지 체크
+        const savedImg = localStorage.getItem('customCalendarImg');
+        if (savedImg) {
+            document.getElementById('calendar-img').src = savedImg;
+            document.getElementById('calendar-img').style.display = 'block';
+        }
+        
+        fetchNotices('kr'); // 시작 시 공지사항 로드
     }
 
     function initGuestSpace() {
@@ -1062,7 +1239,6 @@
             }
             finalizeSetup(displayUid);
         }).catch((error) => {
-            // 여기가 핵심: 파이어베이스 DB 권한 30일 만료 시 발생하는 에러를 캐치해서 프리징 방지
             console.warn("DB 로드 실패 (권한 만료 등):", error);
             loadLocalFallback();
             finalizeSetup(displayUid);
@@ -1107,7 +1283,7 @@
     function applyCafeDataToUI(data) {
         if(data.level) {
             document.getElementById("userLevel").value = data.level;
-            handleLevelChange(data.level, true); // true = skip DB save during init
+            handleLevelChange(data.level, true);
         }
         if(data.trend && data.level >= 20) document.getElementById("trendSelect").value = data.trend;
         if(data.history) charLvHistory = data.history;
@@ -1176,6 +1352,11 @@
 
     function getNextReset(type, now = new Date()) {
         let d = new Date(now);
+        // 커스텀 지정 날짜면 그대로 반환 로직용
+        if (type.startsWith('custom_')) {
+            return new Date(type.replace('custom_', ''));
+        }
+
         let resetToday = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 5, 0, 0);
         if (d >= resetToday) d.setDate(d.getDate() + 1);
         let nextDaily = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 5, 0, 0);
@@ -1183,7 +1364,6 @@
         if (type === 'daily') return nextDaily;
         if (type === 'weekly') { let wd = new Date(nextDaily); while(wd.getDay() !== 1) wd.setDate(wd.getDate() + 1); return wd; }
         
-        // 월간 초기화 로직 수정: 현재 날짜 기준으로 이번달 1일 5시 고정 후 지났으면 달만 1 올려줌.
         if (type === 'monthly') { 
             let md = new Date(now.getFullYear(), now.getMonth(), 1, 5, 0, 0);
             if (now >= md) {
@@ -1209,11 +1389,11 @@
             return new Date(baseDateOrbit + (passed + 1) * period); 
         }
         if (type === '5weekly') { 
-            let pivotDate = new Date(2026, 6, 8, 7, 0, 0).getTime(); // 2026년 7월 8일 오전 7시
+            let pivotDate = new Date(2026, 6, 8, 7, 0, 0).getTime(); 
             if (currentTs < pivotDate) {
                 return new Date(pivotDate);
             } else {
-                let period = 42 * 24 * 60 * 60 * 1000; // 6주
+                let period = 42 * 24 * 60 * 60 * 1000; 
                 let passed = Math.floor((currentTs - pivotDate) / period);
                 return new Date(pivotDate + (passed + 1) * period); 
             }
@@ -1290,7 +1470,13 @@
         }
 
         if (userData.customTasks && Array.isArray(userData.customTasks)) {
-            userData.customTasks.forEach(ct => { if (resetFlags[ct.type]) ct.checked = false; });
+            userData.customTasks.forEach(ct => { 
+                if (ct.type.startsWith('custom_')) {
+                    if (now > new Date(ct.type.replace('custom_', '')).getTime()) ct.checked = false;
+                } else {
+                    if (resetFlags[ct.type]) ct.checked = false; 
+                }
+            });
         }
         if (resetFlags.monthly) userData.itemCounters = {};
         if (needsSave) saveData();
@@ -1305,14 +1491,17 @@
 
     function toggleCategoryTasks(categoryKey) {
         const cat = taskConfig[categoryKey];
+        const nowMs = Date.now();
         let allChecked = true;
         cat.items.forEach((item, idx) => {
+            if(typeof item === 'object' && item.start && nowMs < new Date(item.start).getTime()) return; // 안보이는건 무시
             const taskId = `${cat.type}_${categoryKey}_${idx}`;
             if (!userData.tasks[taskId]) allChecked = false;
         });
 
         const newState = !allChecked;
         cat.items.forEach((item, idx) => {
+            if(typeof item === 'object' && item.start && nowMs < new Date(item.start).getTime()) return;
             const taskId = `${cat.type}_${categoryKey}_${idx}`;
             userData.tasks[taskId] = newState;
         });
@@ -1337,9 +1526,7 @@
     }
 
     function saveData() { 
-        // 무조건 로컬에 먼저 저장 (서버 터져도 복구 가능하게)
         localStorage.setItem('guest_userData', JSON.stringify(userData));
-        
         if (currentUserAuthUid) {
             database.ref('users/' + currentUserAuthUid).set(userData).catch(e => {
                 console.warn("DB 저장 실패 (권한 막혔거나 오프라인일 수 있음):", e);
@@ -1368,16 +1555,34 @@
         updateSliderVisuals('sp-slider', 1, 70, userData.spLevel);
     }
 
+    function toggleCustomTypeInput() {
+        const typeSel = document.getElementById('custom-task-type');
+        const customDateInput = document.getElementById('custom-task-date');
+        if (typeSel.value === 'custom') {
+            customDateInput.style.display = 'block';
+        } else {
+            customDateInput.style.display = 'none';
+        }
+    }
+
     function addCustomTask() {
         const input = document.getElementById('custom-task-input');
         const text = input.value.trim();
-        const type = document.getElementById('custom-task-type').value;
+        let type = document.getElementById('custom-task-type').value;
+        const customDate = document.getElementById('custom-task-date').value;
+        
         if (!text) return;
+        if (type === 'custom') {
+            if(!customDate) return alert("목표 날짜 및 시간을 설정해 주세요.");
+            type = 'custom_' + customDate;
+        }
+
         if (!userData.customTasks || !Array.isArray(userData.customTasks)) userData.customTasks = [];
         userData.customTasks.push({ id: 'c_' + Date.now(), type: type, text: text, checked: false });
         input.value = '';
         saveData(); renderTasks();
     }
+
     function toggleCustomTask(id) {
         const task = userData.customTasks.find(t => t.id === id);
         if (task) { task.checked = !task.checked; saveData(); renderTasks(); }
@@ -1391,6 +1596,7 @@
     function renderTasks() {
         const container = document.getElementById('task-container');
         const openStates = {};
+        const nowMs = Date.now();
         document.querySelectorAll('details.sub-tasks').forEach(d => { if(d.id) openStates[d.id] = d.open; });
 
         container.innerHTML = '';
@@ -1407,11 +1613,17 @@
                 <button class="outline-btn" style="font-size: 11px; padding: 4px 8px; border-color: var(--border-color); color:var(--text-muted); font-weight:600; margin-left:10px;" onclick="toggleCategoryTasks('${categoryKey}')">전체선택/해제</button>
             </h2>`;
             
-            cat.items.forEach((item, idx) => {
+            cat.items.forEach((itemObj, idx) => {
+                let text = itemObj;
+                if(typeof itemObj === 'object') {
+                    if (itemObj.start && nowMs < new Date(itemObj.start).getTime()) return;
+                    text = itemObj.text;
+                }
+                
                 const taskId = `${cat.type}_${categoryKey}_${idx}`;
                 const isChecked = userData.tasks[taskId];
                 const checkedAttr = isChecked ? 'checked' : '';
-                html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${checkedAttr}><span>${item}</span></label>`;
+                html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${checkedAttr}><span>${text}</span></label>`;
                 
                 let weight = 1;
                 if(categoryKey === 'dailyImportant') weight = 2;
@@ -1482,21 +1694,25 @@
         customDiv.className = 'glass-panel task-category';
         let customHtml = `<h2 style="--cat-color: var(--text-muted); justify-content: flex-start; gap: 8px;"><span style="display: flex; align-items: center;">커스텀 숙제 (개인용)</span></h2>
             <div class="custom-controls">
-                <select id="custom-task-type">
+                <select id="custom-task-type" onchange="toggleCustomTypeInput()">
                     <option value="daily">일일</option>
                     <option value="weekly">주간</option>
                     <option value="monthly">월간</option>
+                    <option value="5weekly">시즌 (6주)</option>
+                    <option value="custom">직접 설정</option>
                 </select>
                 <input type="text" id="custom-task-input" placeholder="새 항목 입력" onkeypress="if(event.key === 'Enter') addCustomTask()">
                 <button onclick="addCustomTask()">추가</button>
+                <input type="datetime-local" id="custom-task-date" style="display:none; font-size:13px; padding:8px;">
             </div>`;
 
         if (userData.customTasks && Array.isArray(userData.customTasks) && userData.customTasks.length > 0) {
             userData.customTasks.forEach(task => {
                 const isChecked = task.checked;
                 const checkedAttr = isChecked ? 'checked' : '';
-                const typeLabel = task.type === 'daily' ? '일일' : (task.type === 'weekly' ? '주간' : '월간');
-                const typeColor = task.type === 'daily' ? 'var(--primary)' : (task.type === 'weekly' ? 'var(--secondary)' : 'var(--warning)');
+                
+                let typeLabel = task.type === 'daily' ? '일일' : (task.type === 'weekly' ? '주간' : (task.type === 'monthly' ? '월간' : (task.type === '5weekly' ? '시즌' : '커스텀')));
+                let typeColor = task.type === 'daily' ? 'var(--primary)' : (task.type === 'weekly' ? 'var(--secondary)' : (task.type === 'monthly' ? 'var(--warning)' : (task.type === '5weekly' ? 'var(--danger)' : '#a1a1aa')));
                 
                 if(task.type === 'daily') { dailyTotal++; if(isChecked) dailyDone++; }
                 if(task.type === 'weekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
@@ -1672,6 +1888,194 @@
                 </div>
             </div>`;
         });
+    }
+
+    // ==========================================
+    // 공지사항 연동 모듈 (allorigins CORS Proxy)
+    // ==========================================
+    function fetchNotices(tab) {
+        const listContainer = document.getElementById('notice-list-container');
+        document.getElementById('btn-notice-kr').classList.remove('active');
+        document.getElementById('btn-notice-gl').classList.remove('active');
+        
+        let targetUrl = '';
+        if (tab === 'kr') {
+            document.getElementById('btn-notice-kr').classList.add('active');
+            targetUrl = encodeURIComponent('https://arca.live/b/nevernesstoeverness?category=%EA%B3%B5%EC%8B%9D');
+        } else {
+            document.getElementById('btn-notice-gl').classList.add('active');
+            targetUrl = encodeURIComponent('https://arca.live/b/nevernesstoeverness?category=chinasv');
+        }
+
+        listContainer.innerHTML = '<li style="color:var(--text-muted); font-size:12px;">아카라이브에서 공지사항을 불러오는 중...</li>';
+
+        fetch(`https://api.allorigins.win/get?url=${targetUrl}`)
+            .then(res => res.json())
+            .then(data => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(data.contents, "text/html");
+                const items = doc.querySelectorAll('.vrow:not(.notice)'); // 상단 고정 공지는 제외하거나 포함 가능. 여기선 전부 가져옴
+                
+                let html = '';
+                let count = 0;
+                items.forEach(item => {
+                    if (count >= 7) return; // 7개만 표시
+                    const titleEl = item.querySelector('.title');
+                    if (!titleEl) return;
+                    
+                    let titleText = titleEl.innerText.replace(/[\n\t]/g, '').trim();
+                    let link = "https://arca.live" + (item.getAttribute('href') || item.querySelector('a')?.getAttribute('href') || '');
+                    
+                    html += `
+                        <li>
+                            <span class="notice-badge">공지</span>
+                            <a href="${link}" target="_blank">${titleText}</a>
+                        </li>
+                    `;
+                    count++;
+                });
+                
+                if (html === '') html = '<li style="color:var(--text-muted); font-size:12px;">공지사항을 찾을 수 없습니다.</li>';
+                listContainer.innerHTML = html;
+            })
+            .catch(err => {
+                listContainer.innerHTML = '<li style="color:var(--danger); font-size:12px;">공지사항을 불러오는 데 실패했습니다. (CORS 또는 네트워크 오류)</li>';
+            });
+    }
+
+    // ==========================================
+    // 캘린더 모듈
+    // ==========================================
+    function openCalendarModal() {
+        document.getElementById('calendar-modal').style.display = 'flex';
+    }
+    
+    function closeCalendarModal(e) {
+        if(!e || e.target === document.getElementById('calendar-modal') || e.target.className === 'calendar-close') {
+            document.getElementById('calendar-modal').style.display = 'none';
+        }
+    }
+
+    function handleCalendarUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const dataUrl = event.target.result;
+            document.getElementById('calendar-img').src = dataUrl;
+            document.getElementById('calendar-img').style.display = 'block';
+            localStorage.setItem('customCalendarImg', dataUrl);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // ==========================================
+    // 폰즈 계산기 모듈
+    // ==========================================
+    const hunterItems = [
+        { name: "선택 안 함", cumulative: 0 },
+        { name: "환석", cumulative: 183000 },
+        { name: "삼중열쇠", cumulative: 2487000 },
+        { name: "영원의소라", cumulative: 2537000 },
+        { name: "꿈없는씨앗", cumulative: 3137000 },
+        { name: "이상추적재료 선택상자", cumulative: 3277000 },
+        { name: "확장코어", cumulative: 3502000 },
+        { name: "초급캐릭터이능력 선택상자", cumulative: 3577000 },
+        { name: "초급아크돌파재료 선택상자", cumulative: 3652000 },
+        { name: "특급헌터가이드", cumulative: 3802000 },
+        { name: "베테랑헌터가이드", cumulative: 3877000 },
+        { name: "라이징헌터가이드", cumulative: 3907000 },
+        { name: "혼돈염료", cumulative: 4057000 },
+        { name: "무채색염료", cumulative: 4132000 },
+        { name: "연한염료", cumulative: 4162000 },
+        { name: "맨홀보스", cumulative: 4312000 },
+        { name: "맨홀마스터", cumulative: 4379500 },
+        { name: "맨홀갱스터", cumulative: 4402000 },
+        { name: "초급이상재료 선택상자", cumulative: 4647000 }
+    ];
+
+    const ponzIncomes = [
+        { id: 'ponz_pinkpus', label: '핑크퍼스 (격주)', ponz: 1000000, type: 'biweeklyPinkpus' },
+        { id: 'ponz_sp', label: '시즌패스 (6주)', ponz: 700000, type: '5weekly' },
+        { id: 'ponz_vital', label: '도시활력 (매주)', ponz: 700000, type: 'weekly' },
+        { id: 'ponz_vital_ex', label: '도시활력 교환 (매주)', ponz: 1000000, type: 'weekly' },
+        { id: 'ponz_lv10del', label: '10LV 이상배송임무 (매주)', ponz: 32000, type: 'weekly' },
+        { id: 'ponz_mamon', label: '10LV 마몬 (매주)', ponz: 75000, type: 'weekly' },
+        { id: 'ponz_safe', label: '금고 (매주)', ponz: 15000, type: 'weekly' },
+        { id: 'ponz_anomcert', label: '이상 수정 인증서 (매일)', ponz: 30000, type: 'daily' },
+        { id: 'ponz_attend', label: '출석퀘스트 (매일)', ponz: 20000, type: 'daily' },
+        { id: 'ponz_gourmet', label: '별미카페 (매일)', ponz: 66000, type: 'daily' },
+        { id: 'ponz_wallet', label: '지갑 털기 (매일)', ponz: 1500, type: 'daily' },
+        { id: 'ponz_direction', label: '방향치 기물 교환 (매월)', ponz: 200000, type: 'monthly' },
+        { id: 'ponz_isekai', label: '이세계 재활용 센터 (매월)', ponz: 180000, type: 'monthly' },
+        { id: 'ponz_boxlg', label: '예비 자금 비축상자 (매월)', ponz: 4500000, type: 'monthly' },
+        { id: 'ponz_boxsm', label: '소형 자금 보충상자 (매월)', ponz: 2000000, type: 'monthly' },
+    ];
+
+    function initHunterExchangeOpts() {
+        const curSel = document.getElementById('hunterCurrentSel');
+        const tarSel = document.getElementById('hunterTargetSel');
+        curSel.innerHTML = ''; tarSel.innerHTML = '';
+        
+        hunterItems.forEach((item, idx) => {
+            curSel.innerHTML += `<option value="${item.cumulative}">${item.name} (${item.cumulative.toLocaleString()})</option>`;
+            tarSel.innerHTML += `<option value="${item.cumulative}">${item.name} (${item.cumulative.toLocaleString()})</option>`;
+        });
+        
+        const cboxContainer = document.getElementById('ponzCheckboxes');
+        cboxContainer.innerHTML = '';
+        ponzIncomes.forEach(inc => {
+            cboxContainer.innerHTML += `
+            <label class="task-item">
+                <input type="checkbox" id="${inc.id}" checked onchange="calculateTotalPonz()">
+                <span>${inc.label} <br><span style="font-size:11px; color:var(--text-muted); font-weight:normal;">(+${inc.ponz.toLocaleString()})</span></span>
+            </label>
+            `;
+        });
+        
+        let tmr = new Date();
+        tmr.setDate(tmr.getDate() + 7);
+        document.getElementById('targetDateInput').value = tmr.toISOString().split('T')[0];
+    }
+
+    function calculateTotalPonz() {
+        let basePonz = parseInt(document.getElementById('basePonzInput').value) || 0;
+        let targetDateStr = document.getElementById('targetDateInput').value;
+        if(!targetDateStr) return;
+        
+        let targetDate = new Date(targetDateStr + "T05:00:00+09:00");
+        let now = new Date();
+        if (targetDate <= now) {
+            document.getElementById('ponzTotalResult').innerText = basePonz.toLocaleString();
+            return;
+        }
+
+        // 수입 합산 로직
+        let totalIncome = 0;
+        ponzIncomes.forEach(inc => {
+            const isChecked = document.getElementById(inc.id).checked;
+            if(isChecked) {
+                let occurrences = 0;
+                let iterDate = new Date(now);
+                // 강제 무한루프 방지 및 카운트
+                while(iterDate <= targetDate) {
+                    let next = getNextReset(inc.type, iterDate);
+                    if(next <= targetDate) occurrences++;
+                    iterDate = new Date(next.getTime() + 1000); // 1초 뒤로 이동해서 다음 리셋 탐색
+                }
+                totalIncome += occurrences * inc.ponz;
+            }
+        });
+
+        // 헌터 거래소 지출 로직
+        let curCumul = parseInt(document.getElementById('hunterCurrentSel').value) || 0;
+        let tarCumul = parseInt(document.getElementById('hunterTargetSel').value) || 0;
+        let expense = tarCumul - curCumul;
+        if(expense < 0) expense = 0; // 뒤로가기는 안함
+
+        let finalPonz = basePonz + totalIncome - expense;
+        document.getElementById('ponzTotalResult').innerText = finalPonz.toLocaleString();
     }
 
     // ==========================================
