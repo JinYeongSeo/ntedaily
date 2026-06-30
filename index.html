@@ -505,6 +505,10 @@
                 <button class="calendar-close" onclick="closeCalendarModal()">&times;</button>
             </div>
             
+            <div style="text-align: center; margin-bottom: 15px;">
+                <button class="outline-btn" style="border-color:var(--success); color:var(--success); padding: 8px 16px; font-weight: 700;" onclick="exportToICS()">🗓️ 기기 캘린더에 전체 일정 추가 (ICS)</button>
+            </div>
+
             <div class="calendar-img-wrapper" id="calendar-img-wrapper">
                 <label for="calendar-upload" id="calendar-upload-btn">이미지 직접 업로드</label>
                 <input type="file" id="calendar-upload" accept="image/*" style="display:none;" onchange="handleCalendarUpload(event)">
@@ -586,7 +590,7 @@
         <header>
             <h1>이환 트래커 <span class="version">v1.2</span></h1>
             <div class="user-info">
-                <button class="outline-btn" style="border-color:var(--secondary); color:var(--secondary);" onclick="openCalendarModal()">📅 이벤트 캘린더</button>
+                <button class="outline-btn" style="border-color:var(--warning); color:var(--warning);" onclick="openCalendarModal()">📅 이벤트 캘린더</button>
                 <select id="account-switcher" class="account-select" onchange="switchAccount(this.value)"></select>
                 <button class="outline-btn" id="header-login-btn" style="border-color:var(--success); color:var(--success);" onclick="showLoginScreen()">로그인 / 가입</button>
                 <button id="themeToggleBtn" class="outline-btn" onclick="toggleTheme()">라이트 모드 전환</button>
@@ -655,9 +659,12 @@
         </div>
 
         <div id="tab-sheet" class="tab-content">
-            <div class="glass-panel" style="height: 80vh; overflow: hidden; border-radius: 8px; position: relative;">
+            <div class="glass-panel" style="height: 80vh; overflow: hidden; border-radius: 8px; position: relative; margin-bottom: 20px;">
                 <iframe src="https://docs.google.com/spreadsheets/d/1zdtT4Qj5TkNs_Hga9unXHWKlUKSkoZ_mgM2XCM-BZ7o/edit?usp=sharing&widget=true&headers=false" 
-                style="position: absolute; top: 0; left: 0; width: 125%; height: 125%; border: none; transform: scale(0.8); transform-origin: 0 0;"></iframe>
+                style="position: absolute; top: 0; left: 0; width: 200%; height: 200%; border: none; transform: scale(0.5); transform-origin: 0 0;"></iframe>
+            </div>
+            <div style="text-align: center; font-size: 12px; margin-top: 10px; color: var(--text-muted);">
+                출처: <a href="https://arca.live/b/nevernesstoeverness/173379271" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-weight: bold;">이잘키 시트 원본 (NTE 채널)</a>
             </div>
         </div>
 
@@ -672,7 +679,7 @@
                     </div>
                 </div>
                 <ul class="notice-list" id="notice-list-container">
-                    <li style="color:var(--text-muted); font-size:12px;">공지사항을 불러오는 중입니다...</li>
+                    <li style="color:var(--text-muted); font-size:12px;">공지사항을 불러오고 있습니다...</li>
                 </ul>
             </div>
 
@@ -872,6 +879,29 @@
 
 <script>
     // ==========================================
+    // UI 세팅 조기 실행 (레벨 초기화 방지)
+    // ==========================================
+    function initCafeUI() {
+        const lvSelect = document.getElementById("userLevel");
+        if(lvSelect.options.length <= 1) {
+            for (let i = 1; i <= 40; i++) lvSelect.add(new Option(`Lv. ${i}`, i));
+        }
+        const trSelect = document.getElementById("trendSelect");
+        if(trSelect.options.length <= 1) {
+            TREND_LIST.forEach(t => trSelect.add(new Option(t, t)));
+        }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'cafeData') {
+                let parsedLocal = null;
+                try { parsedLocal = JSON.parse(e.newValue); } catch(err){}
+                if(parsedLocal) applyCafeDataToUI(parsedLocal);
+            }
+        });
+    }
+    initCafeUI(); // DOM 구성되자마자 즉시 실행해서 옵션 채워넣기
+
+    // ==========================================
     // 파이어베이스 트래커 로직
     // ==========================================
     const firebaseConfig = {
@@ -1070,7 +1100,6 @@
         });
     }
 
-    // 시간 조건부(start) 객체도 처리할 수 있게 배열 업데이트
     const taskConfig = {
         dailyImportant: { 
             title: "중요 일일 숙제", type: "daily", color: "var(--primary)",
@@ -1908,15 +1937,27 @@
             rawUrl = 'https://arca.live/b/nevernesstoeverness?category=chinasv';
         }
 
-        listContainer.innerHTML = '<li style="color:var(--text-muted); font-size:12px;">아카라이브에서 공지사항을 불러오는 중...</li>';
+        listContainer.innerHTML = '<li style="color:var(--text-muted); font-size:12px;">공지사항을 불러오고 있습니다...</li>';
 
-        // HTML 텍스트 주입 및 데이터 검증 헬퍼 함수
+        let isTimeout = false;
+        const fallbackHTML = `
+            <li style="color:var(--text-muted); font-size:12px; line-height:1.5;">
+                ⚠️ 공지사항 로딩 지연 혹은 실패.<br>
+                <a href="${rawUrl}" target="_blank" style="color:var(--warning); text-decoration:underline; font-weight:bold; display:inline;">[여기]</a>를 눌러 직접 확인해 주세요.
+            </li>`;
+
+        const timeoutId = setTimeout(() => {
+            isTimeout = true;
+            listContainer.innerHTML = fallbackHTML;
+        }, 5000);
+
         function parseAndRender(htmlText) {
+            if (isTimeout) return true;
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlText, "text/html");
             const items = doc.querySelectorAll('.vrow:not(.notice)');
             
-            if (!items || items.length === 0) return false; // 클옵 챌린지 페이지 걸려서 파싱 실패한 경우
+            if (!items || items.length === 0) return false; 
             
             let html = '';
             let count = 0;
@@ -1937,24 +1978,27 @@
                 count++;
             });
             
+            clearTimeout(timeoutId);
             listContainer.innerHTML = html;
             return true;
         }
 
-        // [1선] corsproxy.io 시도 (Direct Text Stream)
+        // [1선] corsproxy.io 시도
         fetch(`https://corsproxy.io/?${encodeURIComponent(rawUrl)}`)
             .then(res => { if(!res.ok) throw new Error(); return res.text(); })
             .then(htmlText => {
                 if (!parseAndRender(htmlText)) throw new Error("WAF_BLOCKED");
             })
             .catch(() => {
-                // [2선] Failover - AllOrigins 시도 (JSON Wrapper)
+                if (isTimeout) return;
+                // [2선] Failover - AllOrigins 시도
                 fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`)
                     .then(res => { if(!res.ok) throw new Error(); return res.json(); })
                     .then(data => {
                         if (!data.contents || !parseAndRender(data.contents)) throw new Error("WAF_BLOCKED");
                     })
                     .catch(() => {
+                        if (isTimeout) return;
                         // [3선] Failover - ThingProxy 시도
                         fetch(`https://thingproxy.freeboard.io/fetch/${rawUrl}`)
                             .then(res => { if(!res.ok) throw new Error(); return res.text(); })
@@ -1962,19 +2006,16 @@
                                 if (!parseAndRender(htmlText)) throw new Error("WAF_BLOCKED");
                             })
                             .catch(() => {
-                                // [최종 폴백] 프록시 전멸 시 수동 링크 제공
-                                listContainer.innerHTML = `
-                                    <li style="color:var(--text-muted); font-size:12px; line-height:1.5;">
-                                        ⚠️ 클라우드플레어 보안망 차단으로 실시간 공지 로드 실패. <br>
-                                        <a href="${rawUrl}" target="_blank" style="color:var(--warning); text-decoration:underline; font-weight:bold; display:inline;">[여기]</a>를 눌러 아카라이브 채널에서 직접 확인하셈.
-                                    </li>`;
+                                if (isTimeout) return;
+                                clearTimeout(timeoutId);
+                                listContainer.innerHTML = fallbackHTML;
                             });
                     });
             });
     }
 
     // ==========================================
-    // 캘린더 모듈
+    // 캘린더 모듈 (ICS 다운로드 포함)
     // ==========================================
     function openCalendarModal() {
         document.getElementById('calendar-modal').style.display = 'flex';
@@ -1998,6 +2039,56 @@
             localStorage.setItem('customCalendarImg', dataUrl);
         };
         reader.readAsDataURL(file);
+    }
+
+    function exportToICS() {
+        const calendarEvents = [
+            { uid: "nte-1.1-lacri", title: "라크리모사 픽업", start: "20260603", end: "20260625" },
+            { uid: "nte-1.1-chaos", title: "카오스 픽업", start: "20260624", end: "20260709" },
+            { uid: "nte-1.1-run", title: "광란의 질주 / 인기글 굽는 중 등", start: "20260603", end: "20260709" },
+            { uid: "nte-1.1-ponz", title: "폰즈 러시", start: "20260608", end: "20260616" },
+            { uid: "nte-1.1-trial", title: "시련의 연회", start: "20260618", end: "20260709" },
+            { uid: "nte-1.1-fight", title: "파이트 토너먼트", start: "20260624", end: "20260709" },
+            { uid: "nte-1.1-pixel", title: "픽셀 대방출", start: "20260626", end: "20260704" },
+            { uid: "nte-1.2-shinku", title: "동틀 녘 (신쿠 픽업)", start: "20260708", end: "20260730" },
+            { uid: "nte-1.2-illoi", title: "생명선 (일로이 픽업)", start: "20260729", end: "20260820" },
+            { uid: "nte-1.2-arc1", title: "결의 특간 (신쿠 아크)", start: "20260708", end: "20260730" },
+            { uid: "nte-1.2-arc2", title: "꿈의 문 특간 (일로이 아크)", start: "20260729", end: "20260820" },
+            { uid: "nte-1.2-999", title: "999번째 야화", start: "20260708", end: "20260820" },
+            { uid: "nte-1.2-vital", title: "활력제 충전", start: "20260712", end: "20260720" },
+            { uid: "nte-1.2-orbit1", title: "칠석 궤도", start: "20260716", end: "20260731" },
+            { uid: "nte-1.2-gold", title: "골드러시 대작전", start: "20260719", end: "20260803" },
+            { uid: "nte-1.2-orbit2", title: "파도 궤도", start: "20260730", end: "20260814" },
+            { uid: "nte-1.2-hide", title: "아슬아슬 숨바꼭질 / 땅땅땅", start: "20260802", end: "20260820" },
+            { uid: "nte-1.2-fish", title: "어획 대작전", start: "20260809", end: "20260817" },
+            { uid: "nte-1.2-orbit3", title: "달빛 궤도", start: "20260813", end: "20260828" }
+        ];
+
+        let icsContent = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//NTE Tracker//KR\r\n";
+        const nowStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + "Z";
+
+        calendarEvents.forEach(evt => {
+            icsContent += "BEGIN:VEVENT\r\n";
+            icsContent += `UID:${evt.uid}@ntetracker\r\n`;
+            icsContent += `DTSTAMP:${nowStamp}\r\n`;
+            icsContent += `DTSTART;VALUE=DATE:${evt.start}\r\n`;
+            icsContent += `DTEND;VALUE=DATE:${evt.end}\r\n`;
+            icsContent += `SUMMARY:${evt.title}\r\n`;
+            icsContent += "END:VEVENT\r\n";
+        });
+
+        icsContent += "END:VCALENDAR";
+
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'nte_events.ics';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert("일정 파일(ICS)이 다운로드되었습니다. 다운받은 파일을 실행해서 기기 캘린더에 덮어쓰기(추가) 해주세요.");
     }
 
     // ==========================================
@@ -2212,25 +2303,6 @@
             lvlTimerEl.innerText = "--:--:--";
             lvlTimerEl.style.color = "var(--text-muted)";
         }
-    }
-
-    function initCafeUI() {
-        const lvSelect = document.getElementById("userLevel");
-        if(lvSelect.options.length <= 1) {
-            for (let i = 1; i <= 40; i++) lvSelect.add(new Option(`Lv. ${i}`, i));
-        }
-        const trSelect = document.getElementById("trendSelect");
-        if(trSelect.options.length <= 1) {
-            TREND_LIST.forEach(t => trSelect.add(new Option(t, t)));
-        }
-
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'cafeData') {
-                let parsedLocal = null;
-                try { parsedLocal = JSON.parse(e.newValue); } catch(err){}
-                if(parsedLocal) applyCafeDataToUI(parsedLocal);
-            }
-        });
     }
 
     function handleLevelChange(lv, skipSave = false) {
@@ -2755,7 +2827,6 @@
 
     window.onload = () => {
         updateThemeBtnText();
-        initCafeUI();
     };
 </script>
 </body>
