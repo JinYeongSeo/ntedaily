@@ -479,6 +479,7 @@
                 <p style="margin-top:15px; font-size: 12px; color: var(--text-muted);">
                     ※ 우미츠키의 트래픽 배율은 음료 2개 이상 시 총 2.5%(3렙 1%, 5렙 1.5% 추가)가 다른 직원 버프 합산 후 곱연산으로 적용됩니다.<br>
                     ※ 라크리모사의 판매가 배율은 디저트 1개 이상 시 1%(5렙 2개 이상 시 1.5% 추가)가 다른 단가 합산 후 곱연산으로 적용됩니다.<br>
+                    ※ 신쿠의 단가 버프는 '음료 3개 이상'일 때 발동되며, 5레벨 달성 시 단가에 3% 곱연산이 추가됩니다.<br>
                     ※ 사키리의 5레벨 추가 단가 버프는 '동일 카테고리 상품이 3개 이상'일 때 발동됩니다.<br>
                     ※ 카테고리 트렌드(메인메뉴/음료/디저트) 적용 시 단가가 +1.00 증가합니다.
                 </p>
@@ -2244,7 +2245,7 @@
     ];
 
     const FRUITS = ["코코넛", "사과", "토마토", "오렌지", "딸기"];
-    const EMP_LIST = ["민트", "하니엘", "아들러", "나나리", "스키아", "에드가", "우미츠키", "사키리", "치즈", "백장", "다포딜", "라크리모사"];
+    const EMP_LIST = ["민트", "하니엘", "아들러", "나나리", "스키아", "에드가", "우미츠키", "사키리", "치즈", "백장", "다포딜", "라크리모사", "신쿠"];
 
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.lv-overlay') && !e.target.closest('.lv-badge')) {
@@ -2357,10 +2358,11 @@
         if (!emp) return `<div class="cafe-slot empty" onclick="handleSlotClick(${cafeIdx}, ${slotIdx}, event)"></div>`;
         
         const lv = charLvHistory[emp] || 5;
+        const imgSrc = emp === "신쿠" ? "shinku" : emp;
         return `
         <div class="cafe-slot" onclick="handleSlotClick(${cafeIdx}, ${slotIdx}, event)">
             <div class="slot-img-box">
-                <img src="./images/${emp}.png" alt="${emp}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
+                <img src="./images/${imgSrc}.png" alt="${emp}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
                 <div class="lv-badge" onclick="toggleOverlay(event, ${cafeIdx}, ${slotIdx})">Lv.${lv} 설정 ▼</div>
             </div>
             
@@ -2420,9 +2422,10 @@
 
         EMP_LIST.forEach(emp => {
             if(placedChars.includes(emp)) return;
+            const imgSrc = emp === "신쿠" ? "shinku" : emp;
             html += `
             <div class="cafe-char-card" onclick="selectCharForSlot('${emp}')">
-                <img src="./images/${emp}.png" class="cafe-char-img" alt="${emp}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
+                <img src="./images/${imgSrc}.png" class="cafe-char-img" alt="${emp}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
                 <div class="cafe-char-info"><div class="cafe-char-name">${emp}</div></div>
             </div>`;
         });
@@ -2481,7 +2484,8 @@
             let condStr = "";
             let isUmiTraffic = false; let umiCondStr = "";
             let isLacriPrice = false; let lacriCondStr = "";
-            
+            let isShinkuMult = false; let shinkuCondStr = "";
+
             if (n === "민트" || n === "아들러") {
                 if (l >= 1) pBuff += 0.12; if (l >= 5) pBuff += 0.18;
             }
@@ -2511,16 +2515,24 @@
                 if (l >= 1) { isLacriPrice = true; lacriCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(디저트 1개 이상 시 1%)</span>"; }
                 if (l >= 5) { isLacriPrice = true; lacriCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(디저트 2개 이상 시 총 2.5%)</span>"; }
             }
+            if (n === "신쿠") {
+                if (l >= 1) pBuff += 0.3;
+                if (l >= 3) pBuff += 0.3;
+                if (l >= 1) condStr += "<br><span style='font-size:10px; color:var(--text-muted);'>(음료 3개 이상 시 적용)</span>";
+                if (l >= 5) { isShinkuMult = true; shinkuCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(음료 3개 이상 시 3%)</span>"; }
+            }
 
             let statHtml = "";
             if(pBuff > 0) statHtml += `단가 +${pBuff.toFixed(2)}${condStr}<br>`;
             if(tBuff > 0) statHtml += `트래픽 +${tBuff}<br>`;
             if(isUmiTraffic) statHtml += `트래픽 증가 ${umiCondStr}<br>`;
             if(isLacriPrice) statHtml += `판매가 곱연산 증가 ${lacriCondStr}<br>`;
+            if(isShinkuMult) statHtml += `판매가 곱연산 증가 ${shinkuCondStr}<br>`;
 
+            const imgN = n === "신쿠" ? "shinku" : n;
             html += `
                 <div class="emp-stat-item">
-                    <img src="./images/${n}.png" class="emp-stat-icon" alt="${n}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
+                    <img src="./images/${imgN}.png" class="emp-stat-icon" alt="${n}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMzZjNmNDYiLz48L3N2Zz4='">
                     <div class="emp-stat-content">
                         <div class="emp-stat-name">${n} <span style="font-size:10px; color:var(--text-muted);">(Lv.${l})</span></div>
                         <div style="color:var(--text-main); line-height: 1.4;">${statHtml}</div>
@@ -2659,7 +2671,7 @@
             let dessertCount = combo.filter(item => item.category === "디저트").length;
             
             let globalPriceBuff = 0, globalTrafficBuff = 0;
-            let umiMult = 1, lacriMult = 1;
+            let umiMult = 1, lacriMult = 1, shinkuMult = 1;
 
             for (const [n, l] of Object.entries(currentActiveMap)) {
                 if (n === "민트" || n === "아들러") {
@@ -2697,6 +2709,11 @@
                     if (l >= 1 && dessertCount >= 1) lacriMult += 0.01;
                     if (l >= 5 && dessertCount >= 2) lacriMult += 0.015;
                 }
+                if (n === "신쿠") {
+                    if (l >= 1 && drinkCount >= 3) globalPriceBuff += 0.3;
+                    if (l >= 3 && drinkCount >= 3) globalPriceBuff += 0.3;
+                    if (l >= 5 && drinkCount >= 3) shinkuMult += 0.03;
+                }
             }
 
             let comboRev = 0;
@@ -2724,7 +2741,7 @@
                     }
                 }
                 
-                const finalPrice = (item.basePrice + localPriceBuff + trendBonus) * lacriMult;
+                const finalPrice = (item.basePrice + localPriceBuff + trendBonus) * lacriMult * shinkuMult;
                 const totalTraffic = (2400 + localTrafficBuff) * umiMult;
                 const hourlyRev = finalPrice * (totalTraffic / 100);
                 
@@ -2732,7 +2749,7 @@
                 details.push({
                     cafeName: CAFE_NAMES[cafeIdx],
                     name: item.name, category: item.category, base: item.basePrice, final: finalPrice, isTrend, trendBonus, rev: hourlyRev, priceUpLevel: item.priceUpLevel,
-                    appliedPriceBuff: localPriceBuff, lacriMult: lacriMult
+                    appliedPriceBuff: localPriceBuff, lacriMult: lacriMult, shinkuMult: shinkuMult
                 });
             });
 
@@ -2811,6 +2828,10 @@
                         ${it.lacriMult > 1 ? `<div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--secondary);">
                             <span>라크리모사 버프</span>
                             <span>x${it.lacriMult}</span>
+                        </div>` : ''}
+                        ${it.shinkuMult > 1 ? `<div style="display:flex; justify-content:space-between; margin-bottom:4px; color:var(--secondary);">
+                            <span>신쿠 버프</span>
+                            <span>x${it.shinkuMult}</span>
                         </div>` : ''}
                         <div style="display:flex; justify-content:space-between; margin-top:8px; padding-top:8px; border-top:1px solid var(--border-color); font-weight:bold; font-size:12px; color:var(--text-main);">
                             <span>최종 단가</span>
