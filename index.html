@@ -2291,15 +2291,15 @@
         let icsContent = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//NTE Tracker//KR\r\n";
         const nowStamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + "Z";
 
-        calendarEvents.forEach(evt => {
-            icsContent += "BEGIN:VEVENT\r\n";
-            icsContent += `UID:${evt.uid}@ntetracker\r\n`;
-            icsContent += `DTSTAMP:${nowStamp}\r\n`;
-            icsContent += `DTSTART;VALUE=DATE:${evt.start}\r\n`;
-            icsContent += `DTEND;VALUE=DATE:${evt.end}\
-            icsContent += `SUMMARY:${evt.title}\r\n`;
-            icsContent += "END:VEVENT\r\n";
-        });
+calendarEvents.forEach(evt => {
+    icsContent += "BEGIN:VEVENT\r\n";
+    icsContent += `UID:${evt.uid}@ntetracker\r\n`;
+    icsContent += `DTSTAMP:${nowStamp}\r\n`;
+    icsContent += `DTSTART;VALUE=DATE:${evt.start}\r\n`;
+    icsContent += `DTEND;VALUE=DATE:${evt.end}\r\n`; // <- 이 부분 닫는 백틱 및 줄바꿈 추가됨
+    icsContent += `SUMMARY:${evt.title}\r\n`;
+    icsContent += "END:VEVENT\r\n";
+});
 
         icsContent += "END:VCALENDAR";
 
