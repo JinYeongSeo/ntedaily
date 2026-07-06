@@ -701,10 +701,18 @@
             </div>
         </div>
 
-        <div id="tab-sheet" class="tab-content">
+<div id="tab-sheet" class="tab-content">
+            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 12px; padding: 0 5px;">
+                <span style="font-size: 12px; color: var(--text-muted); font-weight: 700;">시트 확대/축소</span>
+                <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(-0.1)">-</button>
+                <span id="sheet-zoom-val" style="font-family: monospace; font-size: 13px; font-weight: bold; color: var(--primary); min-width: 45px; text-align: center;">50%</span>
+                <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(0.1)">+</button>
+                <button class="outline-btn" style="padding: 4px 10px; font-size: 12px;" onclick="resetSheetZoom()">초기화</button>
+            </div>
+
             <div class="glass-panel" style="height: 80vh; overflow: hidden; border-radius: 8px; position: relative; margin-bottom: 20px;">
-                <iframe src="https://docs.google.com/spreadsheets/d/1zdtT4Qj5TkNs_Hga9unXHWKlUKSkoZ_mgM2XCM-BZ7o/edit?usp=sharing&widget=true&headers=false" 
-                style="position: absolute; top: 0; left: 0; width: 200%; height: 200%; border: none; transform: scale(0.5); transform-origin: 0 0;"></iframe>
+                <iframe id="sheet-iframe" src="https://docs.google.com/spreadsheets/d/1zdtT4Qj5TkNs_Hga9unXHWKlUKSkoZ_mgM2XCM-BZ7o/edit?usp=sharing&widget=true&headers=false" 
+                style="position: absolute; top: 0; left: 0; width: 200%; height: 200%; border: none; transform: scale(0.5); transform-origin: 0 0; transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;"></iframe>
             </div>
             <div style="text-align: center; font-size: 12px; margin-top: 10px; color: var(--text-muted);">
                 출처: <a href="https://arca.live/b/nevernesstoeverness/173379271" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-weight: bold;">이잘키 시트 원본 (NTE 채널)</a>
@@ -3060,7 +3068,40 @@ calendarEvents.forEach(evt => {
         wrap.style.display = "block";
         wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+// ==========================================
+    // 이잘키 시트 수동 확대/축소 로직
+    // ==========================================
+    let currentSheetZoom = 0.5; // 초기 렌더링 스케일값 (50%)
 
+    function zoomSheet(delta) {
+        currentSheetZoom += delta;
+        
+        // 최소 30%, 최대 150%로 리밋 걺 (너무 크거나 작아지는 거 방지)
+        if (currentSheetZoom < 0.3) currentSheetZoom = 0.3;
+        if (currentSheetZoom > 1.5) currentSheetZoom = 1.5;
+
+        // JS 부동소수점 오차 보정용 (예: 0.600000000001 같은 좆버그 차단)
+        currentSheetZoom = Math.round(currentSheetZoom * 10) / 10;
+
+        const iframe = document.getElementById('sheet-iframe');
+        const zoomText = document.getElementById('sheet-zoom-val');
+
+        // 핵심 로직: scale(X)를 곱했을 때 부모 컨테이너(100%)에 꽉 차도록 치수 역산
+        const dimension = (1 / currentSheetZoom) * 100;
+
+        // 계산된 값 DOM에 인젝션
+        iframe.style.transform = `scale(${currentSheetZoom})`;
+        iframe.style.width = `${dimension}%`;
+        iframe.style.height = `${dimension}%`;
+
+        // 텍스트 UI 업데이트
+        zoomText.innerText = Math.round(currentSheetZoom * 100) + '%';
+    }
+
+    function resetSheetZoom() {
+        currentSheetZoom = 0.5;
+        zoomSheet(0); // 0을 던져서 수치 렌더링만 강제 동기화
+    }
     window.onload = () => {
         updateThemeBtnText();
     };
