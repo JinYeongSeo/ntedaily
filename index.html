@@ -269,6 +269,19 @@
         .task-item span { font-size: 14px; line-height: 1.4; transition: 0.2s; color: var(--text-main); font-weight: 600; word-break: keep-all; }
         .task-item input[type="checkbox"]:checked + span { color: var(--text-muted); text-decoration: line-through; opacity: 0.5; }
 
+        /* 신비 단추 계산기용 스페셜 스타일 */
+        .btn-sticky-footer {
+            position: sticky; bottom: 0; z-index: 50;
+            background: var(--bg-overlay);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--secondary);
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.4);
+            margin-top: 20px; padding: 20px;
+        }
+        .btn-glow-text { text-shadow: 0 0 15px var(--primary); }
+        .btn-glow-success { text-shadow: 0 0 15px var(--success); color: var(--success) !important; }
+
         /* 슬라이더 개선 */
         .range-wrapper { position: relative; width: 100%; height: 20px; display: flex; align-items: center; margin-top: 10px; margin-bottom: 5px; }
         input[type="range"] { 
@@ -607,7 +620,36 @@
             <button class="tab-btn" id="btn-tab-affection" onclick="switchTab('affection')">호감도 계산기</button>
             <button class="tab-btn" id="btn-tab-cafe" onclick="switchTab('cafe')">카페 수익 계산기</button>
             <button class="tab-btn" id="btn-tab-ponz" onclick="switchTab('ponz')">폰즈 계산기</button>
+            <button class="tab-btn" id="btn-tab-buttonCalc" onclick="switchTab('buttonCalc')">단추 상점 계산기</button>
             <button class="tab-btn" id="btn-tab-sheet" onclick="switchTab('sheet')">이잘키 시트</button>
+        </div>
+
+        <div id="tab-buttonCalc" class="tab-content">
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
+                <h2 style="margin:0; font-size:16px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
+                    <span style="color:var(--accent);">✧</span> 현재 보유 단추
+                </h2>
+                <div style="display:flex; align-items:center; gap:10px; flex:1; min-width: 200px;">
+                    <input type="number" id="current_coins" class="cafe-calc-input" placeholder="0" min="0" style="text-align: right; font-family: monospace; font-size: 16px; font-weight: 700; flex:1;">
+                    <span style="color:var(--text-muted); font-weight:700;">개</span>
+                </div>
+            </div>
+
+            <div id="btn-calc-app" class="task-grid"></div>
+
+            <div class="btn-sticky-footer">
+                <div style="display:flex; justify-content:space-around; align-items:center; flex-wrap:wrap; gap:20px;">
+                    <div style="text-align:center;">
+                        <div style="font-size:13px; color:var(--text-muted); font-weight:700;">선택한 아이템 총합</div>
+                        <div id="total_needed" style="font-size:24px; font-weight:800; color:var(--text-main); font-family:monospace; margin-top:4px;">0</div>
+                    </div>
+                    <div style="width:1px; background:var(--border-color); height:40px;"></div>
+                    <div style="text-align:center;">
+                        <div style="font-size:13px; color:var(--text-muted); font-weight:700;">앞으로 파밍해야 할 단추</div>
+                        <div id="final_required" class="btn-glow-text" style="font-size:28px; font-weight:800; color:var(--primary); font-family:monospace; margin-top:4px;">0</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div id="tab-ponz" class="tab-content">
@@ -889,6 +931,178 @@
         "날달걀", "단단한 버터", "딸기", "밀가루", "별사탕", "사과", "상추", "신선한 돼지고기", "신선한 소고기", 
         "양파", "오렌지", "우유", "코코넛", "크림", "토마토", "팥", "푸카 쿠키", "해수어", "햄"
     ];
+
+    // ==========================================
+    // 신비 단추 계산기 데이터 & 로직 (전역 스코프)
+    // ==========================================
+    const btnCalcData = [
+        {
+            id: 'zero', name: '제로 (Zero)', color: 'var(--primary)', items: [
+                { id: 'z_skin_1', name: '스킨: 미개봉 앞면', cost: 3000 },
+                { id: 'z_skin_2', name: '스킨: 검객의 자세', cost: 4800 },
+                { id: 'z_dye_1', name: '염색 구슬: "언씬 엣지" (미개봉 앞면)', cost: 3750 },
+                { id: 'z_dye_2', name: '염색 구슬: 황토색 (검객의 자세)', cost: 2000 },
+                { id: 'z_dye_3', name: '염색 구슬: 산의 여인 (검객의 자세)', cost: 2000 },
+                { id: 'z_dye_4', name: '염색 구슬: 샛별 (검객의 자세)', cost: 2000 },
+            ]
+        },
+        {
+            id: 'mint', name: '민트 (Mint)', color: 'var(--success)', items: [
+                { id: 'm_skin_1', name: '스킨: 바람처럼 자유롭게', cost: 3000 },
+                { id: 'm_skin_2', name: '스킨: 부시 헌터', cost: 4800 },
+                { id: 'm_skin_3', name: '스킨: 불의 그림자', cost: 8000 },
+                { id: 'm_dye_0', name: '염색 구슬: "바람처럼 자유로운" (바람처럼 자유롭게)', cost: 3750 },
+                { id: 'm_dye_1', name: '염색 구슬: 능선 (부시 헌터)', cost: 2000 },
+                { id: 'm_dye_2', name: '염색 구슬: 라일락 (부시 헌터)', cost: 2000 },
+                { id: 'm_dye_3', name: '염색 구슬: 꽃말 (부시 헌터)', cost: 2000 },
+                { id: 'm_dye_4', name: '염색 구슬: 위장 (불의 그림자)', cost: 5000 },
+                { id: 'm_dye_5', name: '염색 구슬: 붉은 조수 (불의 그림자)', cost: 5000 },
+            ]
+        },
+        {
+            id: 'shinku', name: '신쿠 (Shinku)', color: 'var(--secondary)', items: [
+                { id: 's_skin_1', name: '스킨: 평범한 행인', cost: 8000 },
+            ]
+        },
+        {
+            id: 'iroi', name: '일로이 (Iloi)', color: 'var(--warning)', items: [
+                { id: 'i_skin_1', name: '스킨: 주문이 외워지고 있다', cost: 8000 },
+                { id: 'i_dye_1', name: '염색 구슬: "노래하는" (주문이 외워지고 있다)', cost: 10000 },
+                { id: 'i_dye_2', name: '염색 구슬: 대마법사 다크플레임 (스킨 미판매)', cost: 6000 },
+                { id: 'i_dye_3', name: '염색 구슬: 대마법사 칭치 (스킨 미판매)', cost: 6000 },
+                { id: 'i_dye_4', name: '염색 구슬: 대마법사 얀 얀 (스킨 미판매)', cost: 6000 },
+            ]
+        },
+        {
+            id: 'items', name: '공용 아이템', color: 'var(--accent)', items: [
+                { id: 'it_icon', name: '아이콘 (시와 마지막 장)', cost: 1600 },
+                { id: 'it_border', name: '테두리 (달 아래 용의 그림자)', cost: 1600 },
+                { id: 'it_namecard', name: '명함 (영구적인)', cost: 2100 },
+                { id: 'it_phonecase', name: '제로 폰케이스 (용기의 증거)', cost: 2000 },
+                { id: 'it_phonebg', name: '폰 배경화면 (레드 드래곤의 행진)', cost: 2000 },
+            ]
+        },
+        {
+            id: 'resources', name: '성장 재화', color: 'var(--text-main)', items: [
+                { id: 'r_phantom', name: '환석 (반지석x10)', cost: 5000 },
+                { id: 'r_fonz', name: '폰즈 (방시x10000)', cost: 12000 },
+                { id: 'r_guide', name: '특급 헌터 가이드', cost: 1280 },
+                { id: 'r_ark', name: '아크 레벨업 재료 (혼돈 염료)', cost: 1280 },
+                { id: 'r_boss', name: '맨홀 보스 (슈퍼 절단 유물)', cost: 1280 },
+                { id: 'r_gear', name: '확장 코어', cost: 720 },
+                { id: 'r_unknown', name: '이성질 단위 (효율 좋음)', cost: 1500 },
+                { id: 'r_unknown_bad', name: '이성질 단위 (효율 낮음 - 99개 꽉채울시)', cost: 31680 },
+            ]
+        }
+    ];
+
+    let btnCalcState = { currentCoins: 0, selected: {} };
+
+    function initBtnCalc() {
+        const saved = localStorage.getItem('nte_shop_calc');
+        if (saved) {
+            try { btnCalcState = JSON.parse(saved); } catch(e) {}
+        }
+        if (btnCalcState.currentCoins) {
+            document.getElementById('current_coins').value = btnCalcState.currentCoins;
+        }
+        renderBtnCalc();
+        
+        document.getElementById('current_coins').addEventListener('input', (e) => {
+            btnCalcState.currentCoins = parseInt(e.target.value) || 0;
+            saveBtnCalcState();
+        });
+    }
+
+    function saveBtnCalcState() {
+        localStorage.setItem('nte_shop_calc', JSON.stringify(btnCalcState));
+        calcBtnTotal();
+    }
+
+    function toggleBtnCategory(categoryId, isChecked) {
+        const cat = btnCalcData.find(c => c.id === categoryId);
+        cat.items.forEach(item => {
+            if (isChecked) btnCalcState.selected[item.id] = true;
+            else delete btnCalcState.selected[item.id];
+        });
+        saveBtnCalcState();
+        renderBtnCalc();
+    }
+
+    function updateBtnSelection(itemId, isChecked) {
+        if (isChecked) btnCalcState.selected[itemId] = true;
+        else delete btnCalcState.selected[itemId];
+        saveBtnCalcState();
+        renderBtnCalc();
+    }
+
+    function renderBtnCalc() {
+        const app = document.getElementById('btn-calc-app');
+        if(!app) return;
+        app.innerHTML = '';
+        
+        btnCalcData.forEach(category => {
+            const card = document.createElement('div');
+            card.className = 'glass-panel task-category';
+            card.style.height = '100%';
+            card.style.display = 'flex';
+            card.style.flexDirection = 'column';
+            
+            const allChecked = category.items.length > 0 && category.items.every(item => btnCalcState.selected[item.id]);
+            
+            let html = `
+                <h2 style="display:flex; justify-content:space-between; align-items:center; --cat-color: ${category.color}; margin-bottom:15px;">
+                    <span style="color:${category.color};">${category.name}</span>
+                    <label class="task-item" style="margin:0; cursor:pointer;">
+                        <input type="checkbox" onchange="toggleBtnCategory('${category.id}', this.checked)" ${allChecked ? 'checked' : ''}>
+                        <span style="font-size:12px; color:var(--text-muted);">전체</span>
+                    </label>
+                </h2>
+                <div style="display:flex; flex-direction:column; gap:10px; flex-grow:1;">
+            `;
+            
+            category.items.forEach(item => {
+                const isSelected = !!btnCalcState.selected[item.id];
+                html += `
+                    <label class="task-item" style="justify-content:space-between; padding: 12px; background: var(--dashboard-bg); border-radius: 8px; border: 1px solid var(--border-color); transition:all 0.2s; margin:0; ${isSelected ? 'border-color: var(--secondary); background: rgba(163, 126, 227, 0.1);' : ''}">
+                        <div style="display:flex; align-items:center; gap:10px; flex:1;">
+                            <input type="checkbox" onchange="updateBtnSelection('${item.id}', this.checked)" ${isSelected ? 'checked' : ''} style="margin:0;">
+                            <span style="font-size:13px; font-weight:600; line-height:1.4; color:${isSelected ? 'var(--text-main)' : 'var(--text-muted)'}">${item.name}</span>
+                        </div>
+                        <span style="font-family:monospace; font-weight:800; font-size:14px; color:${isSelected ? 'var(--primary)' : 'var(--text-muted)'}">${item.cost.toLocaleString()}</span>
+                    </label>
+                `;
+            });
+            
+            html += `</div>`;
+            card.innerHTML = html;
+            app.appendChild(card);
+        });
+        calcBtnTotal();
+    }
+
+    function calcBtnTotal() {
+        let totalNeeded = 0;
+        btnCalcData.forEach(cat => {
+            cat.items.forEach(item => {
+                if (btnCalcState.selected[item.id]) totalNeeded += item.cost;
+            });
+        });
+        
+        const currentCoins = parseInt(document.getElementById('current_coins').value) || 0;
+        const finalReq = Math.max(0, totalNeeded - currentCoins);
+        
+        document.getElementById('total_needed').innerText = totalNeeded.toLocaleString();
+        const finalEl = document.getElementById('final_required');
+        finalEl.innerText = finalReq.toLocaleString();
+        
+        if (finalReq === 0 && totalNeeded > 0) {
+            finalEl.className = "btn-glow-success";
+        } else {
+            finalEl.className = "btn-glow-text";
+        }
+    }
+
     // ==========================================
     // UI 세팅 조기 실행 (레벨 초기화 방지)
     // ==========================================
@@ -909,6 +1123,8 @@
                 if(parsedLocal) applyCafeDataToUI(parsedLocal);
             }
         });
+
+        initBtnCalc(); // 상점 계산기 초기화
     }
     initCafeUI(); // DOM 구성되자마자 즉시 실행해서 옵션 채워넣기
 
@@ -1994,7 +2210,6 @@
             return true;
         }
 
-        // [1선] corsproxy.io 시도
         fetch(`https://corsproxy.io/?${encodeURIComponent(rawUrl)}`)
             .then(res => { if(!res.ok) throw new Error(); return res.text(); })
             .then(htmlText => {
@@ -2002,7 +2217,6 @@
             })
             .catch(() => {
                 if (isTimeout) return;
-                // [2선] Failover - AllOrigins 시도
                 fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rawUrl)}`)
                     .then(res => { if(!res.ok) throw new Error(); return res.json(); })
                     .then(data => {
@@ -2010,7 +2224,6 @@
                     })
                     .catch(() => {
                         if (isTimeout) return;
-                        // [3선] Failover - ThingProxy 시도
                         fetch(`https://thingproxy.freeboard.io/fetch/${rawUrl}`)
                             .then(res => { if(!res.ok) throw new Error(); return res.text(); })
                             .then(htmlText => {
@@ -2083,7 +2296,7 @@
             icsContent += `UID:${evt.uid}@ntetracker\r\n`;
             icsContent += `DTSTAMP:${nowStamp}\r\n`;
             icsContent += `DTSTART;VALUE=DATE:${evt.start}\r\n`;
-            icsContent += `DTEND;VALUE=DATE:${evt.end}\r\n`;
+            icsContent += `DTEND;VALUE=DATE:${evt.end}\
             icsContent += `SUMMARY:${evt.title}\r\n`;
             icsContent += "END:VEVENT\r\n";
         });
