@@ -2617,7 +2617,7 @@ calendarEvents.forEach(evt => {
         if (!isShowing) overlay.style.display = 'flex';
     }
 
-    function handleSlotClick(cafeIdx, slotIdx, event) {
+function handleSlotClick(cafeIdx, slotIdx, event) {
         const level = parseInt(document.getElementById("userLevel").value);
         if (isNaN(level)) { 
             alert("관리 레벨을 먼저 선택해 주시기 바랍니다."); 
@@ -2625,6 +2625,11 @@ calendarEvents.forEach(evt => {
         }
 
         if (event && event.target && (event.target.closest('.lv-btn') || event.target.closest('.lv-badge'))) return;
+
+        // [핵심 해결] 로컬 데이터 증발로 인해 해당 인덱스의 배열이 없으면 강제로 빈 배열 생성 (TypeError 방지)
+        if (!cafeDataState[cafeIdx]) {
+            cafeDataState[cafeIdx] = [null, null];
+        }
 
         if (cafeDataState[cafeIdx][slotIdx]) {
             cafeDataState[cafeIdx][slotIdx] = null;
