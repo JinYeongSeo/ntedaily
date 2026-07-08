@@ -2967,9 +2967,10 @@ function handleSlotClick(cafeIdx, slotIdx, event) {
                     }
                 }
                 
-                const finalPrice = (item.basePrice + localPriceBuff + trendBonus) * lacriMult * shinkuMult;
-                const totalTraffic = (2424 + localTrafficBuff) * umiMult;
-                const hourlyRev = finalPrice * (totalTraffic / 100);
+// 인게임과 동일하게 단가 소수점 2자리 밑 버림 & 기본 트래픽 2452 적용 후 버림 처리
+const finalPrice = Math.floor((item.basePrice + localPriceBuff + trendBonus) * lacriMult * shinkuMult * 100) / 100;
+const totalTraffic = Math.floor((2452 + localTrafficBuff) * umiMult);
+const hourlyRev = finalPrice * (totalTraffic / 100);
                 
                 comboRev += hourlyRev;
                 details.push({
@@ -2980,7 +2981,7 @@ function handleSlotClick(cafeIdx, slotIdx, event) {
             });
 
             const finalRev = Math.round((comboRev + Number.EPSILON) * 100) / 100;
-            comboList.push({ rev: finalRev, details, globalPriceBuff, totalTraffic: (2424 + globalTrafficBuff) * umiMult });
+            comboList.push({ rev: finalRev, details, globalPriceBuff, totalTraffic: Math.floor((2452 + globalTrafficBuff) * umiMult) });
         });
 
         comboList.sort((a, b) => b.rev - a.rev);
