@@ -2963,7 +2963,7 @@ calendarEvents.forEach(evt => {
                 }
                 
                 const finalPrice = (item.basePrice + localPriceBuff + trendBonus) * lacriMult * shinkuMult;
-                const totalTraffic = (2424 + localTrafficBuff) * umiMult;
+                const totalTraffic = (2400 + localTrafficBuff) * umiMult;
                 const hourlyRev = finalPrice * (totalTraffic / 100);
                 
                 comboRev += hourlyRev;
@@ -2975,7 +2975,7 @@ calendarEvents.forEach(evt => {
             });
 
             const finalRev = Math.round((comboRev + Number.EPSILON) * 100) / 100;
-            comboList.push({ rev: finalRev, details, globalPriceBuff, totalTraffic: (2424 + globalTrafficBuff) * umiMult });
+            comboList.push({ rev: finalRev, details, globalPriceBuff, totalTraffic: (2400 + globalTrafficBuff) * umiMult });
         });
 
         comboList.sort((a, b) => b.rev - a.rev);
