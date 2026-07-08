@@ -483,7 +483,7 @@
                 본 계산기는 다음의 공식을 바탕으로 최고 효율의 수익을 산출합니다.
                 <ul>
                     <li><strong>상품 단가:</strong> 기본가 + 직원 버프 + 트렌드 보너스</li>
-                    <li><strong>트래픽:</strong> 기본 트래픽(2400) + 직원 트래픽 버프</li>
+                    <li><strong>트래픽:</strong> 기본 트래픽(2424) + 직원 트래픽 버프</li>
                     <li><strong>시간당 메뉴 수익:</strong> 상품 단가 × (트래픽 / 100)</li>
                 </ul>
                 <div class="modal-formula">
@@ -2963,7 +2963,7 @@ calendarEvents.forEach(evt => {
                 }
                 
                 const finalPrice = (item.basePrice + localPriceBuff + trendBonus) * lacriMult * shinkuMult;
-                const totalTraffic = (2400 + localTrafficBuff) * umiMult;
+                const totalTraffic = (2424 + localTrafficBuff) * umiMult;
                 const hourlyRev = finalPrice * (totalTraffic / 100);
                 
                 comboRev += hourlyRev;
@@ -2975,7 +2975,7 @@ calendarEvents.forEach(evt => {
             });
 
             const finalRev = Math.round((comboRev + Number.EPSILON) * 100) / 100;
-            comboList.push({ rev: finalRev, details, globalPriceBuff, totalTraffic: (2400 + globalTrafficBuff) * umiMult });
+            comboList.push({ rev: finalRev, details, globalPriceBuff, totalTraffic: (2424 + globalTrafficBuff) * umiMult });
         });
 
         comboList.sort((a, b) => b.rev - a.rev);
