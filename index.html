@@ -617,6 +617,7 @@
 
         <div class="tabs">
             <button class="tab-btn active" id="btn-tab-homework" onclick="switchTab('homework')">숙제 트래커</button>
+            <button class="tab-btn" id="btn-tab-gear" onclick="switchTab('gear')">999일 야화 빌더</button>
             <button class="tab-btn" id="btn-tab-affection" onclick="switchTab('affection')">호감도 계산기</button>
             <button class="tab-btn" id="btn-tab-cafe" onclick="switchTab('cafe')">카페 수익 계산기</button>
             <button class="tab-btn" id="btn-tab-ponz" onclick="switchTab('ponz')">폰즈 계산기</button>
@@ -709,7 +710,43 @@
                 <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(0.1)">+</button>
                 <button class="outline-btn" style="padding: 4px 10px; font-size: 12px;" onclick="resetSheetZoom()">초기화</button>
             </div>
+<div id="tab-gear" class="tab-content">
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 20px;">
+                <h2 style="margin-top:0; font-size:16px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px;">캐릭터 및 장비 선택</h2>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;">
+                    <button class="outline-btn gear-char-btn active" id="gear-char-zero" onclick="selectGearChar('제로')" style="border-color:var(--text-main); color:var(--text-main);">제로</button>
+                    <button class="outline-btn gear-char-btn" id="gear-char-mint" onclick="selectGearChar('민트')" style="border-color:var(--success); color:var(--success);">민트</button>
+                    <button class="outline-btn gear-char-btn" id="gear-char-iroi" onclick="selectGearChar('일로이')" style="border-color:var(--warning); color:var(--warning);">일로이</button>
+                    <button class="outline-btn gear-char-btn" id="gear-char-shinku" onclick="selectGearChar('신쿠')" style="border-color:var(--secondary); color:var(--secondary);">신쿠</button>
+                </div>
 
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                    <div>
+                        <label class="cafe-input-label">무기</label>
+                        <select id="gear-weapon" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                    <div>
+                        <label class="cafe-input-label">방어구 (세트)</label>
+                        <select id="gear-armor" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                    <div>
+                        <label class="cafe-input-label">악세서리 1</label>
+                        <select id="gear-acc1" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                    <div>
+                        <label class="cafe-input-label">악세서리 2</label>
+                        <select id="gear-acc2" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 20px;">
+                <h2 style="margin-top:0; font-size:16px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px;">종합 세트 효과 내역</h2>
+                <div id="gear-result-container">
+                    </div>
+            </div>
+        </div>
             <div class="glass-panel" style="height: 80vh; overflow: hidden; border-radius: 8px; position: relative; margin-bottom: 20px;">
                 <iframe id="sheet-iframe" src="https://docs.google.com/spreadsheets/d/1zdtT4Qj5TkNs_Hga9unXHWKlUKSkoZ_mgM2XCM-BZ7o/edit?usp=sharing&widget=true&headers=false" 
                 style="position: absolute; top: 0; left: 0; width: 200%; height: 200%; border: none; transform: scale(0.5); transform-origin: 0 0; transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;"></iframe>
@@ -718,6 +755,7 @@
                 출처: <a href="https://arca.live/b/nevernesstoeverness/173379271" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-weight: bold;">이잘키 시트 원본 (NTE 채널)</a>
             </div>
         </div>
+        
 
         <div id="tab-homework" class="tab-content active">
             
@@ -939,7 +977,199 @@
         "날달걀", "단단한 버터", "딸기", "밀가루", "별사탕", "사과", "상추", "신선한 돼지고기", "신선한 소고기", 
         "양파", "오렌지", "우유", "코코넛", "크림", "토마토", "팥", "푸카 쿠키", "해수어", "햄"
     ];
+// ==========================================
+    // 장비 세트 빌더 모듈
+    // ==========================================
+    const GEAR_DATA = {
+        weapons: {
+            "제로": [
+                { name: "찬란한 화염 장검", effects: [{ title: "작렬하는 불꽃", desc: "파티 전체가 「백염 성화」 부여 시 10%의 확률로 「작렬」 이 발동한다. 목표가 보유한 「백염 성화」 1중첩당 20%×중첩의 배율 피해를 입는다." }, { title: "기나긴 홍염", desc: "「홍염」 지속 시간이 10초 늘어나며, 착용자의 모든 공격이 50%의 확률로 목표에 「홍염」 을 부여한다." }, { title: "백염 가속", desc: "착용자가 「홍염」 부여 시 「백염 성화」 를 대신 부여한다. 파티 전체가 부여한 「백염 성화」 의 피해 발동 간격이 50% 단축된다." }] },
+                { name: "밤하늘의 별 장검", effects: [{ title: "밤하늘의 별 장검", desc: "몬스터에 「꿈꾸는 양」 부여 시 40%의 확률로 「포근」 이 추가로 부여된다. 방어력 및 공격력 -15%, 5초 지속, 최대 3중첩." }, { title: "귀향의 선율", desc: "파티 전체의 방어력이 30% 증가한다." }, { title: "심야의 순찰자 장검", desc: "파티 전체의 방어력이 48% 증가하고, 필드에 있는 양 1마리당 방어력이 추가로 8% 증가한다." }] },
+                { name: "새벽 종의 검", effects: [{ title: "새벽 종의 검", desc: "몬스터에 「꿈꾸는 양」 부여 시 30%의 확률로 「열화」 가 추가로 부여된다. 1초마다 부여자 공격력의 166%만큼의 피해를 받는다. 5초 지속, 최대 3중첩." }, { title: "새벽빛의 노래", desc: "파티 전체의 HP가 21% 증가한다." }, { title: "목자의 장검", desc: "파티 전체의 HP가 36% 증가하고, 필드에 있는 양 1마리당 HP가 추가로 7% 증가한다." }] },
+                { name: "사그라진 불꽃 장검", effects: [{ title: "사그라진 불꽃 선회 인장", desc: "파티 전체가 「사그라진 불꽃 인장」 을 폭발시킨 후, 목표에 「사그라진 불꽃 인장」 을 재부여한다." }, { title: "작렬하는 재", desc: "착용자의 모든 공격이 50%의 확률로 목표에 「홍염」 을 부여하며, 파티 전체가 부여한 「홍염」 지속 시간 종료 시 목표에게 300% 배율의 피해를 준다." }, { title: "사그라진 불꽃 사냥 인장", desc: "착용자가 「홍염」 부여 시 「사그라진 불꽃 인장」 을 대신 부여한다. 파티 전체가 「사그라진 불꽃 인장」 을 폭발시켜 다수의 목표를 처치하면, 처치한 목표 수에 따라 「사그라진 불꽃 인장」 피해가 영구적으로 증가한다. 목표당 +0.5%." }] }
+            ],
+            "민트": [
+                { name: "밤의 불꽃 쌍칼", effects: [{ title: "생명 잠식", desc: "파티 전체가 「사그라진 불꽃 인장」 을 폭발시키면 목표의 HP가 추가로 1.5% 차감된다." }, { title: "불타는 함정", desc: "파티 전체가 부여한 「홍염」 의 지속 시간 종료 시 목표의 붕괴 수치를 6 차감한다." }, { title: "사그라진 불꽃 참수", desc: "착용자가 「홍염」 부여 시, 「사그라진 불꽃 인장」 을 대신 부여한다. 파티 전체가 「사그라진 불꽃 인장」 을 폭발시키면 HP가 15% 미만인 목표를 처형한다." }] },
+                { name: "무지개 쌍칼", effects: [{ title: "무지개 쌍칼", desc: "파티 내 캐릭터가 일반 공격을 할 때마다 파티 전체에 「무지개」 를 부여한다. 공격력 +1.25%, 3초 지속, 최대 100중첩." }, { title: "양 떼 회전", desc: "파티 전체의 피해가 14% 증가한다." }, { title: "양 떼 충돌", desc: "파티 전체의 피해가 20% 증가하고, 필드에 있는 양 1마리당 피해가 추가로 4% 증가한다." }] },
+                { name: "머무는 섬광 쌍칼", effects: [{ title: "머무는 섬광 쌍칼", desc: "파티 내 캐릭터가 치명타를 줄 때 50%의 확률로 파티 전체 캐릭터가 최대 HP의 15% +3,000만큼 회복하고 「겨울바람」 이 부여된다. 공격력+100%, 5초 지속." }, { title: "목초지 사이", desc: "파티 전체의 공격력이 15% 증가한다." }, { title: "양 떼 강타", desc: "파티 전체의 공격력이 24% 증가하고, 필드에 있는 양 1마리당 공격력이 추가로 5% 증가한다." }] },
+                { name: "춤추는 섬광 쌍칼", effects: [{ title: "무극 성화", desc: "파티 전체가 부여하는 「백염 성화」 중첩에는 상한이 없다." }, { title: "중첩된 용염", desc: "파티 전체가 용염 중첩을 더 많이 축적할 수 있고, 자신의 울티메이트와 일반 공격 길게 누르기로 목표에게 용염을 부여한다." }, { title: "성화 심판", desc: "착용자가 「홍염」 부여 시 「백염 성화」 를 대신 부여한다. 목표가 「백염 성화」 보유 시 받는 피해가 300% 증가한다." }] }
+            ],
+            "일로이": [
+                { name: "광명의 축복 마도서", effects: [{ title: "성화 확산", desc: "파티 전체가 「백염 성화」 중첩 부여 시 범위 내 「백염 성화」 를 보유한 모든 목표에 추가로 1중첩 부여한다." }, { title: "열화에서 삶으로", desc: "파티 전체가 받는 「홍염」 및 「몬스터 화상」 효과가 HP 회복으로 전환된다. 착용자가 울티메이트 발동 시 파티 전체와 목표에게 「홍염」 을 부여한다." }, { title: "백염 증폭", desc: "착용자가 「홍염」 부여 시 「백염 성화」 를 대신 부여한다. 파티 전체가 부여하는 「백염 성화」 중첩이 2배로 부여된다." }] },
+                { name: "심연의 화염 마도서", effects: [{ title: "사그라진 불꽃의 저주", desc: "파티 전체가 목표에 디버프 효과 부여 시, 「사그라진 불꽃 인장」 이 부여된 모든 목표에게 동일한 디버프 효과를 부여한다." }, { title: "마지막 불꽃의 잔향", desc: "착용자가 울티메이트 발동 시 목표에 「홍염」 을 부여한다. 파티 전체가 부여한 「홍염」 지속 시간 종료 시 목표에 300% 배율의 피해를 주고 HP를 회복한다." }, { title: "사그라진 불꽃 저주 인장", desc: "착용자가 「홍염」 부여 시 「사그라진 불꽃 인장」 을 대신 부여한다. 파티 전체가 「사그라진 불꽃 인장」 부여 시 목표에게 공격력-30%, 저항-20%, 방어력-30% 중 하나의 디버프 효과를 부여한다." }] },
+                { name: "어둠의 꿈 마도서", effects: [{ title: "어둠의 꿈 마도서", desc: "모르페우스가 일반 공격을 할 때마다 탄환을 추가로 2발 발사하며 경직 삭감 효과가 강화된다." }, { title: "사기 진작", desc: "모르페우스의 공격이 25%의 확률로 파티 전체에게 「고취」 를 부여한다. 공격+1.6%, 5초 지속, 최대 10중첩." }, { title: "주사기 맹공", desc: "이카루스는 매 공격마다 50%의 확률로 HP가 최대 HP의 15% 미만인 몬스터를 처형한다. 최대 피해 500,000." }] }
+            ],
+            "신쿠": [
+                { name: "균열", effects: [{ title: "백발백중의 성화", desc: "신쿠가 「백염 성화」 가 부여된 목표 공격 시 반드시 치명타를 준다." }, { title: "투지의 불길", desc: "신쿠가 「홍염」 이 부여된 목표 공격 시 「야성의 투지」 를 3 회복한다." }, { title: "신성한 마지막 불꽃", desc: "신쿠가 울티메이트를 발동해 목표에 「홍염」 부여 시, 「백염 성화」 를 대신 부여한다." }] },
+                { name: "단월", effects: [{ title: "단월", desc: "파티 내 캐릭터가 치명타를 줄 때, 파티 전체에 주는 「홍월」 치명 피해+12%, 3초 지속, 최대 10중첩." }, { title: "함께하는 길", desc: "파티 전체의 치명 피해가 13.5% 증가한다." }, { title: "천선성", desc: "파티 전체의 치명 피해가 30% 증가하며, 양 1마리당 치명 피해가 추가로 5.5% 증가한다." }] },
+                { name: "흐르는 빛깔", effects: [{ title: "새벽을 깨우는 빛", desc: "파티 내 캐릭터가 적을 처치할 때마다 파티 전체에 「유운」 을 부여한다. 피해+12.5%, 5초 지속, 최대 10중첩." }, { title: "깨어진 태양", desc: "파티 전체가 몬스터 방어력의 3%를 무시한다." }, { title: "태양을 가르는 흰 무지개", desc: "파티 전체가 몬스터의 방어력을 9% 무시하고, 양 1마리당 방어력의 2%를 추가로 무시한다." }] },
+                { name: "재점화", effects: [{ title: "위압적 종막", desc: "착용자가 「위압적 응시」 상태에 있을 때 1초마다 자신의 HP를 25% 회복한다. 「위압적 응시」 상태 종료 시, 모든 「사그라진불꽃 인장」 을 폭발시킨다." }, { title: "위압적 잔영", desc: "「위압적 응시」 상태에서 신쿠의 이동속도가 50% 증가한다. 회피 발동 시 100% 배율의 피해를 주고, 범위 내 목표에게 「홍염」 을부여한다." }, { title: "잠식 회피", desc: "신쿠가 회피를 발동해 목표에 「홍염」 부여 시, 「사그라진 불꽃 인장」 을 대신 부여한다." }] }
+            ]
+        },
+        armors: {
+            "제로": [
+                { name: "방어구 1세트", effects: [{ title: "흰 불꽃의 노래 [0/2]", desc: "파티 전체가 몬스터 방어력의 3%를 무시한다." }, { title: "흰 불꽃의 노래 [0/4]", desc: "착용자가 3초마다 초광역 목표에게 「백염 성화」 를 부여한다.(필드 밖에서도 적용)" }, { title: "새벽녘의 태양 [0/2]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 에너지 충전량을 3 회복한다.(쿨타임 1초)" }, { title: "새벽녘의 태양 [0/4]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 에너지 충전량을 6 회복한다.(쿨타임 1초)" }] },
+                { name: "방어구 2세트", effects: [{ title: "영원한 밤의 잔불 [0/2]", desc: "파티 전체가 「사그라진 불꽃 인장」 을 폭발시키면 「사그라진 불꽃 인장」 을 보유한 목표 1명당 기폭 피해가 40% 증가한다." }, { title: "영원한 밤의 잔불 [0/4]", desc: "파티 전체가 「사그라진 불꽃 인장」 을 폭발시키면 「사그라진 불꽃 인장」 을 보유한 목표 1명당 기폭 피해가 100% 증가한다." }, { title: "새벽녘의 태양 [0/2]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 에너지 충전량을 3 회복한다.(쿨타임 1초)" }, { title: "새벽녘의 태양 [0/4]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 에너지 충전량을 6 회복한다.(쿨타임 1초)" }] },
+                { name: "방어구 3세트", effects: [{ title: "새벽 종의 목가 [0/2]", desc: "파티 내 캐릭터가 「꿈꾸는 양」 이 부여된 목표 공격 시 20%의 확률로 파티 전체에 「목가」 를 부여한다. 치명 피해+40%, 3초 지속, 최대 3중첩." }, { title: "새벽 종의 목가 [0/4]", desc: "「목가」 가 부여한 치명 피해가 120%로 증가한다." }, { title: "긴 밤의 보금자리 [0/2]", desc: "파티 내 캐릭터가 「꿈꾸는 양」 이 부여된 목표 공격 시 10%의 확률로 파티 전체에 「야상곡」 을 부여한다. 피해+21%, 3초 지속, 최대 2중첩." }, { title: "긴 밤의 보금자리 [0/4]", desc: "「야상곡」 이 부여한 피해 증가 효과가 40%로 증가한다." }] },
+                { name: "방어구 4세트", effects: [{ title: "새벽녘의 노래 [0/2]", desc: "제로의 모든 공격이 목표에 「꿈꾸는 양」 을 부여하고, 「꿈꾸는 양」 1중첩당 몬스터의 저항이 추가로 1.8% 감소한다. 초기 「꿈꾸는 양」 : 몬스터 저항-5%, 2초 지속, 최대 5중첩." }, { title: "새벽녘의 노래 [0/4]", desc: "「꿈꾸는 양」 1중첩당 몬스터의 저항이 추가로 3.2% 감소한다." }] }
+            ],
+            "민트": [
+                { name: "방어구 1세트", effects: [{ title: "태양을 좇는 빛 [0/2]", desc: "파티 전체의 치명 피해가 13.5% 증가한다." }, { title: "태양을 좇는 빛 [0/4]", desc: "파티 전체가 부여한 「백염 성화」 가 인접 목표로 확장된다." }, { title: "태양을 향한 비상 [0/2]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 치명 피해가 300% 증가한다." }, { title: "태양을 향한 비상 [0/4]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 치명 피해가 600% 증가한다." }] },
+                { name: "방어구 2세트", effects: [{ title: "밤사냥 시간 [0/2]", desc: "파티 전체가 부여한 「사그라진 불꽃 인장」 이 목표 처치 시, 그와 인접한 목표에게 「사그라진 불꽃 인장」 을 부여하고, 5초간 기폭 피해가 150% 증가한다." }, { title: "밤사냥 시간 [0/4]", desc: "파티 전체가 부여한 「사그라진 불꽃 인장」 이 목표 처치 시, 그와 인접한 목표에게 「사그라진 불꽃 인장」 을 부여하고, 5초간 기폭 피해가 300% 증가한다." }, { title: "태양을 향한 비상 [0/2]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 치명 피해가 300% 증가한다." }, { title: "태양을 향한 비상 [0/4]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 치명 피해가 600% 증가한다." }] },
+                { name: "방어구 3세트", effects: [{ title: "광야의 사냥꾼 [0/2]", desc: "파티 내 캐릭터가 몬스터에게 치명타를 줄 때 5%의 확률로 목표에게 「사냥 표식」 을 부여한다. 5초 지속, 최대 10 중첩. 「사냥 표식」 이 10중첩에 도달하거나 몬스터가 사망하면, [80,000+30,000x중첩]의 광역 피해를 주고 표식을 제거한다." }, { title: "광야의 사냥꾼 [0/4]", desc: "「사냥 표식」 으로 준 광역 피해는 명중한 목표에게 추가로 「사냥 표식」 2중첩을 부여한다. 폭발 피해가 400% 증가한다." }, { title: "바람의 보금자리 [0/2]", desc: "민트가 울티메이트 및 일반 공격 길게 누르기로 「꿈꾸는 양」 을 부여하며, 「꿈꾸는 양」 지속 시간이 1초 늘어난다. 중첩당 몬스터의 저항이 추가로 1% 감소한다. 초기 「꿈꾸는 양」 : 몬스터 저항-5%, 2초 지속, 최대 5중첩." }, { title: "바람의 보금자리 [0/4]", desc: "「꿈꾸는 양」 지속 시간이 2초 늘어나고, 중첩당 몬스터의 저항이 추가로 2% 감소한다." }] },
+                { name: "방어구 4세트", effects: [{ title: "타오르는 섬광의 추격 [0/2]", desc: "파티 내 캐릭터가 치료받을 때 30%의 확률로 해당 캐릭터에게 「햇살 바람」 을 부여한다. 피해+50%, 5초 지속, 최대 3중첩." }, { title: "타오르는 섬광의 추격 [0/4]", desc: "확률이 50%로 증가하며, 「햇살 바람」 이 추가로 공격력을 60% 증가시키고 치명 피해를 100% 증가시킨다." }, { title: "바람의 보금자리 [0/2]", desc: "민트가 울티메이트 및 일반 공격 길게 누르기로 「꿈꾸는 양」 을 부여하며, 「꿈꾸는 양」 지속 시간이 1초 늘어난다. 중첩당 몬스터의 저항이 추가로 1% 감소한다. 초기 「꿈꾸는 양」 : 몬스터 저항-5%, 2초 지속, 최대 5중첩." }, { title: "바람의 보금자리 [0/4]", desc: "「꿈꾸는 양」 지속 시간이 2초 늘어나고, 중첩당 몬스터의 저항이 추가로 2% 감소한다." }] }
+            ],
+            "일로이": [
+                { name: "방어구 1세트", effects: [{ title: "공명하는 불길의 꿈 [0/2]", desc: "파티 전체의 공격력이 15% 증가한다." }, { title: "공명하는 불길의 꿈 [0/4]", desc: "착용자가 보유한 「홍염」 은 사라지지 않으며, 바이레일 스킬 발동 시 파티 전체와 범위 내 목표의 「백염 성화」 가 최고 중첩수로 동기화된다." }, { title: "용염 모음곡 [0/2]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 파티 전체의 HP를 1.5% 회복한다. (쿨타임 1초)" }, { title: "용염 모음곡 [0/4]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 파티 전체의 HP를 3% 회복한다. (쿨타임 1초)" }] },
+                { name: "방어구 2세트", effects: [{ title: "어스름의 꿈 [0/2]", desc: "파티 전체의 피해가 14% 증가한다." }, { title: "어스름의 꿈 [0/4]", desc: "파티 전체가 「사그라진 불꽃 인장」 이 부여된 목표에게 「사그라진 불꽃 인장」 재부여 시 추가로 디버프 효과 1개를 부여한다." }, { title: "용염 모음곡 [0/2]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 파티 전체의 HP를 1.5% 회복한다. (쿨타임 1초)" }, { title: "용염 모음곡 [0/4]", desc: "파티 전체가 「홍염」 이 부여된 목표 공격 시 파티 전체의 HP를 3% 회복한다. (쿨타임 1초)" }] },
+                { name: "방어구 3세트", effects: [{ title: "물결치는 별의 노래 [0/2]", desc: "판타소스의 일반 공격 간격이 0.8초 감소하고, 일반 공격 배율이 600% 증가한다." }, { title: "물결치는 별의 노래 [0/4]", desc: "판타소스의 일반 공격 간격이 1.2초 감소하고, 일반 공격 배율이 2,000% 증가한다." }, { title: "양치기 모음곡 [0/2]", desc: "일로이의 양들이 공격 시 25%의 확률로 목표에게 「꿈꾸는 양」 을 부여하며, 양이 각자 「꿈꾸는 양」 을 부여할 때마다 추가로 200% 배율의 피해를 준다. 초기 「꿈꾸는 양」 : 몬스터 저항-5%, 2초 지속, 최대 5중첩." }, { title: "양치기 모음곡 [0/4]", desc: "확률이 75%로 상승하고, 피해 배율이 200%로 상승한다." }] },
+                { name: "방어구 4세트", effects: [{ title: "잠식하는 별의 노래 [0/2]", desc: "모르페우스의 일반 공격 간격이 0.4초 감소하고, 일반 공격 배율이 200% 증가한다." }, { title: "잠식하는 별의 노래 [0/4]", desc: "모르페우스의 일반 공격 간격이 0.6초 감소하고, 일반 공격 배율이 500% 증가한다." }, { title: "양치기 모음곡 [0/2]", desc: "일로이의 양들이 공격 시 25%의 확률로 목표에게 「꿈꾸는 양」 을 부여하며, 양이 각자 「꿈꾸는 양」 을 부여할 때마다 추가로 200% 배율의 피해를 준다. 초기 「꿈꾸는 양」 : 몬스터 저항-5%, 2초 지속, 최대 5중첩." }, { title: "양치기 모음곡 [0/4]", desc: "확률이 75%로 상승하고, 피해 배율이 200%로 상승한다." }] }
+            ],
+            "신쿠": [
+                { name: "방어구 1세트", effects: [{ title: "구름이 걷힌 창공 [0/2]", desc: "착용자가 받는 「홍염」 피해가 40% 감소하며, 필드에 있으면 방어력이 250% 증가하고 공격력이 450% 증가한다." }, { title: "구름이 걷힌 창공 [0/4]", desc: "착용자가 받는 「홍염」 피해가 80% 감소하며, 필드에 있으면 방어력이 500% 증가하고 공격력이 900% 증가한다." }, { title: "용과 용 사냥꾼 [0/2]", desc: "신쿠가 받는 「홍염」 피해가 40% 감소하며, 출전 시 경직 저항력이 증가하고 방어력이 400% 증가한다." }, { title: "용과 용 사냥꾼 [0/4]", desc: "신쿠가 받는 「홍염」 피해가 80% 감소하며, 출전 시 경직 저항력이 증가하고 방어력이 800% 증가한다." }] },
+                { name: "방어구 2세트", effects: [{ title: "영원히 평온한 밤 [0/2]", desc: "착용자가 받는 「홍염」 피해가 40% 감소하며, 필드에 있으면 방어력이 250% 증가하고 공격력이 450% 증가한다." }, { title: "영원히 평온한 밤 [0/4]", desc: "착용자가 받는 「홍염」 피해가 80% 감소하며, 필드에 있으면 방어력이 500% 증가하고 공격력이 900% 증가한다." }, { title: "용과 용 사냥꾼 [0/2]", desc: "신쿠가 받는 「홍염」 피해가 40% 감소하며, 출전 시 경직 저항력이 증가하고 방어력이 400% 증가한다." }, { title: "용과 용 사냥꾼 [0/4]", desc: "신쿠가 받는 「홍염」 피해가 80% 감소하며, 출전 시 경직 저항력이 증가하고 방어력이 800% 증가한다." }] },
+                { name: "방어구 3세트", effects: [{ title: "하늘을 가르는 일격 [0/2]", desc: "파티 내 캐릭터가 「꿈꾸는 양」 이 부여된 목표 적 처치 시, 30%의 확률로 파티 전체에 「희미한 빛」 을 부여한다. 치명 확률+3%, 3초 지속, 최대 3중첩." }, { title: "하늘을 가르는 일격 [0/4]", desc: "「희미한 빛」 이 부여한 치명 확률 증가 효과가 10%로 증가한다." }, { title: "용과 양치기 [0/2]", desc: "신쿠의 울티메이트, 스킬과 극한 회피는 목표에게 「꿈꾸는 양」 을 부여하며, 「꿈꾸는 양」 지속 시간이 1초 늘어난다. 중첩당 몬스터의 저항이 추가로 1% 감소한다." }, { title: "용과 양치기 [0/4]", desc: "「꿈꾸는 양」 지속 시간이 2초 늘어나고, 중첩당 몬스터의 저항이 추가로 2% 감소한다." }] },
+                { name: "방어구 4세트", effects: [{ title: "불꽃의 추락 [0/2]", desc: "파티 내 캐릭터가 「꿈꾸는 양」 이 부여된 목표 적에게 치명타를 가할 시, 20%의 확률로 파티 전체에 「유성」 을 부여한다. 공격력+25%, 3초 지속, 최대 3중첩." }, { title: "불꽃의 추락 [0/4]", desc: "「유성」 이 부여한 공격력이 75%로 증가한다." }, { title: "용과 양치기 [0/2]", desc: "신쿠의 울티메이트, 스킬과 극한 회피는 목표에게 「꿈꾸는 양」 을 부여하며, 「꿈꾸는 양」 지속 시간이 1초 늘어난다. 중첩당 몬스터의 저항이 추가로 1% 감소한다." }, { title: "용과 양치기 [0/4]", desc: "「꿈꾸는 양」 지속 시간이 2초 늘어나고, 중첩당 몬스터의 저항이 추가로 2% 감소한다." }] }
+            ]
+        },
+        accessories: [
+            { name: "선택 안 함", desc: "" },
+            { name: "타기도", desc: "착용자가 공격 시 타기도의 목소리를 들을 수 있다." },
+            { name: "라이언하트 솜솜의 왕관", desc: "착용자의 HP가 50% 미만인 경우, 주는 피해가 200% 증가한다." },
+            { name: "특제 시럽", desc: "착용자가 목표에게 피해를 주면 근처 범위 내 목표에게 25% 배율의 주변 피해를 1회 준다. (쿨타임 0.25초)" },
+            { name: "온천 달걀", desc: "장신구 착용 시 파티 전체가 몬스터 화상이 주는 피해에 면역된다." },
+            { name: "담금질의 돌", desc: "파티 전체가 주는 피해가 80% 증가하고, 방어력이 80% 감소한다." },
+            { name: "복수자의 마음", desc: "착용자가 부활 시 공격력과 피해가 200% 증가한다. 5초 지속." },
+            { name: "강철 의지", desc: "착용자의 이동 속도가 60% 감소하고, 대시를 사용할 수 없다. 1초마다 자신의 최대 HP를 20% 회복한다." },
+            { name: "검은 양뿔", desc: "착용자가 전투 진입 후 1초마다 방어력이 50% 증가하고 상한이 500%로 상승한다." },
+            { name: "가족사진", desc: "파티 전체에서 HP가 가득 찬 캐릭터 1명당 파티 전체 피해가 20% 증가한다. 전사한 캐릭터 1명당 파티 전체 피해가 20% 감소한다.(파티 전체에서 하나만 발동 가능, 중첩 불가) 동일한 이름의 효과는 중복 적용되지 않습니다." },
+            { name: "솜솜 부적", desc: "착용자가 울티메이트 발동 시, 파티 전체가 착용자 최대 HP의 50%에 해당하는 방어막을 획득한다. 12초 지속." },
+            { name: "질풍의 깃털 부적", desc: "착용자의 이동 속도가 50% 상승한다.(파티 전체에서 하나만 발동 가능, 중첩 불가) 동일한 이름의 효과는 중복 적용되지 않습니다." },
+            { name: "구름 타기 부적", desc: "착용자의 체력 소모가 50% 감소한다.(파티 전체에서 하나만 발동 가능, 중첩 불가) 동일한 이름의 효과는 중복 적용되지 않습니다." },
+            { name: "운명의 돌", desc: "임의의 장비 파츠를 대체해 세트 효과 활성화에 사용할 수 있다.(파티 전체에서 하나만 발동 가능, 중첩 불가) 동일한 이름의 효과는 중복 적용되지 않습니다." },
+            { name: "메에의 저주", desc: "다른 캐릭터에서 착용자로 전환 시 착용자가 「어둠 솜솜」 상태로 변하고, 모든 몬스터가 착용자를 아군 유닛으로 간주해 먼저 공격하지 않는다. 착용자가 먼저 공격하거나 캐릭터를 전환하면 「어둠 솜솜」 상태가 해제된다." },
+            { name: "안개 속 등불", desc: "장신구 착용 시 파티 전체가 붉은 안개의 피해에 면역된다." },
+            { name: "쌍둥이 목걸이·어둠", desc: "파티 전체가 부여한 「백염 성화」 지속 시간 종료 시, 목표에 「사그라진 불꽃 인장」 을 부여한다.(쿨타임 1초)" },
+            { name: "쌍둥이 목걸이·빛", desc: "파티 전체가 「사그라진 불꽃 인장」 을 폭발시킨 후, 목표에 「백염 성화」 를 부여한다.(쿨타임 1초)" },
+            { name: "신의 강림", desc: "착용자가 울티메이트 발동 시 초광역 목표에게 이동 속도 감소 효과를 부여한다. 10초 지속.(쿨타임 60초) 동일한 이름의 효과는 중복 적용되지 않습니다." },
+            { name: "타오르는 뼈", desc: "착용자가 피해를 입으면 자신의 방어력이 100% 증가한다(최대 700%). 50%의 확률로 공격자에게 경직 효과를 부여하며(보스에게는 적용되지 않음, 1초 지속), 자신의 주변 목표에게 피해를 주고 1,000% 배율의 피해를 1회 준다.(쿨타임 3초)" },
+            { name: "번갯불", desc: "「전하」 가 목표 명중 시, 목표에 경직 효과를 부여한다. 0.5초 지속.(보스에게는 적용되지 않음) 동일한 이름의 효과는 중복 적용되지 않습니다." },
+            { name: "불안정한 전하", desc: "착용자가 피해를 줄 때마다 50%의 확률로 「전하」 를 발동해 범위 내 다수의 목표에 1,800% 배율의 피해를 준다.(쿨타임 1.5초) 동일한 이름의 효과는 중복 적용되지 않습니다." },
+            { name: "드리운 어둠", desc: "「사그라진 불꽃 인장」 이 부여된 목표의 수가 많을수록 신쿠가 회피를 발동해 「사그라진 불꽃 인장」 을 부여하는 범위가 커진다." },
+            { name: "콜드 블레이드", desc: "처치한 대상 하나당, 착용자의 궤도 변경 및 극한 궤도 마무리 스킬의 재사용 대기시간이 0.5초 감소합니다. 이 효과의 재사용 대기시간은 1초입니다. 이 효과는 파티 전체에 적용되며 중첩되지 않습니다." },
+            { name: "심판", desc: "신쿠가 울티메이트 발동 시 목표에게 부여된 모든 「백염 성화」 피해를 즉시 정산한다." }
+        ]
+    };
 
+    let currentGearChar = '제로';
+
+    function selectGearChar(charName) {
+        currentGearChar = charName;
+        document.querySelectorAll('.gear-char-btn').forEach(btn => btn.classList.remove('active'));
+        
+        const idMap = { '제로': 'gear-char-zero', '민트': 'gear-char-mint', '일로이': 'gear-char-iroi', '신쿠': 'gear-char-shinku' };
+        document.getElementById(idMap[charName]).classList.add('active');
+        
+        populateGearSelects();
+    }
+
+    function populateGearSelects() {
+        const weaponSel = document.getElementById('gear-weapon');
+        const armorSel = document.getElementById('gear-armor');
+        const acc1Sel = document.getElementById('gear-acc1');
+        const acc2Sel = document.getElementById('gear-acc2');
+
+        weaponSel.innerHTML = '';
+        armorSel.innerHTML = '';
+        
+        // 무기 리스트
+        GEAR_DATA.weapons[currentGearChar].forEach((w, idx) => {
+            weaponSel.innerHTML += `<option value="${idx}">${w.name}</option>`;
+        });
+
+        // 방어구 리스트
+        GEAR_DATA.armors[currentGearChar].forEach((a, idx) => {
+            armorSel.innerHTML += `<option value="${idx}">${a.name}</option>`;
+        });
+
+        // 악세서리는 최초 1회만 채워넣음
+        if (acc1Sel.options.length === 0) {
+            GEAR_DATA.accessories.forEach((acc, idx) => {
+                const opt = `<option value="${idx}">${acc.name}</option>`;
+                acc1Sel.innerHTML += opt;
+                acc2Sel.innerHTML += opt;
+            });
+        }
+
+        // 값 변경될때 렌더링 호출
+        updateGearResult();
+    }
+
+    function updateGearResult() {
+        const wIdx = document.getElementById('gear-weapon').value;
+        const aIdx = document.getElementById('gear-armor').value;
+        const ac1Idx = document.getElementById('gear-acc1').value;
+        const ac2Idx = document.getElementById('gear-acc2').value;
+
+        const container = document.getElementById('gear-result-container');
+        let html = '';
+
+        // 1. 무기 효과 렌더링
+        if (wIdx) {
+            const weapon = GEAR_DATA.weapons[currentGearChar][wIdx];
+            html += `<div class="gear-effect-box">
+                        <h3>🗡️ 무기: ${weapon.name}</h3>`;
+            weapon.effects.forEach(eff => {
+                html += `<div class="gear-effect-item">
+                            <div class="gear-effect-title">${eff.title}</div>
+                            <div class="gear-effect-desc">${eff.desc}</div>
+                         </div>`;
+            });
+            html += `</div>`;
+        }
+
+        // 2. 방어구 효과 렌더링
+        if (aIdx) {
+            const armor = GEAR_DATA.armors[currentGearChar][aIdx];
+            html += `<div class="gear-effect-box">
+                        <h3>🛡️ 방어구: ${armor.name}</h3>`;
+            armor.effects.forEach(eff => {
+                html += `<div class="gear-effect-item">
+                            <div class="gear-effect-title">${eff.title}</div>
+                            <div class="gear-effect-desc">${eff.desc}</div>
+                         </div>`;
+            });
+            html += `</div>`;
+        }
+
+        // 3. 악세서리 효과 렌더링
+        if (ac1Idx > 0 || ac2Idx > 0) {
+            html += `<div class="gear-effect-box"><h3>💍 장신구 (악세서리)</h3>`;
+            if (ac1Idx > 0) {
+                const acc1 = GEAR_DATA.accessories[ac1Idx];
+                html += `<div class="gear-effect-item">
+                            <div class="gear-effect-title">${acc1.name}</div>
+                            <div class="gear-effect-desc">${acc1.desc}</div>
+                         </div>`;
+            }
+            if (ac2Idx > 0) {
+                const acc2 = GEAR_DATA.accessories[ac2Idx];
+                html += `<div class="gear-effect-item">
+                            <div class="gear-effect-title">${acc2.name}</div>
+                            <div class="gear-effect-desc">${acc2.desc}</div>
+                         </div>`;
+            }
+            html += `</div>`;
+        }
+
+        if (html === '') html = '<div style="color:var(--text-muted); font-size:13px; text-align:center;">선택된 장비가 없습니다.</div>';
+        container.innerHTML = html;
+    }
+
+    // 문서 로드 완료 시 초기화 실행 보장 (기존 onload와 겹치지 않게 리스너로 뺐음)
+    document.addEventListener("DOMContentLoaded", () => {
+        selectGearChar('제로'); // 초기에 제로로 세팅
+    });
     // ==========================================
     // 신비 단추 계산기 데이터 & 로직 (전역 스코프)
     // ==========================================
