@@ -749,13 +749,18 @@
         </div>
 
 <div id="tab-sheet" class="tab-content">
-            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 12px; padding: 0 5px;">
-                <span style="font-size: 12px; color: var(--text-muted); font-weight: 700;">시트 확대/축소</span>
-                <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(-0.1)">-</button>
-                <span id="sheet-zoom-val" style="font-family: monospace; font-size: 13px; font-weight: bold; color: var(--primary); min-width: 45px; text-align: center;">50%</span>
-                <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(0.1)">+</button>
-                <button class="outline-btn" style="padding: 4px 10px; font-size: 12px;" onclick="resetSheetZoom()">초기화</button>
-            </div>
+    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-bottom: 12px; padding: 0 5px;">
+        <span style="font-size: 12px; color: var(--text-muted); font-weight: 700;">시트 확대/축소</span>
+        <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(-0.1)">-</button>
+        <span id="sheet-zoom-val" style="font-family: monospace; font-size: 13px; font-weight: bold; color: var(--primary); min-width: 45px; text-align: center;">50%</span>
+        <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(0.1)">+</button>
+        <button class="outline-btn" style="padding: 4px 10px; font-size: 12px;" onclick="resetSheetZoom()">초기화</button>
+    </div>
+    <div style="width: 100%; height: 70vh; overflow: hidden; border: 1px solid var(--border-color); border-radius: 8px;">
+        <iframe id="sheet-iframe" src="https://docs.google.com/spreadsheets/d/시트ID/pubhtml?widget=true&amp;headers=false" 
+                style="width: 200%; height: 200%; transform: scale(0.5); transform-origin: 0 0; border: none;"></iframe>
+    </div>
+</div>
 
         <div id="tab-homework" class="tab-content active">
             
