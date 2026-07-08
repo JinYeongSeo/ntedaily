@@ -320,6 +320,7 @@
         .custom-controls button { flex-shrink: 0; width: 60px; padding: 8px; font-size: 13px; white-space: nowrap; }
         .delete-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); padding: 0; width: 24px; height: 24px; min-width: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; border-radius: 4px; margin-left: auto; cursor: pointer; transition: 0.2s; flex: none; }
         .delete-btn:hover { background: var(--danger); color: #fff; border-color: var(--danger); }
+        
         /* 장비 빌더 전용 CSS */
         .gear-char-btn { transition: 0.2s; font-weight: 600; }
         .gear-char-btn.active { background: var(--dashboard-bg); font-weight: 800; box-shadow: var(--shadow); }
@@ -633,7 +634,43 @@
             <button class="tab-btn" id="btn-tab-buttonCalc" onclick="switchTab('buttonCalc')">신비단추 상점 계산기</button>
             <button class="tab-btn" id="btn-tab-sheet" onclick="switchTab('sheet')">이잘키 시트</button>
         </div>
+    <div id="tab-gear" class="tab-content">
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 20px;">
+                <h2 style="margin-top:0; font-size:16px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px;">캐릭터 및 장비 선택</h2>
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;">
+                    <button class="outline-btn gear-char-btn active" id="gear-char-zero" onclick="selectGearChar('제로')" style="border-color:var(--text-main); color:var(--text-main);">제로</button>
+                    <button class="outline-btn gear-char-btn" id="gear-char-mint" onclick="selectGearChar('민트')" style="border-color:var(--success); color:var(--success);">민트</button>
+                    <button class="outline-btn gear-char-btn" id="gear-char-iroi" onclick="selectGearChar('일로이')" style="border-color:var(--warning); color:var(--warning);">일로이</button>
+                    <button class="outline-btn gear-char-btn" id="gear-char-shinku" onclick="selectGearChar('신쿠')" style="border-color:var(--secondary); color:var(--secondary);">신쿠</button>
+                </div>
 
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
+                    <div>
+                        <label class="cafe-input-label">무기</label>
+                        <select id="gear-weapon" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                    <div>
+                        <label class="cafe-input-label">방어구 (세트)</label>
+                        <select id="gear-armor" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                    <div>
+                        <label class="cafe-input-label">악세서리 1</label>
+                        <select id="gear-acc1" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                    <div>
+                        <label class="cafe-input-label">악세서리 2</label>
+                        <select id="gear-acc2" class="cafe-calc-input" onchange="updateGearResult()"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 20px;">
+                <h2 style="margin-top:0; font-size:16px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px;">종합 세트 효과 내역</h2>
+                <div id="gear-result-container">
+                    </div>
+            </div>
+        </div>
         <div id="tab-buttonCalc" class="tab-content">
             <div class="glass-panel" style="padding: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;">
                 <h2 style="margin:0; font-size:16px; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
@@ -719,52 +756,6 @@
                 <button class="outline-btn" style="padding: 4px 12px; font-size: 16px; border-color: var(--border-color); color: var(--text-main);" onclick="zoomSheet(0.1)">+</button>
                 <button class="outline-btn" style="padding: 4px 10px; font-size: 12px;" onclick="resetSheetZoom()">초기화</button>
             </div>
-<div id="tab-gear" class="tab-content">
-            <div class="glass-panel" style="padding: 20px; margin-bottom: 20px;">
-                <h2 style="margin-top:0; font-size:16px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px;">캐릭터 및 장비 선택</h2>
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 5px;">
-                    <button class="outline-btn gear-char-btn active" id="gear-char-zero" onclick="selectGearChar('제로')" style="border-color:var(--text-main); color:var(--text-main);">제로</button>
-                    <button class="outline-btn gear-char-btn" id="gear-char-mint" onclick="selectGearChar('민트')" style="border-color:var(--success); color:var(--success);">민트</button>
-                    <button class="outline-btn gear-char-btn" id="gear-char-iroi" onclick="selectGearChar('일로이')" style="border-color:var(--warning); color:var(--warning);">일로이</button>
-                    <button class="outline-btn gear-char-btn" id="gear-char-shinku" onclick="selectGearChar('신쿠')" style="border-color:var(--secondary); color:var(--secondary);">신쿠</button>
-                </div>
-
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;">
-                    <div>
-                        <label class="cafe-input-label">무기</label>
-                        <select id="gear-weapon" class="cafe-calc-input" onchange="updateGearResult()"></select>
-                    </div>
-                    <div>
-                        <label class="cafe-input-label">방어구 (세트)</label>
-                        <select id="gear-armor" class="cafe-calc-input" onchange="updateGearResult()"></select>
-                    </div>
-                    <div>
-                        <label class="cafe-input-label">악세서리 1</label>
-                        <select id="gear-acc1" class="cafe-calc-input" onchange="updateGearResult()"></select>
-                    </div>
-                    <div>
-                        <label class="cafe-input-label">악세서리 2</label>
-                        <select id="gear-acc2" class="cafe-calc-input" onchange="updateGearResult()"></select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel" style="padding: 20px;">
-                <h2 style="margin-top:0; font-size:16px; font-weight:800; border-bottom:1px solid var(--border-color); padding-bottom:10px;">종합 세트 효과 내역</h2>
-                <div id="gear-result-container">
-                    </div>
-            </div>
-        </div>
-            <div class="glass-panel" style="height: 80vh; overflow: hidden; border-radius: 8px; position: relative; margin-bottom: 20px;">
-                <iframe id="sheet-iframe" src="https://docs.google.com/spreadsheets/d/1zdtT4Qj5TkNs_Hga9unXHWKlUKSkoZ_mgM2XCM-BZ7o/edit?usp=sharing&widget=true&headers=false" 
-                style="position: absolute; top: 0; left: 0; width: 200%; height: 200%; border: none; transform: scale(0.5); transform-origin: 0 0; transition: transform 0.2s ease, width 0.2s ease, height 0.2s ease;"></iframe>
-            </div>
-            <div style="text-align: center; font-size: 12px; margin-top: 10px; color: var(--text-muted);">
-                출처: <a href="https://arca.live/b/nevernesstoeverness/173379271" target="_blank" style="color: var(--accent-blue); text-decoration: none; font-weight: bold;">이잘키 시트 원본 (NTE 채널)</a>
-            </div>
-        </div>
-        
 
         <div id="tab-homework" class="tab-content active">
             
