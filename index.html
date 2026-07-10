@@ -2114,6 +2114,12 @@
             userData.customTasks.sort((a, b) => a.text.localeCompare(b.text, 'ko-KR'));
         } else if (sortType === 'name_desc') {
             userData.customTasks.sort((a, b) => b.text.localeCompare(a.text, 'ko-KR'));
+        } else if (sortType === 'time_asc') {
+            // 마감 임박순 (남은 시간이 짧은 순)
+            userData.customTasks.sort((a, b) => getNextReset(a.type).getTime() - getNextReset(b.type).getTime());
+        } else if (sortType === 'time_desc') {
+            // 마감 여유순 (남은 시간이 긴 순)
+            userData.customTasks.sort((a, b) => getNextReset(b.type).getTime() - getNextReset(a.type).getTime());
         }
         
         saveData();
