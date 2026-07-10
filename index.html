@@ -2103,6 +2103,23 @@
         renderTasks();
     }
 
+    function executeCustomSort(sortType) {
+        if (!sortType || !userData.customTasks || userData.customTasks.length === 0) return;
+        
+        if (sortType === 'date_asc') {
+            userData.customTasks.sort((a, b) => parseInt(a.id.split('_')[1]) - parseInt(b.id.split('_')[1]));
+        } else if (sortType === 'date_desc') {
+            userData.customTasks.sort((a, b) => parseInt(b.id.split('_')[1]) - parseInt(a.id.split('_')[1]));
+        } else if (sortType === 'name_asc') {
+            userData.customTasks.sort((a, b) => a.text.localeCompare(b.text, 'ko-KR'));
+        } else if (sortType === 'name_desc') {
+            userData.customTasks.sort((a, b) => b.text.localeCompare(a.text, 'ko-KR'));
+        }
+        
+        saveData();
+        renderTasks();
+    }
+
     function renderTasks() {
         const container = document.getElementById('task-container');
         const openStates = {};
@@ -2202,7 +2219,16 @@
 
         const customDiv = document.createElement('div');
         customDiv.className = 'glass-panel task-category';
-        let customHtml = `<h2 style="--cat-color: var(--text-muted); justify-content: flex-start; gap: 8px;"><span style="display: flex; align-items: center;">커스텀 숙제 (개인용)</span></h2>
+        let customHtml = `<h2 style="--cat-color: var(--text-muted); display:flex; justify-content: space-between; align-items: center; width:100%;">
+                <span style="display: flex; align-items: center;">커스텀 숙제 (개인용)</span>
+                <select class="cafe-calc-input" style="width:auto; padding: 4px 8px; font-size:11px; cursor:pointer;" onchange="executeCustomSort(this.value)">
+                    <option value="">정렬 방식...</option>
+                    <option value="date_asc">생성일 오름차순 (오래된순)</option>
+                    <option value="date_desc">생성일 내림차순 (최신순)</option>
+                    <option value="name_asc">이름 오름차순 (ㄱ-ㅎ)</option>
+                    <option value="name_desc">이름 내림차순 (ㅎ-ㄱ)</option>
+                </select>
+            </h2>
             <div class="custom-controls">
                 <select id="custom-task-type" onchange="toggleCustomTypeInput()">
                     <option value="daily">일일</option>
