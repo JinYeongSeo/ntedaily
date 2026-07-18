@@ -1755,6 +1755,7 @@
         if(!userData.userAddedTasks) userData.userAddedTasks = {};
         if(userData.stamina === undefined) userData.stamina = 0;
         if(!userData.staminaMax) userData.staminaMax = 360;
+        if(!userData.lotteryData) userData.lotteryData = { fonds: 0, currentDay: 1, stock: { screen: 20, news: 20, cat: 20, ramen: 20, book: 20 }, history: [] };
     }
 
     function finalizeSetup(displayUid) {
@@ -1775,6 +1776,23 @@
             if(!cafeDataState[0]) cafeDataState = [[null, null], [null, null], [null, null], [null, null], [null, null]];
             renderCafes();
         }
+
+        // [추가된 부분] 복권 데이터 파이어베이스 연동 및 렌더링
+        let localLottery = localStorage.getItem('nteGachaState_v4');
+        let parsedLottery = null;
+        try { if(localLottery) parsedLottery = JSON.parse(localLottery); } catch(e){}
+
+        if (userData.lotteryData && userData.lotteryData.history) {
+            // 서버에 데이터가 있으면 덮어씌움
+            lotteryState = userData.lotteryData;
+            localStorage.setItem('nteGachaState_v4', JSON.stringify(lotteryState));
+        } else if (parsedLottery) {
+            // 서버에 없고 기기에만 있으면 기기 데이터를 서버로 올림
+            userData.lotteryData = parsedLottery;
+            lotteryState = parsedLottery;
+            saveData();
+        }
+        renderLotteryUI(); // 동기화 완료 후 복권 UI 새로고침
 
         checkAndResetTasks();
         
@@ -3503,6 +3521,12 @@ const hourlyRev = finalPrice * (totalTraffic / 100);
 
     function saveLotteryState() {
         localStorage.setItem('nteGachaState_v4', JSON.stringify(lotteryState));
+        
+        // [추가된 부분] 상태 변동 시 서버 데이터 객체(userData)에도 반영 후 전송
+        userData.lotteryData = lotteryState;
+        if (currentUserAuthUid) {
+            saveData();
+        }
     }
 
     const formatLotteryNum = (num) => num.toLocaleString('ko-KR');
