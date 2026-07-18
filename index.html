@@ -2302,7 +2302,7 @@
                 if(cat.type === 'weekly' || cat.type === 'biweeklyPinkpus' || cat.type === 'biweeklyOrbit') { weeklyTotal += weight; if(isChecked) weeklyDone += weight; }
             });
 
-            if (isEditMode && categoryKey !== 'fiveWeekly') {
+            if (isEditMode) {
                 html += `<div style="display:flex; gap:8px; margin-top:15px; border-top: 1px dashed var(--border-color); padding-top: 15px;">
                     <input type="text" id="add-task-${categoryKey}" class="cafe-calc-input" style="flex:1; padding:8px; font-size:13px;" placeholder="새 항목 입력" onkeypress="if(event.key === 'Enter') addStandardTask('${categoryKey}')">
                     <button class="outline-btn" style="border-color:var(--primary); color:var(--primary); font-weight:700; flex:none; padding:0 15px;" onclick="addStandardTask('${categoryKey}')">추가</button>
