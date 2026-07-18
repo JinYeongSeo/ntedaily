@@ -477,6 +477,40 @@
             .cafe-timer-wrap { flex-direction: column; }
             .task-category h2 button { font-size: 11px; padding: 3px 6px; }
         }
+        /* ========================================== */
+        /* 복권 시뮬레이터 전용 CSS */
+        /* ========================================== */
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .gacha-card { background-color: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s; box-shadow: var(--shadow); }
+        .gacha-card:hover { transform: translateY(-3px); border-color: var(--primary); }
+        .card-img-box { width: 100%; height: 140px; background-color: var(--dashboard-bg); position: relative; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--border-color); overflow: hidden; }
+        .card-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .gacha-card:hover .card-img-box img { transform: scale(1.05); }
+        .card-content { padding: 16px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; text-align: center; }
+        .card-title { font-size: 15px; font-weight: 800; margin-bottom: 6px; word-break: keep-all; line-height: 1.3; color: var(--text-main); }
+        .card-stock { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; }
+        .card-price { font-size: 16px; font-weight: 800; color: var(--warning); margin-bottom: 14px; font-family: monospace; }
+        .btn-pull { width: 100%; padding: 12px; font-size: 14px; background: var(--primary); color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-pull:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-pull:disabled { background: var(--border-color); color: var(--text-muted); cursor: not-allowed; }
+        
+        .history-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 15px; }
+        .total-net-display { font-size: 15px; color: var(--text-muted); font-weight: 600; margin-top: 8px; }
+        .history-list { display: flex; flex-direction: column; gap: 16px; max-height: 500px; overflow-y: auto; padding-right: 4px; }
+        .day-card { background-color: var(--dashboard-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; }
+        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 16px; font-weight: 800; flex-wrap: wrap; gap: 10px; }
+        .day-summary { font-size: 13px; color: var(--text-muted); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px dashed var(--border-color); font-weight: 600; }
+        .log-list { display: flex; flex-direction: column; gap: 6px; max-height: 200px; overflow-y: auto; }
+        .log-item { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 8px; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 4px; font-weight: 500; }
+        .net-plus { color: var(--success); font-weight: 700; }
+        .net-minus { color: var(--danger); font-weight: 700; }
+        .net-zero { color: var(--text-muted); font-weight: 700; }
+        
+        @media (max-width: 768px) {
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .history-header { flex-direction: column; align-items: stretch; }
+        }
+        
     </style>
 </head>
 <body>
@@ -628,6 +662,7 @@
         <div class="tabs">
             <button class="tab-btn active" id="btn-tab-homework" onclick="switchTab('homework')">숙제 트래커</button>
             <button class="tab-btn" id="btn-tab-gear" onclick="switchTab('gear')">999일 야화 빌더</button>
+            <button class="tab-btn" id="btn-tab-lottery" onclick="switchTab('lottery')">복권 시뮬레이터</button>
             <button class="tab-btn" id="btn-tab-affection" onclick="switchTab('affection')">호감도 계산기</button>
             <button class="tab-btn" id="btn-tab-cafe" onclick="switchTab('cafe')">카페 수익 계산기</button>
             <button class="tab-btn" id="btn-tab-ponz" onclick="switchTab('ponz')">폰즈 계산기</button>
@@ -761,6 +796,37 @@
                 style="width: 200%; height: 200%; transform: scale(0.5); transform-origin: 0 0; border: none;"></iframe>
     </div>
 </div>
+        <div id="tab-lottery" class="tab-content">
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                <h2 style="margin:0; font-size:18px; font-weight:800; color:var(--text-main);">
+                    🎟️ NTE 복권 시뮬레이터
+                </h2>
+                <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 800; color: var(--warning); background: var(--dashboard-bg); padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border-color);">
+                        <img src="./image/ponz.png" alt="Ponz" style="width: 20px; height: 20px; object-fit: contain;" onerror="this.style.display='none'">
+                        <span id="fonds-amt" style="font-family: monospace;">0</span>
+                    </div>
+                    <button class="outline-btn" style="border-color:var(--primary); color:var(--primary); font-weight:700;" onclick="recharge(1000000)">100만 폰즈 충전</button>
+                </div>
+            </div>
+
+            <div class="cards-grid" id="cards-container"></div>
+
+            <div class="glass-panel history-panel">
+                <div class="history-header">
+                    <div>
+                        <h2 style="margin:0; font-size: 18px; font-weight: 800; color:var(--text-main);">당첨 기록</h2>
+                        <div class="total-net-display">총 누적 손익: <span id="total-net-amt" class="net-zero" style="font-family: monospace; font-size: 16px;">0</span> 폰즈</div>
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="outline-btn" style="background:var(--primary); color:#fff; border:none;" onclick="nextDay()">다음 날로 넘기기</button>
+                        <button class="outline-btn" onclick="clearHistory()">기록만 삭제</button>
+                        <button class="outline-btn" style="border-color:var(--danger); color:var(--danger);" onclick="hardReset()">전체 초기화</button>
+                    </div>
+                </div>
+                <div class="history-list" id="history-container"></div>
+            </div>
+        </div>
 
         <div id="tab-homework" class="tab-content active">
             
@@ -3399,8 +3465,221 @@ const hourlyRev = finalPrice * (totalTraffic / 100);
         currentSheetZoom = 0.5;
         zoomSheet(0); // 0을 던져서 수치 렌더링만 강제 동기화
     }
+    // ==========================================
+    // 복권 시뮬레이터 로직
+    // ==========================================
+    const gachaDataObj = {
+        screen: {
+            id: 'screen', name: '<스크린 너머>', cost: 10000, img: 'image/1.png',
+            probs: JSON.parse('[{"prize":0,"p":21.2837},{"prize":10000,"p":72.8128},{"prize":20000,"p":2.9125},{"prize":30000,"p":1.5682},{"prize":40000,"p":0.3136},{"prize":50000,"p":0.2464},{"prize":60000,"p":0.1736},{"prize":70000,"p":0.0504},{"prize":80000,"p":0.1288},{"prize":90000,"p":0.1064},{"prize":100000,"p":0.2072},{"prize":110000,"p":0.0089},{"prize":120000,"p":0.0235},{"prize":130000,"p":0.01},{"prize":140000,"p":0.01},{"prize":150000,"p":0.0201},{"prize":160000,"p":0.0089},{"prize":170000,"p":0.0033},{"prize":180000,"p":0.0078},{"prize":190000,"p":0.0044},{"prize":200000,"p":0.0448},{"prize":210000,"p":0.0067},{"prize":220000,"p":0.0078},{"prize":230000,"p":0.0078},{"prize":240000,"p":0.0089},{"prize":250000,"p":0.0044},{"prize":260000,"p":0.0056},{"prize":280000,"p":0.0033},{"prize":290000,"p":0.0022},{"prize":300000,"p":0.0033},{"prize":350000,"p":0.0011},{"prize":400000,"p":0.0011},{"prize":500000,"p":0.0011}]')
+        },
+        news: {
+            id: 'news', name: '<헤테로 뉴스>', cost: 20000, img: 'image/2.png',
+            probs: JSON.parse('[{"prize":0,"p":19.7011},{"prize":20000,"p":64.0286},{"prize":30000,"p":12.8057},{"prize":40000,"p":1.2805},{"prize":50000,"p":1.4775},{"prize":60000,"p":0.128},{"prize":70000,"p":0.0098},{"prize":80000,"p":0.0738},{"prize":90000,"p":0.0738},{"prize":100000,"p":0.1576},{"prize":110000,"p":0.0039},{"prize":120000,"p":0.0167},{"prize":130000,"p":0.0049},{"prize":140000,"p":0.0059},{"prize":150000,"p":0.0197},{"prize":160000,"p":0.0059},{"prize":170000,"p":0.0029},{"prize":180000,"p":0.0059},{"prize":190000,"p":0.0029},{"prize":200000,"p":0.0305},{"prize":210000,"p":0.0029},{"prize":220000,"p":0.0039},{"prize":230000,"p":0.0029},{"prize":240000,"p":0.0039},{"prize":250000,"p":0.0039},{"prize":260000,"p":0.0039},{"prize":270000,"p":0.0019},{"prize":280000,"p":0.0019},{"prize":290000,"p":0.0019},{"prize":300000,"p":0.0285},{"prize":320000,"p":0.0039},{"prize":330000,"p":0.0019},{"prize":340000,"p":0.0019},{"prize":350000,"p":0.0039},{"prize":360000,"p":0.0039},{"prize":380000,"p":0.0019},{"prize":390000,"p":0.0019},{"prize":400000,"p":0.0147},{"prize":420000,"p":0.0029},{"prize":430000,"p":0.0009},{"prize":440000,"p":0.0009},{"prize":450000,"p":0.0039},{"prize":460000,"p":0.0019},{"prize":480000,"p":0.0009},{"prize":490000,"p":0.0009},{"prize":500000,"p":0.0147},{"prize":520000,"p":0.0019},{"prize":530000,"p":0.0009},{"prize":540000,"p":0.0009},{"prize":550000,"p":0.0009},{"prize":560000,"p":0.0019},{"prize":580000,"p":0.0009},{"prize":590000,"p":0.0009},{"prize":600000,"p":0.0167},{"prize":620000,"p":0.0019},{"prize":630000,"p":0.0009},{"prize":640000,"p":0.0009},{"prize":650000,"p":0.0029},{"prize":660000,"p":0.0019},{"prize":680000,"p":0.0009},{"prize":690000,"p":0.0009},{"prize":700000,"p":0.0029},{"prize":720000,"p":0.0009},{"prize":750000,"p":0.0009},{"prize":800000,"p":0.0019},{"prize":1000000,"p":0.0019}]')
+        },
+        cat: {
+            id: 'cat', name: '<고양이는 무슨 꿈을 꿀까>', cost: 50000, img: 'image/3.png',
+            probs: JSON.parse('[{"prize":0,"p":21.9706},{"prize":20000,"p":38.4486},{"prize":40000,"p":8.7882},{"prize":50000,"p":8.7882},{"prize":60000,"p":1.0985},{"prize":70000,"p":1.0985},{"prize":80000,"p":1.0985},{"prize":90000,"p":1.0985},{"prize":100000,"p":4.3941},{"prize":110000,"p":0.5492},{"prize":120000,"p":1.6477},{"prize":130000,"p":0.5492},{"prize":140000,"p":1.6477},{"prize":150000,"p":2.197},{"prize":160000,"p":0.6591},{"prize":170000,"p":0.4394},{"prize":180000,"p":0.6591},{"prize":190000,"p":0.4394},{"prize":200000,"p":1.9773},{"prize":210000,"p":0.1098},{"prize":220000,"p":0.1647},{"prize":230000,"p":0.1098},{"prize":240000,"p":0.1647},{"prize":250000,"p":0.4394},{"prize":260000,"p":0.1647},{"prize":280000,"p":0.1647},{"prize":300000,"p":0.6041},{"prize":320000,"p":0.0164},{"prize":340000,"p":0.0164},{"prize":350000,"p":0.0549},{"prize":360000,"p":0.0164},{"prize":380000,"p":0.0164},{"prize":400000,"p":0.0823},{"prize":420000,"p":0.0109},{"prize":440000,"p":0.0109},{"prize":450000,"p":0.0549},{"prize":460000,"p":0.0109},{"prize":470000,"p":0.0054},{"prize":480000,"p":0.0109},{"prize":490000,"p":0.0054},{"prize":500000,"p":0.1043},{"prize":510000,"p":0.0005},{"prize":520000,"p":0.0005},{"prize":530000,"p":0.0005},{"prize":540000,"p":0.0005},{"prize":550000,"p":0.0043},{"prize":560000,"p":0.0005},{"prize":580000,"p":0.0005},{"prize":600000,"p":0.0087},{"prize":620000,"p":0.0016},{"prize":640000,"p":0.0016},{"prize":650000,"p":0.0049},{"prize":660000,"p":0.0016},{"prize":680000,"p":0.0016},{"prize":700000,"p":0.0087},{"prize":750000,"p":0.006},{"prize":800000,"p":0.0093},{"prize":820000,"p":0.001},{"prize":840000,"p":0.001},{"prize":850000,"p":0.0021},{"prize":860000,"p":0.001},{"prize":880000,"p":0.001},{"prize":900000,"p":0.0093},{"prize":920000,"p":0.0005},{"prize":940000,"p":0.0005},{"prize":950000,"p":0.0038},{"prize":960000,"p":0.0005},{"prize":980000,"p":0.0005},{"prize":1000000,"p":0.0126},{"prize":1020000,"p":0.0002},{"prize":1040000,"p":0.0002},{"prize":1050000,"p":0.0009},{"prize":1060000,"p":0.0002},{"prize":1080000,"p":0.0002},{"prize":1100000,"p":0.0017},{"prize":1150000,"p":0.0004},{"prize":1200000,"p":0.0018},{"prize":1220000,"p":0.0001},{"prize":1240000,"p":0.0001},{"prize":1250000,"p":0.0006},{"prize":1260000,"p":0.0001},{"prize":1280000,"p":0.0001},{"prize":1300000,"p":0.0013},{"prize":1350000,"p":0.0004},{"prize":1400000,"p":0.0015},{"prize":1450000,"p":0.0002},{"prize":1500000,"p":0.0014},{"prize":1520000,"p":0.0001},{"prize":1540000,"p":0.0001},{"prize":1550000,"p":0.0002},{"prize":1560000,"p":0.0001},{"prize":1580000,"p":0.0001},{"prize":1600000,"p":0.0013},{"prize":1620000,"p":0.0001},{"prize":1640000,"p":0.0001},{"prize":1650000,"p":0.0004},{"prize":1660000,"p":0.0001},{"prize":1680000,"p":0.0001},{"prize":1700000,"p":0.0007},{"prize":1750000,"p":0.0003},{"prize":1800000,"p":0.0014},{"prize":1900000,"p":0.0007},{"prize":1950000,"p":0.0001},{"prize":2000000,"p":0.001},{"prize":2020000,"p":0.0001},{"prize":2040000,"p":0.0001},{"prize":2050000,"p":0.0002},{"prize":2060000,"p":0.0001},{"prize":2080000,"p":0.0001},{"prize":2100000,"p":0.0007},{"prize":2150000,"p":0.0002},{"prize":2200000,"p":0.0007},{"prize":2300000,"p":0.0005},{"prize":2400000,"p":0.0005},{"prize":2450000,"p":0.0001},{"prize":2500000,"p":0.0005}]')
+        },
+        ramen: {
+            id: 'ramen', name: '<라멘의 예술>', cost: 50000, img: 'image/4.png',
+            probs: JSON.parse('[{"prize":0,"p":22.2607},{"prize":20000,"p":38.9563},{"prize":40000,"p":8.9043},{"prize":50000,"p":8.9043},{"prize":60000,"p":1.113},{"prize":70000,"p":1.113},{"prize":80000,"p":1.113},{"prize":90000,"p":1.113},{"prize":100000,"p":3.3391},{"prize":110000,"p":0.5565},{"prize":120000,"p":1.6695},{"prize":130000,"p":0.5565},{"prize":140000,"p":1.6695},{"prize":150000,"p":2.226},{"prize":160000,"p":0.6678},{"prize":170000,"p":0.4452},{"prize":180000,"p":0.6678},{"prize":190000,"p":0.4452},{"prize":200000,"p":1.5582},{"prize":210000,"p":0.1113},{"prize":220000,"p":0.1669},{"prize":230000,"p":0.1113},{"prize":240000,"p":0.1669},{"prize":250000,"p":0.3895},{"prize":260000,"p":0.1669},{"prize":280000,"p":0.1669},{"prize":300000,"p":0.5565},{"prize":320000,"p":0.0333},{"prize":340000,"p":0.0333},{"prize":350000,"p":0.1113},{"prize":360000,"p":0.0333},{"prize":380000,"p":0.0333},{"prize":400000,"p":0.1446},{"prize":420000,"p":0.0222},{"prize":440000,"p":0.0222},{"prize":450000,"p":0.1113},{"prize":460000,"p":0.0222},{"prize":470000,"p":0.0111},{"prize":480000,"p":0.0222},{"prize":490000,"p":0.0111},{"prize":500000,"p":0.1669},{"prize":510000,"p":0.0005},{"prize":520000,"p":0.0005},{"prize":530000,"p":0.0005},{"prize":540000,"p":0.0005},{"prize":550000,"p":0.0044},{"prize":560000,"p":0.0005},{"prize":580000,"p":0.0005},{"prize":600000,"p":0.0083},{"prize":620000,"p":0.0016},{"prize":640000,"p":0.0016},{"prize":650000,"p":0.005},{"prize":660000,"p":0.0016},{"prize":680000,"p":0.0016},{"prize":700000,"p":0.0089},{"prize":750000,"p":0.005},{"prize":800000,"p":0.0089},{"prize":820000,"p":0.0011},{"prize":840000,"p":0.0011},{"prize":850000,"p":0.0022},{"prize":860000,"p":0.0011},{"prize":880000,"p":0.0011},{"prize":900000,"p":0.0094},{"prize":920000,"p":0.0005},{"prize":940000,"p":0.0005},{"prize":950000,"p":0.0038},{"prize":960000,"p":0.0005},{"prize":980000,"p":0.0005},{"prize":1000000,"p":0.0094},{"prize":1020000,"p":0.0002},{"prize":1040000,"p":0.0002},{"prize":1050000,"p":0.001},{"prize":1060000,"p":0.0002},{"prize":1080000,"p":0.0002},{"prize":1100000,"p":0.0017},{"prize":1150000,"p":0.0004},{"prize":1200000,"p":0.0018},{"prize":1220000,"p":0.0001},{"prize":1240000,"p":0.0001},{"prize":1250000,"p":0.0005},{"prize":1260000,"p":0.0001},{"prize":1280000,"p":0.0001},{"prize":1300000,"p":0.0013},{"prize":1350000,"p":0.0004},{"prize":1400000,"p":0.0015},{"prize":1450000,"p":0.0002},{"prize":1500000,"p":0.0008},{"prize":1520000,"p":0.0001},{"prize":1540000,"p":0.0001},{"prize":1550000,"p":0.0002},{"prize":1560000,"p":0.0001},{"prize":1580000,"p":0.0001},{"prize":1600000,"p":0.0013},{"prize":1620000,"p":0.0001},{"prize":1640000,"p":0.0001},{"prize":1650000,"p":0.0004},{"prize":1660000,"p":0.0001},{"prize":1680000,"p":0.0001},{"prize":1700000,"p":0.0007},{"prize":1750000,"p":0.0003},{"prize":1800000,"p":0.0014},{"prize":1900000,"p":0.0007},{"prize":1950000,"p":0.0001},{"prize":2000000,"p":0.0006},{"prize":2020000,"p":0.0001},{"prize":2040000,"p":0.0001},{"prize":2050000,"p":0.0002},{"prize":2060000,"p":0.0001},{"prize":2080000,"p":0.0001},{"prize":2100000,"p":0.0007},{"prize":2150000,"p":0.0002},{"prize":2200000,"p":0.0007},{"prize":2300000,"p":0.0005},{"prize":2400000,"p":0.0005},{"prize":2450000,"p":0.0001},{"prize":2500000,"p":0.0003}]')
+        },
+        book: {
+            id: 'book', name: '<책 밖의 세상>', cost: 50000, img: 'image/5.png',
+            probs: JSON.parse('[{"prize":0,"p":22.2607},{"prize":20000,"p":38.9563},{"prize":40000,"p":8.9043},{"prize":50000,"p":8.9043},{"prize":60000,"p":1.113},{"prize":70000,"p":1.113},{"prize":80000,"p":1.113},{"prize":90000,"p":1.113},{"prize":100000,"p":3.3391},{"prize":110000,"p":0.5565},{"prize":120000,"p":1.6695},{"prize":130000,"p":0.5565},{"prize":140000,"p":1.6695},{"prize":150000,"p":2.226},{"prize":160000,"p":0.6678},{"prize":170000,"p":0.4452},{"prize":180000,"p":0.6678},{"prize":190000,"p":0.4452},{"prize":200000,"p":1.5582},{"prize":210000,"p":0.1113},{"prize":220000,"p":0.1669},{"prize":230000,"p":0.1113},{"prize":240000,"p":0.1669},{"prize":250000,"p":0.3895},{"prize":260000,"p":0.1669},{"prize":280000,"p":0.1669},{"prize":300000,"p":0.5565},{"prize":320000,"p":0.0333},{"prize":340000,"p":0.0333},{"prize":350000,"p":0.1113},{"prize":360000,"p":0.0333},{"prize":380000,"p":0.0333},{"prize":400000,"p":0.1446},{"prize":420000,"p":0.0222},{"prize":440000,"p":0.0222},{"prize":450000,"p":0.1113},{"prize":460000,"p":0.0222},{"prize":470000,"p":0.0111},{"prize":480000,"p":0.0222},{"prize":490000,"p":0.0111},{"prize":500000,"p":0.1669},{"prize":510000,"p":0.0005},{"prize":520000,"p":0.0005},{"prize":530000,"p":0.0005},{"prize":540000,"p":0.0005},{"prize":550000,"p":0.0044},{"prize":560000,"p":0.0005},{"prize":580000,"p":0.0005},{"prize":600000,"p":0.0083},{"prize":620000,"p":0.0016},{"prize":640000,"p":0.0016},{"prize":650000,"p":0.005},{"prize":660000,"p":0.0016},{"prize":680000,"p":0.0016},{"prize":700000,"p":0.0089},{"prize":750000,"p":0.005},{"prize":800000,"p":0.0089},{"prize":820000,"p":0.0011},{"prize":840000,"p":0.0011},{"prize":850000,"p":0.0022},{"prize":860000,"p":0.0011},{"prize":880000,"p":0.0011},{"prize":900000,"p":0.0094},{"prize":920000,"p":0.0005},{"prize":940000,"p":0.0005},{"prize":950000,"p":0.0038},{"prize":960000,"p":0.0005},{"prize":980000,"p":0.0005},{"prize":1000000,"p":0.0094},{"prize":1020000,"p":0.0002},{"prize":1040000,"p":0.0002},{"prize":1050000,"p":0.001},{"prize":1060000,"p":0.0002},{"prize":1080000,"p":0.0002},{"prize":1100000,"p":0.0017},{"prize":1150000,"p":0.0004},{"prize":1200000,"p":0.0018},{"prize":1220000,"p":0.0001},{"prize":1240000,"p":0.0001},{"prize":1250000,"p":0.0005},{"prize":1260000,"p":0.0001},{"prize":1280000,"p":0.0001},{"prize":1300000,"p":0.0013},{"prize":1350000,"p":0.0004},{"prize":1400000,"p":0.0015},{"prize":1450000,"p":0.0002},{"prize":1500000,"p":0.0008},{"prize":1520000,"p":0.0001},{"prize":1540000,"p":0.0001},{"prize":1550000,"p":0.0002},{"prize":1560000,"p":0.0001},{"prize":1580000,"p":0.0001},{"prize":1600000,"p":0.0013},{"prize":1620000,"p":0.0001},{"prize":1640000,"p":0.0001},{"prize":1650000,"p":0.0004},{"prize":1660000,"p":0.0001},{"prize":1680000,"p":0.0001},{"prize":1700000,"p":0.0007},{"prize":1750000,"p":0.0003},{"prize":1800000,"p":0.0014},{"prize":1900000,"p":0.0007},{"prize":1950000,"p":0.0001},{"prize":2000000,"p":0.0006},{"prize":2020000,"p":0.0001},{"prize":2040000,"p":0.0001},{"prize":2050000,"p":0.0002},{"prize":2060000,"p":0.0001},{"prize":2080000,"p":0.0001},{"prize":2100000,"p":0.0007},{"prize":2150000,"p":0.0002},{"prize":2200000,"p":0.0007},{"prize":2300000,"p":0.0005},{"prize":2400000,"p":0.0005},{"prize":2450000,"p":0.0001},{"prize":2500000,"p":0.0003}]')
+        }
+    };
+
+    let lotteryState = { fonds: 0, currentDay: 1, stock: { screen: 20, news: 20, cat: 20, ramen: 20, book: 20 }, history: [] };
+
+    function initLotteryApp() {
+        const saved = localStorage.getItem('nteGachaState_v4');
+        if (saved) {
+            try { lotteryState = JSON.parse(saved); } catch(e) {}
+        }
+        renderLotteryUI();
+    }
+
+    function saveLotteryState() {
+        localStorage.setItem('nteGachaState_v4', JSON.stringify(lotteryState));
+    }
+
+    const formatLotteryNum = (num) => num.toLocaleString('ko-KR');
+    const formatLotteryNet = (num) => num > 0 ? `+${formatLotteryNum(num)}` : num < 0 ? formatLotteryNum(num) : '0';
+
+    function rollGacha(typeKey) {
+        const gacha = gachaDataObj[typeKey];
+        if (lotteryState.stock[typeKey] <= 0) {
+            alert('오늘 재고가 모두 소진되었습니다. 다음 날로 넘어가주세요.'); return;
+        }
+        if (lotteryState.fonds < gacha.cost) {
+            alert('폰즈가 부족합니다. 우측 상단에서 충전해주세요.'); return;
+        }
+
+        lotteryState.stock[typeKey]--;
+        lotteryState.fonds -= gacha.cost;
+
+        const rand = Math.random() * 100;
+        let cumulative = 0;
+        let winAmount = 0;
+
+        for (let item of gacha.probs) {
+            cumulative += item.p;
+            if (rand <= cumulative + 0.000001) {
+                winAmount = item.prize; break;
+            }
+        }
+        
+        lotteryState.fonds += winAmount;
+        const netProfit = winAmount - gacha.cost;
+
+        lotteryState.history.push({
+            day: lotteryState.currentDay, type: typeKey, name: gacha.name, cost: gacha.cost,
+            win: winAmount, net: netProfit, time: new Date().toLocaleTimeString('ko-KR', { hour12: false })
+        });
+
+        saveLotteryState(); renderLotteryUI();
+    }
+
+    function recharge(amount) {
+        lotteryState.fonds += amount;
+        saveLotteryState(); renderLotteryUI();
+    }
+
+    function nextDay() {
+        lotteryState.currentDay++;
+        lotteryState.stock = { screen: 20, news: 20, cat: 20, ramen: 20, book: 20 };
+        saveLotteryState(); renderLotteryUI();
+    }
+
+    function clearHistory() {
+        if(confirm('기록만 초기화하시겠습니까? (보유 폰즈와 진행 일차는 유지됩니다.)')) {
+            lotteryState.history = [];
+            saveLotteryState(); renderLotteryUI();
+        }
+    }
+
+    function hardReset() {
+        if(confirm('모든 데이터를 초기화하시겠습니까? 폰즈와 전체 히스토리가 삭제됩니다.')) {
+            lotteryState = { fonds: 0, currentDay: 1, stock: { screen: 20, news: 20, cat: 20, ramen: 20, book: 20 }, history: [] };
+            saveLotteryState(); renderLotteryUI();
+        }
+    }
+
+    function deleteDay(targetDay) {
+        if(confirm(targetDay + '일차 기록을 삭제하시겠습니까? (보유 폰즈 수치에는 영향을 주지 않습니다)')) {
+            lotteryState.history = lotteryState.history.filter(log => log.day !== targetDay);
+            saveLotteryState(); renderLotteryUI();
+        }
+    }
+
+    function renderLotteryUI() {
+        document.getElementById('fonds-amt').innerText = formatLotteryNum(lotteryState.fonds);
+
+        let totalNet = 0;
+        lotteryState.history.forEach(log => { totalNet += log.net; });
+
+        const totalNetDisplay = document.getElementById('total-net-amt');
+        totalNetDisplay.innerText = formatLotteryNet(totalNet);
+        totalNetDisplay.className = totalNet > 0 ? 'net-plus' : (totalNet < 0 ? 'net-minus' : 'net-zero');
+
+        const cardsContainer = document.getElementById('cards-container');
+        cardsContainer.innerHTML = '';
+        
+        Object.keys(gachaDataObj).forEach(key => {
+            const data = gachaDataObj[key];
+            const stock = lotteryState.stock[key];
+            const isSoldOut = stock <= 0;
+
+            const cardHtml = `
+                <div class="gacha-card" id="card-${key}">
+                    <div class="card-img-box">
+                        <img src="${data.img}" alt="${data.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <span class="card-img-fallback" style="display:none; color:var(--text-muted); font-size:13px;">${data.name} 이미지 없음</span>
+                    </div>
+                    <div class="card-content">
+                        <div>
+                            <div class="card-title">${data.name}</div>
+                            <div class="card-stock">일일 재고: ${stock} / 20</div>
+                        </div>
+                        <div>
+                            <div class="card-price">${formatLotteryNum(data.cost)} 폰즈</div>
+                            <button class="btn-pull" onclick="rollGacha('${key}')" ${isSoldOut ? 'disabled' : ''}>
+                                ${isSoldOut ? '매진됨' : '복권 사용'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            cardsContainer.innerHTML += cardHtml;
+        });
+
+        const historyContainer = document.getElementById('history-container');
+        historyContainer.innerHTML = '';
+        
+        if (lotteryState.history.length === 0) {
+            historyContainer.innerHTML = '<div style="text-align:center; padding:40px 0; color:var(--text-muted); font-weight:600;">아직 복권 사용 기록이 없습니다. 효율 연구를 위해 복권을 사용해보세요.</div>';
+            return;
+        }
+
+        const grouped = lotteryState.history.reduce((acc, log) => {
+            if (!acc[log.day]) acc[log.day] = [];
+            acc[log.day].unshift(log);
+            return acc;
+        }, {});
+
+        Object.keys(grouped).sort((a,b) => b - a).forEach(day => {
+            const logs = grouped[day];
+            let dailyCost = 0, dailyWin = 0;
+            
+            logs.forEach(log => { dailyCost += log.cost; dailyWin += log.win; });
+            const dailyNet = dailyWin - dailyCost;
+            
+            let netClass = 'net-zero';
+            if (dailyNet > 0) netClass = 'net-plus';
+            else if (dailyNet < 0) netClass = 'net-minus';
+
+            let dayHtml = `
+                <div class="day-card">
+                    <div class="day-header">
+                        <span>${day}일차 기록</span>
+                        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                            <span class="${netClass}">일일 손익: ${formatLotteryNet(dailyNet)} 폰즈</span>
+                            <button class="outline-btn" style="padding: 4px 8px; font-size: 11px; border-color: var(--danger); color: var(--danger);" onclick="deleteDay(${day})">기록 삭제</button>
+                        </div>
+                    </div>
+                    <div class="day-summary">
+                        소모: ${formatLotteryNum(dailyCost)} / 당첨: ${formatLotteryNum(dailyWin)} (총 ${logs.length}회 시행)
+                    </div>
+                    <div class="log-list">
+            `;
+
+            logs.forEach(log => {
+                let logNetClass = 'net-zero';
+                if (log.net > 0) logNetClass = 'net-plus';
+                else if (log.net < 0) logNetClass = 'net-minus';
+
+                dayHtml += `
+                    <div class="log-item">
+                        <div>
+                            <span style="color:var(--text-muted); margin-right:8px;">[${log.time}]</span>
+                            <span>${log.name}</span>
+                        </div>
+                        <span class="${logNetClass}">
+                            ${log.win === 0 ? '꽝 (호감도 아이템)' : formatLotteryNum(log.win) + ' 당첨'} (${formatLotteryNet(log.net)})
+                        </span>
+                    </div>
+                `;
+            });
+
+            dayHtml += `</div></div>`;
+            historyContainer.innerHTML += dayHtml;
+        });
+    }
     window.onload = () => {
         updateThemeBtnText();
+        initLotteryApp();
     };
 </script>
 </body>
