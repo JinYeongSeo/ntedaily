@@ -507,7 +507,20 @@
         .net-zero { color: var(--text-muted); font-weight: 700; }
         
         @media (max-width: 768px) {
-            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .cards-grid { 
+                display: flex; 
+                flex-wrap: nowrap; 
+                overflow-x: auto; 
+                -webkit-overflow-scrolling: touch; 
+                gap: 12px; 
+                padding-bottom: 12px; 
+                scroll-snap-type: x mandatory; 
+            }
+            .gacha-card { 
+                flex: 0 0 160px; /* 모바일 전용 카드 너비 고정 */
+                scroll-snap-align: start; 
+            }
+            .card-img-box { height: 110px; } /* 이미지 박스 높이 모바일에 맞게 축소 */
             .history-header { flex-direction: column; align-items: stretch; }
         }
         
@@ -812,7 +825,7 @@
 
             <div class="cards-grid" id="cards-container"></div>
 
-            <div class="glass-panel history-panel">
+            <div class="glass-panel history-panel" style="padding: 20px;">
                 <div class="history-header">
                     <div>
                         <h2 style="margin:0; font-size: 18px; font-weight: 800; color:var(--text-main);">당첨 기록</h2>
@@ -886,7 +899,8 @@
                 <div class="timer-badge"><h3 style="color:var(--danger);">시즌 초기화</h3><div id="timer-5weekly" class="time" style="color:var(--danger);">계산 중...</div></div>
             </div>
 
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; padding: 0 5px;">
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 15px; padding: 0 5px; gap: 8px;">
+                <button class="outline-btn" id="btn-edit-mode" style="color: var(--secondary); border-color: var(--secondary); font-weight: 700; padding: 6px 12px; font-size:12px;" onclick="toggleEditMode()">숙제 편집 모드</button>
                 <button class="outline-btn" style="color: var(--danger); border-color: var(--danger); font-weight: 700; padding: 6px 12px; font-size:12px;" onclick="uncheckAllTasks()">전체 체크 해제</button>
             </div>
 
@@ -1731,6 +1745,8 @@
         if(!userData.itemCounters) userData.itemCounters = {};
         if(!userData.characters) userData.characters = [];
         if(!userData.resetTargets) userData.resetTargets = {};
+        if(!userData.deletedTasks) userData.deletedTasks = {};
+        if(!userData.userAddedTasks) userData.userAddedTasks = {};
         if(userData.stamina === undefined) userData.stamina = 0;
         if(!userData.staminaMax) userData.staminaMax = 360;
     }
@@ -2028,23 +2044,14 @@
             }
         });
 
-        if (resetFlags.biweeklyPinkpus || resetFlags.biweeklyOrbit) { resetFlags.weekly = true; resetFlags.daily = true; }
-        if (resetFlags.weekly) { resetFlags.daily = true; }
+        // 궤도 너머 연쇄 초기화 버그 픽스 (주간, 일일 숙제 강제 초기화 로직 제거)
+        // 개별 타이머에 맞춰 완벽히 독립적으로 작동함
 
         for (let key in userData.tasks) {
             let type = key.split('_')[0];
             if (resetFlags[type]) userData.tasks[key] = false;
         }
 
-        if (userData.customTasks && Array.isArray(userData.customTasks)) {
-            userData.customTasks.forEach(ct => { 
-                if (ct.type.startsWith('custom_')) {
-                    if (now > new Date(ct.type.replace('custom_', '')).getTime()) ct.checked = false;
-                } else {
-                    if (resetFlags[ct.type]) ct.checked = false; 
-                }
-            });
-        }
         if (resetFlags.monthly) userData.itemCounters = {};
         if (needsSave) saveData();
     }
@@ -2052,7 +2059,6 @@
     function uncheckAllTasks() {
         if (!confirm("모든 숙제 체크를 해제하시겠습니까?")) return;
         for (let key in userData.tasks) userData.tasks[key] = false;
-        if (userData.customTasks && Array.isArray(userData.customTasks)) userData.customTasks.forEach(task => task.checked = false);
         saveData(); renderTasks();
     }
 
@@ -2060,16 +2066,30 @@
         const cat = taskConfig[categoryKey];
         const nowMs = Date.now();
         let allChecked = true;
-        cat.items.forEach((item, idx) => {
-            if(typeof item === 'object' && item.start && nowMs < new Date(item.start).getTime()) return; // 안보이는건 무시
-            const taskId = `${cat.type}_${categoryKey}_${idx}`;
+        
+        let activeItems = [];
+        cat.items.forEach(item => {
+            let textCheck = typeof item === 'object' ? item.text : item;
+            if (!userData.deletedTasks || !userData.deletedTasks[categoryKey] || !userData.deletedTasks[categoryKey].includes(textCheck)) {
+                activeItems.push(item);
+            }
+        });
+        if (userData.userAddedTasks && userData.userAddedTasks[categoryKey]) {
+            userData.userAddedTasks[categoryKey].forEach(t => activeItems.push(t));
+        }
+
+        activeItems.forEach(itemObj => {
+            if(typeof itemObj === 'object' && itemObj.start && nowMs < new Date(itemObj.start).getTime()) return; 
+            let text = typeof itemObj === 'object' ? itemObj.text : itemObj;
+            const taskId = `${cat.type}_${categoryKey}_${encodeURIComponent(text).replace(/[%.\-\(\)]/g, '')}`;
             if (!userData.tasks[taskId]) allChecked = false;
         });
 
         const newState = !allChecked;
-        cat.items.forEach((item, idx) => {
-            if(typeof item === 'object' && item.start && nowMs < new Date(item.start).getTime()) return;
-            const taskId = `${cat.type}_${categoryKey}_${idx}`;
+        activeItems.forEach(itemObj => {
+            if(typeof itemObj === 'object' && itemObj.start && nowMs < new Date(itemObj.start).getTime()) return;
+            let text = typeof itemObj === 'object' ? itemObj.text : itemObj;
+            const taskId = `${cat.type}_${categoryKey}_${encodeURIComponent(text).replace(/[%.\-\(\)]/g, '')}`;
             userData.tasks[taskId] = newState;
         });
         saveData(); renderTasks();
@@ -2122,74 +2142,51 @@
         updateSliderVisuals('sp-slider', 1, 70, userData.spLevel);
     }
 
-    function toggleCustomTypeInput() {
-        const typeSel = document.getElementById('custom-task-type');
-        const customDateInput = document.getElementById('custom-task-date');
-        if (typeSel.value === 'custom') {
-            customDateInput.style.display = 'block';
-        } else {
-            customDateInput.style.display = 'none';
-        }
+    // ==========================================
+    // 통합 편집 시스템 (추가 / 삭제)
+    // ==========================================
+    let isEditMode = false;
+    function toggleEditMode() {
+        isEditMode = !isEditMode;
+        const btn = document.getElementById('btn-edit-mode');
+        btn.innerText = isEditMode ? "편집 완료" : "숙제 편집 모드";
+        btn.style.background = isEditMode ? "var(--dashboard-bg)" : "transparent";
+        btn.style.color = isEditMode ? "var(--text-main)" : "var(--secondary)";
+        btn.style.borderColor = isEditMode ? "var(--border-color)" : "var(--secondary)";
+        renderTasks();
     }
 
-    function addCustomTask() {
-        const input = document.getElementById('custom-task-input');
-        const text = input.value.trim();
-        let type = document.getElementById('custom-task-type').value;
-        const customDate = document.getElementById('custom-task-date').value;
+    function deleteStandardTask(categoryKey, text) {
+        if(!confirm("이 숙제를 리스트에서 영구 삭제하시겠습니까?")) return;
         
-        if (!text) return;
-        if (type === 'custom') {
-            if(!customDate) return alert("목표 날짜 및 시간을 설정해 주세요.");
-            type = 'custom_' + customDate;
+        if (userData.userAddedTasks && userData.userAddedTasks[categoryKey] && userData.userAddedTasks[categoryKey].includes(text)) {
+            userData.userAddedTasks[categoryKey] = userData.userAddedTasks[categoryKey].filter(t => t !== text);
+        } else {
+            if (!userData.deletedTasks) userData.deletedTasks = {};
+            if (!userData.deletedTasks[categoryKey]) userData.deletedTasks[categoryKey] = [];
+            userData.deletedTasks[categoryKey].push(text);
         }
+        saveData(); renderTasks();
+    }
 
-        if (!userData.customTasks || !Array.isArray(userData.customTasks)) userData.customTasks = [];
-        userData.customTasks.push({ id: 'c_' + Date.now(), type: type, text: text, checked: false });
+    function addStandardTask(categoryKey) {
+        const input = document.getElementById(`add-task-${categoryKey}`);
+        const text = input.value.trim();
+        if (!text) return;
+        
+        if (!userData.userAddedTasks) userData.userAddedTasks = {};
+        if (!userData.userAddedTasks[categoryKey]) userData.userAddedTasks[categoryKey] = [];
+        
+        if (userData.userAddedTasks[categoryKey].includes(text)) return alert("이미 존재하는 숙제입니다.");
+        
+        if (userData.deletedTasks && userData.deletedTasks[categoryKey] && userData.deletedTasks[categoryKey].includes(text)) {
+            userData.deletedTasks[categoryKey] = userData.deletedTasks[categoryKey].filter(t => t !== text);
+        } else {
+            userData.userAddedTasks[categoryKey].push(text);
+        }
+        
         input.value = '';
         saveData(); renderTasks();
-    }
-
-    function toggleCustomTask(id) {
-        const task = userData.customTasks.find(t => t.id === id);
-        if (task) { task.checked = !task.checked; saveData(); renderTasks(); }
-    }
-    function deleteCustomTask(id) {
-        if(!confirm("이 항목을 삭제하시겠습니까?")) return;
-        userData.customTasks = userData.customTasks.filter(t => t.id !== id);
-        saveData(); renderTasks();
-    }
-    
-    function moveCustomTask(index, direction) {
-        if (index + direction < 0 || index + direction >= userData.customTasks.length) return;
-        const temp = userData.customTasks[index];
-        userData.customTasks[index] = userData.customTasks[index + direction];
-        userData.customTasks[index + direction] = temp;
-        saveData(); 
-        renderTasks();
-    }
-
-    function executeCustomSort(sortType) {
-        if (!sortType || !userData.customTasks || userData.customTasks.length === 0) return;
-        
-        if (sortType === 'date_asc') {
-            userData.customTasks.sort((a, b) => parseInt(a.id.split('_')[1]) - parseInt(b.id.split('_')[1]));
-        } else if (sortType === 'date_desc') {
-            userData.customTasks.sort((a, b) => parseInt(b.id.split('_')[1]) - parseInt(a.id.split('_')[1]));
-        } else if (sortType === 'name_asc') {
-            userData.customTasks.sort((a, b) => a.text.localeCompare(b.text, 'ko-KR'));
-        } else if (sortType === 'name_desc') {
-            userData.customTasks.sort((a, b) => b.text.localeCompare(a.text, 'ko-KR'));
-        } else if (sortType === 'time_asc') {
-            // 마감 임박순 (남은 시간이 짧은 순)
-            userData.customTasks.sort((a, b) => getNextReset(a.type).getTime() - getNextReset(b.type).getTime());
-        } else if (sortType === 'time_desc') {
-            // 마감 여유순 (남은 시간이 긴 순)
-            userData.customTasks.sort((a, b) => getNextReset(b.type).getTime() - getNextReset(a.type).getTime());
-        }
-        
-        saveData();
-        renderTasks();
     }
 
     function renderTasks() {
@@ -2209,20 +2206,41 @@
             
             let html = `<h2 style="--cat-color: ${cat.color};">
                 <span style="display: flex; align-items: center;">${cat.title}</span>
-                <button class="outline-btn" style="font-size: 11px; padding: 4px 8px; border-color: var(--border-color); color:var(--text-muted); font-weight:600; margin-left:10px;" onclick="toggleCategoryTasks('${categoryKey}')">전체선택/해제</button>
+                <button class="outline-btn" style="font-size: 11px; padding: 4px 8px; border-color: var(--border-color); color:var(--text-muted); font-weight:600; margin-left:auto;" onclick="toggleCategoryTasks('${categoryKey}')">전체선택/해제</button>
             </h2>`;
             
-            cat.items.forEach((itemObj, idx) => {
+            let activeItems = [];
+            cat.items.forEach(item => {
+                let textCheck = typeof item === 'object' ? item.text : item;
+                if (!userData.deletedTasks || !userData.deletedTasks[categoryKey] || !userData.deletedTasks[categoryKey].includes(textCheck)) {
+                    activeItems.push(item);
+                }
+            });
+            if (userData.userAddedTasks && userData.userAddedTasks[categoryKey]) {
+                userData.userAddedTasks[categoryKey].forEach(t => activeItems.push(t));
+            }
+            
+            activeItems.forEach((itemObj, idx) => {
                 let text = itemObj;
                 if(typeof itemObj === 'object') {
                     if (itemObj.start && nowMs < new Date(itemObj.start).getTime()) return;
                     text = itemObj.text;
                 }
                 
-                const taskId = `${cat.type}_${categoryKey}_${idx}`;
+                const taskId = `${cat.type}_${categoryKey}_${encodeURIComponent(text).replace(/[%.\-\(\)]/g, '')}`;
                 const isChecked = userData.tasks[taskId];
                 const checkedAttr = isChecked ? 'checked' : '';
-                html += `<label class="task-item"><input type="checkbox" onchange="toggleTask('${taskId}')" ${checkedAttr}><span>${text}</span></label>`;
+                
+                let delBtnHtml = '';
+                if (isEditMode) {
+                    delBtnHtml = `<button class="delete-btn" style="margin-left:auto; width:24px; height:24px; display:flex;" onclick="deleteStandardTask('${categoryKey}', '${text.replace(/'/g, "\\'")}')">✕</button>`;
+                }
+
+                html += `<label class="task-item" style="display:flex; width:100%; align-items:flex-start;">
+                    <input type="checkbox" onchange="toggleTask('${taskId}')" ${checkedAttr} style="margin-top:2px;">
+                    <span style="flex:1; word-break: keep-all; padding-right:8px;">${text}</span>
+                    ${delBtnHtml}
+                </label>`;
                 
                 let weight = 1;
                 if(categoryKey === 'dailyImportant') weight = 2;
@@ -2230,6 +2248,13 @@
                 if(cat.type === 'daily') { dailyTotal += weight; if(isChecked) dailyDone += weight; }
                 if(cat.type === 'weekly' || cat.type === 'biweeklyPinkpus' || cat.type === 'biweeklyOrbit') { weeklyTotal += weight; if(isChecked) weeklyDone += weight; }
             });
+
+            if (isEditMode && categoryKey !== 'fiveWeekly') {
+                html += `<div style="display:flex; gap:8px; margin-top:15px; border-top: 1px dashed var(--border-color); padding-top: 15px;">
+                    <input type="text" id="add-task-${categoryKey}" class="cafe-calc-input" style="flex:1; padding:8px; font-size:13px;" placeholder="새 항목 입력" onkeypress="if(event.key === 'Enter') addStandardTask('${categoryKey}')">
+                    <button class="outline-btn" style="border-color:var(--primary); color:var(--primary); font-weight:700; flex:none; padding:0 15px;" onclick="addStandardTask('${categoryKey}')">추가</button>
+                </div>`;
+            }
 
             if (cat.sub) {
                 const detailsId = `details_${cat.sub.id}`;
@@ -2288,66 +2313,6 @@
             div.innerHTML = html;
             container.appendChild(div);
         });
-
-        const customDiv = document.createElement('div');
-        customDiv.className = 'glass-panel task-category';
-        let customHtml = `<h2 style="--cat-color: var(--text-muted); display:flex; justify-content: space-between; align-items: center; width:100%;">
-                <span style="display: flex; align-items: center;">커스텀 숙제 (개인용)</span>
-                <select class="cafe-calc-input" style="width:auto; padding: 4px 8px; font-size:11px; cursor:pointer;" onchange="executeCustomSort(this.value)">
-                    <option value="">정렬 방식...</option>
-                    <option value="date_asc">생성일 오름차순 (오래된순)</option>
-                    <option value="date_desc">생성일 내림차순 (최신순)</option>
-                    <option value="name_asc">이름 오름차순 (ㄱ-ㅎ)</option>
-                    <option value="name_desc">이름 내림차순 (ㅎ-ㄱ)</option>
-                    <option value="time_asc">마감 임박순 (남은시간 짧은순)</option>
-                    <option value="time_desc">마감 여유순 (남은시간 긴순)</option>
-                </select>
-            </h2>
-            <div class="custom-controls">
-                <select id="custom-task-type" onchange="toggleCustomTypeInput()">
-                    <option value="daily">일일</option>
-                    <option value="weekly">주간</option>
-                    <option value="monthly">월간</option>
-                    <option value="5weekly">시즌 (6주)</option>
-                    <option value="custom">직접 설정</option>
-                </select>
-                <input type="text" id="custom-task-input" placeholder="새 항목 입력" onkeypress="if(event.key === 'Enter') addCustomTask()">
-                <button onclick="addCustomTask()">추가</button>
-                <input type="datetime-local" id="custom-task-date" style="display:none; font-size:13px; padding:8px;">
-            </div>`;
-
-if (userData.customTasks && Array.isArray(userData.customTasks) && userData.customTasks.length > 0) {
-            // forEach 파라미터에 index를 추가해서 위치값을 추적함
-            userData.customTasks.forEach((task, index) => {
-                const isChecked = task.checked;
-                const checkedAttr = isChecked ? 'checked' : '';
-                
-                let typeLabel = task.type === 'daily' ? '일일' : (task.type === 'weekly' ? '주간' : (task.type === 'monthly' ? '월간' : (task.type === '5weekly' ? '시즌' : '커스텀')));
-                let typeColor = task.type === 'daily' ? 'var(--primary)' : (task.type === 'weekly' ? 'var(--secondary)' : (task.type === 'monthly' ? 'var(--warning)' : (task.type === '5weekly' ? 'var(--danger)' : '#a1a1aa')));
-                
-                if(task.type === 'daily') { dailyTotal++; if(isChecked) dailyDone++; }
-                if(task.type === 'weekly') { weeklyTotal++; if(isChecked) weeklyDone++; }
-
-                customHtml += `
-                <div class="task-item" style="flex-wrap: wrap;">
-                    <label style="display:flex; align-items:flex-start; justify-content:flex-start; flex:1; cursor:pointer; min-width: 0; text-align:left; padding-right:8px;">
-                        <input type="checkbox" onchange="toggleCustomTask('${task.id}')" ${checkedAttr}>
-                        <span style="display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 6px; width: 100%; text-align:left;">
-                            <b style="color:${typeColor}; border:1px solid ${typeColor}; padding:2px 6px; border-radius:4px; font-size:11px; white-space: nowrap;">${typeLabel}</b> 
-                            <span style="word-break: break-word; text-align:left;">${task.text}</span>
-                            <span class="custom-timer-span" data-type="${task.type}" style="font-size: 11px; color: ${typeColor}; font-family: monospace; white-space: nowrap; margin-left: auto;">계산 중...</span>
-                        </span>
-                    </label>
-                    <div style="display:flex; gap: 4px; flex:none; align-items:center;">
-                        <button class="outline-btn" style="padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; border-color: var(--border-color); color: var(--text-muted); cursor:pointer;" onclick="moveCustomTask(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''}>▲</button>
-                        <button class="outline-btn" style="padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 10px; border-color: var(--border-color); color: var(--text-muted); cursor:pointer;" onclick="moveCustomTask(${index}, 1)" ${index === userData.customTasks.length - 1 ? 'disabled style="opacity:0.3; cursor:not-allowed;"' : ''}>▼</button>
-                        <button class="delete-btn" style="margin-left:0;" onclick="deleteCustomTask('${task.id}')">✕</button>
-                    </div>
-                </div>`;
-            });
-        }
-        customDiv.innerHTML = customHtml;
-        container.appendChild(customDiv);
 
         const dailyPercent = dailyTotal > 0 ? Math.round((dailyDone / dailyTotal) * 100) : 0;
         const weeklyPercent = weeklyTotal > 0 ? Math.round((weeklyDone / weeklyTotal) * 100) : 0;
