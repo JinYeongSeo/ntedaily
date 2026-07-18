@@ -2233,7 +2233,8 @@
                 
                 let delBtnHtml = '';
                 if (isEditMode) {
-                    delBtnHtml = `<button class="delete-btn" style="margin-left:auto; width:24px; height:24px; display:flex;" onclick="deleteStandardTask('${categoryKey}', '${text.replace(/'/g, "\\'")}')">✕</button>`;
+                    let safeText = encodeURIComponent(text).replace(/'/g, "%27");
+                    delBtnHtml = `<button class="delete-btn" style="margin-left:auto; width:24px; height:24px; display:flex;" onclick="deleteStandardTask('${categoryKey}', decodeURIComponent('${safeText}'))">✕</button>`;
                 }
 
                 html += `<label class="task-item" style="display:flex; width:100%; align-items:flex-start;">
