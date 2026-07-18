@@ -876,6 +876,12 @@
                         </div>
                         <button onclick="syncStamina()">적용</button>
                     </div>
+                    <div style="display: flex; gap: 6px; margin-top: 10px; width: 100%;">
+                        <button class="outline-btn" style="flex: 1; padding: 8px 0; border-color: var(--danger); color: var(--danger); font-weight: 800; font-family: monospace; font-size: 14px;" onclick="adjustStamina(-40)">-40</button>
+                        <button class="outline-btn" style="flex: 1; padding: 8px 0; border-color: var(--danger); color: var(--danger); font-weight: 800; font-family: monospace; font-size: 14px;" onclick="adjustStamina(-60)">-60</button>
+                        <button class="outline-btn" style="flex: 1; padding: 8px 0; border-color: var(--danger); color: var(--danger); font-weight: 800; font-family: monospace; font-size: 14px;" onclick="adjustStamina(-80)">-80</button>
+                        <button class="outline-btn" style="flex: 1; padding: 8px 0; border-color: var(--success); color: var(--success); font-weight: 800; font-family: monospace; font-size: 14px;" onclick="adjustStamina(60)">+60</button>
+                    </div>
                 </div>
 
                 <div class="glass-panel progress-widget">
@@ -1904,6 +1910,34 @@
         userData.staminaUpdated = Date.now();
         saveData(); calcStamina();
         document.getElementById('stamina-input').value = ''; 
+    }
+
+    function adjustStamina(amount) {
+        if(!userData.staminaUpdated) userData.staminaUpdated = Date.now();
+        const maxStamina = userData.staminaMax || 360;
+        
+        // 현재 시점의 정확한 스태미나 계산 (Delta Time 동기화)
+        const now = Date.now();
+        const diff = now - userData.staminaUpdated;
+        const generated = Math.floor(diff / (6 * 60 * 1000));
+        const remainder = diff % (6 * 60 * 1000); // 진행 중인 타이머 잔여 틱 보존용
+        
+        let current = (userData.stamina || 0) + generated;
+        if (current > maxStamina) current = maxStamina;
+        
+        // 값 가감
+        current += amount;
+        
+        // Clamp 처리 (Underflow, Overflow 방지)
+        if (current < 0) current = 0;
+        if (current > maxStamina) current = maxStamina;
+        
+        userData.stamina = current;
+        // 최대치일 때는 현재 시간으로 초기화하고, 깎였을 때는 잔여 틱을 이어받음
+        userData.staminaUpdated = (current === maxStamina) ? now : (now - remainder);
+        
+        saveData(); 
+        calcStamina(); // UI 즉시 리렌더링
     }
 
     function calcStamina() {
