@@ -2834,7 +2834,7 @@ calendarEvents.forEach(evt => {
     ];
 
     const FRUITS = ["코코넛", "사과", "토마토", "오렌지", "딸기"];
-    const EMP_LIST = ["민트", "하니엘", "아들러", "나나리", "스키아", "에드가", "우미츠키", "사키리", "치즈", "백장", "다포딜", "라크리모사", "신쿠"];
+    const EMP_LIST = ["민트", "하니엘", "아들러", "나나리", "스키아", "에드가", "우미츠키", "사키리", "치즈", "백장", "다포딜", "라크리모사", "신쿠", "일로이"];
 
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.lv-overlay') && !e.target.closest('.lv-badge')) {
@@ -3115,6 +3115,8 @@ function handleSlotClick(cafeIdx, slotIdx, event) {
                 if (l >= 1) condStr += "<br><span style='font-size:10px; color:var(--text-muted);'>(음료 3개 이상 시 적용)</span>";
                 if (l >= 5) { isShinkuMult = true; shinkuCondStr = "<br><span style='font-size:10px; color:var(--text-muted);'>(음료 3개 이상 시 3%)</span>"; }
             }
+            if (n === "일로이") {
+                if (l >= 1) tBuff += 18; if (l >= 3) tBuff += 18; if (l >= 5) tBuff += 27;
 
             let statHtml = "";
             if(pBuff > 0) statHtml += `단가 +${pBuff.toFixed(2)}${condStr}<br>`;
@@ -3307,6 +3309,11 @@ function handleSlotClick(cafeIdx, slotIdx, event) {
                     if (l >= 1 && drinkCount >= 3) globalPriceBuff += 0.3;
                     if (l >= 3 && drinkCount >= 3) globalPriceBuff += 0.3;
                     if (l >= 5 && drinkCount >= 3) shinkuMult += 0.03;
+                }
+                if (n === "일로이") {
+                    if (l >= 1) globalTrafficBuff += 18;
+                    if (l >= 3) globalTrafficBuff += 18;
+                    if (l >= 5) globalTrafficBuff += 27;
                 }
             }
 
